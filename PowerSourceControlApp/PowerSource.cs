@@ -1,56 +1,99 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Dapper;
-using DevExpress.Data.Helpers;
 using MySql.Data.MySqlClient;
+using System.Threading;
 
 namespace PowerSourceControlApp
 {
+    class MagicAttribute : Attribute { }
+    class NoMagicAttribute : Attribute { }
 
-    public class Chanel
+    public class Chanel : INotifyPropertyChanged
     {
+        private bool _isInited;
         public uint ChanelId { get; set; }
         public string ChanelUUID { get; set; }
         public uint Address { get; set; }
-        public decimal Voltage { get; set; }
-        public decimal Current { get; set; }
-        public decimal Power { get; set; }
-        public uint Calibration { get; set; }
-        public bool OnOff { get; set; }
         public uint Status { get; set; }
+        [Magic]
+        public decimal Voltage { get; set; }
+        [Magic]
+        public decimal Current { get; set; }
+        [Magic]
+        public decimal Power { get; set; }
+        [Magic]
+        public uint Calibration { get; set; }
+        [Magic]
+        public bool OnOff { get; set; }
 
-        public MySqlConnection Connection;
+        public MySqlConnectionStringBuilder ConnectionString;
         public List<PowerSourceCalibration> CalibrationResult;
+        public PowerSourceSettings Settings;
 
-        public Chanel(uint chanelId, MySqlConnection connection)
+        public Chanel(uint chanelId, MySqlConnectionStringBuilder connectionString)
         {
             ChanelId = chanelId;
-            Connection = connection;
+            ConnectionString = connectionString;
+            _isInited = false;
         }
 
         public void Init()
         {
-            using (Connection)
+            using (var connection = GetConnection(connectionstring: ConnectionString))
             {
-                Connection.Open();
-                var settings = Connection.Get<PowerSourceSettings>(ChanelId);
+                Settings = connection.Get<PowerSourceSettings>(ChanelId);
 
-                ChanelUUID = settings.UUID;
-                Address = settings.Address;
-                Voltage = settings.Voltage;
-                Current = settings.Current;
-                Power = settings.Power;
-                Calibration = settings.Calibration;
-                OnOff = settings.OnOff;
-                Status = settings.Status;
+                ChanelUUID = Settings.UUID;
+                Address = Settings.Address;
+                Voltage = Settings.Voltage;
+                Current = Settings.Current;
+                Power = Settings.Power;
+                Calibration = Settings.Calibration;
+                OnOff = Settings.OnOff;
+                Status = Settings.Status;
 
-                CalibrationResult = Connection.GetList<PowerSourceCalibration>(new { UUID = ChanelUUID }).ToList();
+                CalibrationResult = connection.GetList<PowerSourceCalibration>(new {UUID = ChanelUUID}).ToList();
+                _isInited = true;
             }
         }
+
+        private void UpdateSettingsTable()
+        {
+            Settings.Voltage = Voltage;
+            Settings.Current = Current;
+            Settings.Power = Power;
+            Settings.Calibration = Calibration;
+            Settings.OnOff = OnOff;
+
+            using (var connection = GetConnection(connectionstring: ConnectionString))
+            {
+                connection.Open();
+                connection.UpdateAsync(Settings);
+            }            
+        }
+
+        protected virtual void RaisePropertyChanged(string propName)
+        {
+            if (_isInited)
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+                Thread updateThread = new Thread(UpdateSettingsTable);
+                updateThread.Start();
+            }          
+        }
+
+        private static MySqlConnection GetConnection(MySqlConnectionStringBuilder connectionstring)
+        {
+            var connection = new MySqlConnection(connectionstring.ToString());
+            SimpleCRUD.SetDialect(SimpleCRUD.Dialect.MySQL);
+            return connection;
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
     }
 
     class PowerSource
@@ -75,10 +118,11 @@ namespace PowerSourceControlApp
             {
                 connection.Open();
                 var chanels = connection.GetList<PowerSourceSettings>();
+                connection.Close();
 
                 foreach (var chanel in chanels)
                 {
-                    ChanelList.Add(new Chanel(chanel.Id, connection));
+                    ChanelList.Add(new Chanel(chanel.Id, connectionString));
                 }
             }
 

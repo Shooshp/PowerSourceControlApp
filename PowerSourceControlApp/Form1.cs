@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using DevExpress.XtraEditors.CustomEditor;
+using DevExpress.XtraEditors.Repository;
 using DevExpress.XtraGauges.Win;
 using DevExpress.XtraGrid.Columns;
 using DevExpress.XtraGrid.Views.Base;
@@ -15,17 +16,26 @@ namespace PowerSourceControlApp
 {
     public partial class Form1 : DevExpress.XtraEditors.XtraForm
     {
-        private Focus CurentFocus;
+        private NowFocused _curentNowFocused;
 
         public Form1()
         {
-            CurentFocus = new Focus();
+            _curentNowFocused = new NowFocused();
             var powerSource = new PowerSource("192.168.43.207");
+
             InitializeComponent();
             CreateGauge(layoutView1.Columns["Status"], StatusGauge);
             CreateGauge(layoutView1.Columns["Voltage"], VoltageGauge);
             CreateGauge(layoutView1.Columns["Current"], CurrentGauge);
+            var edit = new RepositoryItemToggleSwitch();
+            layoutView1.Columns["OnOff"].ColumnEdit = edit;
+            edit.EditValueChanged +=  Edit_EditValueChanged;
             gridControl1.DataSource = powerSource.ChanelList;
+        }
+
+        private void Edit_EditValueChanged(object sender, EventArgs e)
+        {
+            layoutView1.PostEditor();
         }
 
         private static void CreateGauge(GridColumn column, GaugeControl gauge)
@@ -41,18 +51,23 @@ namespace PowerSourceControlApp
             if (arguments.FocusedColumn == null)
                 return;
 
-            CurentFocus.Column = arguments.FocusedColumn.Name;
-            Console.WriteLine(CurentFocus.Row);
-            Console.WriteLine(CurentFocus.Column);
+            _curentNowFocused.Column = arguments.FocusedColumn.Name;
+            Console.WriteLine(_curentNowFocused.Row);
+            Console.WriteLine(_curentNowFocused.Column);
         }
 
         private void RowFocus(object sender, FocusedRowChangedEventArgs e)
         {
             var arguments = e;
-            CurentFocus.Row = arguments.FocusedRowHandle;
+            _curentNowFocused.Row = arguments.FocusedRowHandle;
         }
 
-        public class Focus
+        public void UpdateOnChange()
+        {
+            layoutView1.PostEditor();
+        }
+
+        private class NowFocused
         {
             public int Row { get; set; }
             public string Column { get; set; }

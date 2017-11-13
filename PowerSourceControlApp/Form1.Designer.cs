@@ -30,10 +30,10 @@ namespace PowerSourceControlApp
         /// </summary>
         private void InitializeComponent()
         {
-            DevExpress.XtraGauges.Core.Model.IndicatorState indicatorState1 = new DevExpress.XtraGauges.Core.Model.IndicatorState();
-            DevExpress.XtraGauges.Core.Model.IndicatorState indicatorState2 = new DevExpress.XtraGauges.Core.Model.IndicatorState();
-            DevExpress.XtraGauges.Core.Model.IndicatorState indicatorState3 = new DevExpress.XtraGauges.Core.Model.IndicatorState();
-            DevExpress.XtraGauges.Core.Model.IndicatorState indicatorState4 = new DevExpress.XtraGauges.Core.Model.IndicatorState();
+            DevExpress.XtraGauges.Core.Model.IndicatorState indicatorState5 = new DevExpress.XtraGauges.Core.Model.IndicatorState();
+            DevExpress.XtraGauges.Core.Model.IndicatorState indicatorState6 = new DevExpress.XtraGauges.Core.Model.IndicatorState();
+            DevExpress.XtraGauges.Core.Model.IndicatorState indicatorState7 = new DevExpress.XtraGauges.Core.Model.IndicatorState();
+            DevExpress.XtraGauges.Core.Model.IndicatorState indicatorState8 = new DevExpress.XtraGauges.Core.Model.IndicatorState();
             this.gridControl1 = new DevExpress.XtraGrid.GridControl();
             this.layoutView1 = new DevExpress.XtraGrid.Views.Layout.LayoutView();
             this.CalibrationColumn = new DevExpress.XtraGrid.Columns.LayoutViewColumn();
@@ -63,6 +63,7 @@ namespace PowerSourceControlApp
             this.CurrentGauge = new DevExpress.XtraGauges.Win.GaugeControl();
             this.digitalGauge1 = new DevExpress.XtraGauges.Win.Gauges.Digital.DigitalGauge();
             this.digitalBackgroundLayerComponent2 = new DevExpress.XtraGauges.Win.Gauges.Digital.DigitalBackgroundLayerComponent();
+            this.toggleSwitch1 = new DevExpress.XtraEditors.ToggleSwitch();
             ((System.ComponentModel.ISupportInitialize)(this.gridControl1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutViewField_layoutViewColumn1_5)).BeginInit();
@@ -81,6 +82,7 @@ namespace PowerSourceControlApp
             ((System.ComponentModel.ISupportInitialize)(this.digitalBackgroundLayerComponent1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.digitalGauge1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.digitalBackgroundLayerComponent2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.toggleSwitch1.Properties)).BeginInit();
             this.SuspendLayout();
             // 
             // gridControl1
@@ -89,7 +91,7 @@ namespace PowerSourceControlApp
             this.gridControl1.Location = new System.Drawing.Point(0, 0);
             this.gridControl1.MainView = this.layoutView1;
             this.gridControl1.Name = "gridControl1";
-            this.gridControl1.Size = new System.Drawing.Size(863, 357);
+            this.gridControl1.Size = new System.Drawing.Size(1005, 415);
             this.gridControl1.TabIndex = 0;
             this.gridControl1.ViewCollection.AddRange(new DevExpress.XtraGrid.Views.Base.BaseView[] {
             this.layoutView1});
@@ -284,19 +286,19 @@ namespace PowerSourceControlApp
             this.stateIndicatorComponent1.Name = "stateIndicatorComponent1";
             this.stateIndicatorComponent1.Size = new System.Drawing.SizeF(200F, 200F);
             this.stateIndicatorComponent1.StateIndex = 3;
-            indicatorState1.Name = "State1";
-            indicatorState1.ShapeType = DevExpress.XtraGauges.Core.Model.StateIndicatorShapeType.ElectricLight1;
-            indicatorState2.Name = "State2";
-            indicatorState2.ShapeType = DevExpress.XtraGauges.Core.Model.StateIndicatorShapeType.ElectricLight2;
-            indicatorState3.Name = "State3";
-            indicatorState3.ShapeType = DevExpress.XtraGauges.Core.Model.StateIndicatorShapeType.ElectricLight3;
-            indicatorState4.Name = "State4";
-            indicatorState4.ShapeType = DevExpress.XtraGauges.Core.Model.StateIndicatorShapeType.ElectricLight4;
+            indicatorState5.Name = "State1";
+            indicatorState5.ShapeType = DevExpress.XtraGauges.Core.Model.StateIndicatorShapeType.ElectricLight1;
+            indicatorState6.Name = "State2";
+            indicatorState6.ShapeType = DevExpress.XtraGauges.Core.Model.StateIndicatorShapeType.ElectricLight2;
+            indicatorState7.Name = "State3";
+            indicatorState7.ShapeType = DevExpress.XtraGauges.Core.Model.StateIndicatorShapeType.ElectricLight3;
+            indicatorState8.Name = "State4";
+            indicatorState8.ShapeType = DevExpress.XtraGauges.Core.Model.StateIndicatorShapeType.ElectricLight4;
             this.stateIndicatorComponent1.States.AddRange(new DevExpress.XtraGauges.Core.Model.IIndicatorState[] {
-            indicatorState1,
-            indicatorState2,
-            indicatorState3,
-            indicatorState4});
+            indicatorState5,
+            indicatorState6,
+            indicatorState7,
+            indicatorState8});
             // 
             // VoltageGauge
             // 
@@ -356,11 +358,22 @@ namespace PowerSourceControlApp
             this.digitalBackgroundLayerComponent2.TopLeft = new DevExpress.XtraGauges.Core.Base.PointF2D(20F, 0F);
             this.digitalBackgroundLayerComponent2.ZOrder = 1000;
             // 
+            // toggleSwitch1
+            // 
+            this.toggleSwitch1.Location = new System.Drawing.Point(64, 252);
+            this.toggleSwitch1.Name = "toggleSwitch1";
+            this.toggleSwitch1.Properties.OffText = "Off";
+            this.toggleSwitch1.Properties.OnText = "On";
+            this.toggleSwitch1.Size = new System.Drawing.Size(95, 24);
+            this.toggleSwitch1.TabIndex = 4;
+            this.toggleSwitch1.Visible = false;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(863, 357);
+            this.ClientSize = new System.Drawing.Size(1005, 415);
+            this.Controls.Add(this.toggleSwitch1);
             this.Controls.Add(this.CurrentGauge);
             this.Controls.Add(this.VoltageGauge);
             this.Controls.Add(this.StatusGauge);
@@ -385,6 +398,7 @@ namespace PowerSourceControlApp
             ((System.ComponentModel.ISupportInitialize)(this.digitalBackgroundLayerComponent1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.digitalGauge1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.digitalBackgroundLayerComponent2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.toggleSwitch1.Properties)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -420,6 +434,7 @@ namespace PowerSourceControlApp
         private DevExpress.XtraGauges.Win.GaugeControl CurrentGauge;
         private DevExpress.XtraGauges.Win.Gauges.Digital.DigitalGauge digitalGauge1;
         private DevExpress.XtraGauges.Win.Gauges.Digital.DigitalBackgroundLayerComponent digitalBackgroundLayerComponent2;
+        private DevExpress.XtraEditors.ToggleSwitch toggleSwitch1;
     }
 }
 
