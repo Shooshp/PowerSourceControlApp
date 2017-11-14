@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 using DevExpress.XtraEditors.CustomEditor;
 using DevExpress.XtraEditors.Repository;
@@ -37,8 +38,6 @@ namespace PowerSourceControlApp
             PowerSourceList.DataSource = _powerSourceScanResultList;
             PowerSourceChanelList.DataSource =
                 _powerSourceScanResultList.ElementAt(_currentlySelectedPowerSource.Row).ChanelList;
-
-
         }
 
         private void Edit_EditValueChanged(object sender, EventArgs e)
@@ -85,10 +84,16 @@ namespace PowerSourceControlApp
         private void ScanForPowerSources()
         {
             var scaner = new NetworkScaner("192.168.1.", 10236);
+            var scanResult = new List<PowerSource>();
+  
             foreach (var pinger in scaner.PingerList)
             {
-                _powerSourceScanResultList.Add(new PowerSource(pinger.address));
+                scanResult.Add(new PowerSource(pinger.address));
             }
+            _powerSourceScanResultList.Clear();
+            _powerSourceScanResultList = scanResult.ToList();
+            scanResult.Clear();
+            scaner.PingerList.Clear();
             GC.Collect();
         }
 
