@@ -16,21 +16,29 @@ namespace PowerSourceControlApp
 {
     public partial class Form1 : DevExpress.XtraEditors.XtraForm
     {
-        private NowFocused _curentNowFocused;
+        private NowFocused _currentlySelectedChanel;
+        private NowFocused _currentlySelectedPowerSource;
+        private List<PowerSource> _powerSourceScanResultList;
 
         public Form1()
         {
-            _curentNowFocused = new NowFocused();
-            var powerSource = new PowerSource("192.168.43.207");
-
+            _currentlySelectedChanel = new NowFocused();
+            _currentlySelectedPowerSource = new NowFocused();
+            _powerSourceScanResultList = new List<PowerSource>();
+            ScanForPowerSources();
             InitializeComponent();
             CreateGauge(layoutView1.Columns["Status"], StatusGauge);
             CreateGauge(layoutView1.Columns["Voltage"], VoltageGauge);
             CreateGauge(layoutView1.Columns["Current"], CurrentGauge);
             var edit = new RepositoryItemToggleSwitch();
             layoutView1.Columns["OnOff"].ColumnEdit = edit;
-            edit.EditValueChanged +=  Edit_EditValueChanged;
-            gridControl1.DataSource = powerSource.ChanelList;
+            edit.EditValueChanged += Edit_EditValueChanged;
+
+            PowerSourceList.DataSource = _powerSourceScanResultList;
+            PowerSourceChanelList.DataSource =
+                _powerSourceScanResultList.ElementAt(_currentlySelectedPowerSource.Row).ChanelList;
+
+
         }
 
         private void Edit_EditValueChanged(object sender, EventArgs e)
@@ -40,26 +48,33 @@ namespace PowerSourceControlApp
 
         private static void CreateGauge(GridColumn column, GaugeControl gauge)
         {
-            var ri = new RepositoryItemAnyControl { Control = gauge };
+            var ri = new RepositoryItemAnyControl {Control = gauge};
             column.View.GridControl.RepositoryItems.Add(ri);
             column.ColumnEdit = ri;
         }
 
-        private void ColomnFocus(object sender, FocusedColumnChangedEventArgs e)
+        private void ChanelColomnFocus(object sender, FocusedColumnChangedEventArgs e)
         {
             var arguments = e;
             if (arguments.FocusedColumn == null)
                 return;
 
-            _curentNowFocused.Column = arguments.FocusedColumn.Name;
-            Console.WriteLine(_curentNowFocused.Row);
-            Console.WriteLine(_curentNowFocused.Column);
+            _currentlySelectedChanel.Column = arguments.FocusedColumn.Name;
+            Console.WriteLine(_currentlySelectedChanel.Row);
+            Console.WriteLine(_currentlySelectedChanel.Column);
         }
 
-        private void RowFocus(object sender, FocusedRowChangedEventArgs e)
+        private void ChanelRowFocus(object sender, FocusedRowChangedEventArgs e)
         {
             var arguments = e;
-            _curentNowFocused.Row = arguments.FocusedRowHandle;
+            _currentlySelectedChanel.Row = arguments.FocusedRowHandle;
+        }
+
+        private void PowerSourceRowFocus(object sender, FocusedRowChangedEventArgs e)
+        {
+            var arguments = e;
+            _currentlySelectedPowerSource.Row = arguments.FocusedRowHandle;
+            layoutView1.Refresh();
         }
 
         public void UpdateOnChange()
@@ -67,10 +82,26 @@ namespace PowerSourceControlApp
             layoutView1.PostEditor();
         }
 
+        private void ScanForPowerSources()
+        {
+            var scaner = new NetworkScaner("192.168.1.", 10236);
+            foreach (var pinger in scaner.PingerList)
+            {
+                _powerSourceScanResultList.Add(new PowerSource(pinger.address));
+            }
+            GC.Collect();
+        }
+
         private class NowFocused
         {
             public int Row { get; set; }
             public string Column { get; set; }
+
+            public NowFocused()
+            {
+                Row = 0;
+                Column = null;
+            }
         }
     }
 }
