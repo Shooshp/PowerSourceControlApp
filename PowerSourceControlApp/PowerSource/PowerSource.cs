@@ -1,13 +1,17 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Net.NetworkInformation;
+using System.Net.Sockets;
 using Dapper;
 using MySql.Data.MySqlClient;
 
 namespace PowerSourceControlApp
 {
-    class PowerSource
+    public class PowerSource
     {
         public string Server { get; }
         public List<Chanel> ChanelList;
+        public bool isOnline;
 
         public PowerSource(string server)
         {
@@ -30,7 +34,7 @@ namespace PowerSourceControlApp
 
                 foreach (var chanel in chanels)
                 {
-                    ChanelList.Add(new Chanel(chanel.Id, connectionString));
+                    ChanelList.Add(new Chanel(chanel.Id, Server));
                 }
             }
 
@@ -38,6 +42,8 @@ namespace PowerSourceControlApp
             {
                 chanel.Init();
             }
+
+            isOnline = true;
         }
 
         private static MySqlConnection GetConnection(MySqlConnectionStringBuilder connectionstring)
@@ -45,6 +51,21 @@ namespace PowerSourceControlApp
             var connection = new MySqlConnection(connectionstring.ToString());
             SimpleCRUD.SetDialect(SimpleCRUD.Dialect.MySQL);
             return connection;
+        }
+
+        public void Ping()
+        {
+            try
+            {
+                using (var client = new TcpClient(Server, 10236))
+                {
+                    isOnline = true;
+                }
+            }
+            catch (Exception e)
+            {
+                isOnline = false;
+            }
         }
     }
 }

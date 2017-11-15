@@ -30,20 +30,32 @@ namespace PowerSourceControlApp
         /// </summary>
         private void InitializeComponent()
         {
-            DevExpress.XtraGauges.Core.Model.IndicatorState indicatorState25 = new DevExpress.XtraGauges.Core.Model.IndicatorState();
-            DevExpress.XtraGauges.Core.Model.IndicatorState indicatorState26 = new DevExpress.XtraGauges.Core.Model.IndicatorState();
-            DevExpress.XtraGauges.Core.Model.IndicatorState indicatorState27 = new DevExpress.XtraGauges.Core.Model.IndicatorState();
-            DevExpress.XtraGauges.Core.Model.IndicatorState indicatorState28 = new DevExpress.XtraGauges.Core.Model.IndicatorState();
+            this.components = new System.ComponentModel.Container();
+            DevExpress.XtraGauges.Core.Model.IndicatorState indicatorState5 = new DevExpress.XtraGauges.Core.Model.IndicatorState();
+            DevExpress.XtraGauges.Core.Model.IndicatorState indicatorState6 = new DevExpress.XtraGauges.Core.Model.IndicatorState();
+            DevExpress.XtraGauges.Core.Model.IndicatorState indicatorState7 = new DevExpress.XtraGauges.Core.Model.IndicatorState();
+            DevExpress.XtraGauges.Core.Model.IndicatorState indicatorState8 = new DevExpress.XtraGauges.Core.Model.IndicatorState();
             this.PowerSourceChanelList = new DevExpress.XtraGrid.GridControl();
             this.layoutView1 = new DevExpress.XtraGrid.Views.Layout.LayoutView();
             this.CalibrationColumn = new DevExpress.XtraGrid.Columns.LayoutViewColumn();
+            this.layoutViewField_layoutViewColumn1_5 = new DevExpress.XtraGrid.Views.Layout.LayoutViewField();
             this.PowerColumn = new DevExpress.XtraGrid.Columns.LayoutViewColumn();
+            this.layoutViewField_layoutViewColumn1_4 = new DevExpress.XtraGrid.Views.Layout.LayoutViewField();
             this.CurrentColumn = new DevExpress.XtraGrid.Columns.LayoutViewColumn();
+            this.layoutViewField_layoutViewColumn1_3 = new DevExpress.XtraGrid.Views.Layout.LayoutViewField();
             this.AddressColumn = new DevExpress.XtraGrid.Columns.LayoutViewColumn();
+            this.layoutViewField_layoutViewColumn1_2 = new DevExpress.XtraGrid.Views.Layout.LayoutViewField();
             this.ChanelIdColumn = new DevExpress.XtraGrid.Columns.LayoutViewColumn();
+            this.layoutViewField_layoutViewColumn1_1 = new DevExpress.XtraGrid.Views.Layout.LayoutViewField();
             this.VoltageColumn = new DevExpress.XtraGrid.Columns.LayoutViewColumn();
+            this.layoutViewField_layoutViewColumn1 = new DevExpress.XtraGrid.Views.Layout.LayoutViewField();
             this.OnOffColumn = new DevExpress.XtraGrid.Columns.LayoutViewColumn();
+            this.layoutViewField_layoutViewColumn1_6 = new DevExpress.XtraGrid.Views.Layout.LayoutViewField();
             this.StatusColumn = new DevExpress.XtraGrid.Columns.LayoutViewColumn();
+            this.layoutViewField_layoutViewColumn1_7 = new DevExpress.XtraGrid.Views.Layout.LayoutViewField();
+            this.layoutViewCard1 = new DevExpress.XtraGrid.Views.Layout.LayoutViewCard();
+            this.item1 = new DevExpress.XtraLayout.SimpleSeparator();
+            this.item2 = new DevExpress.XtraLayout.SimpleSeparator();
             this.StatusGauge = new DevExpress.XtraGauges.Win.GaugeControl();
             this.stateIndicatorGauge1 = new DevExpress.XtraGauges.Win.Gauges.State.StateIndicatorGauge();
             this.stateIndicatorComponent1 = new DevExpress.XtraGauges.Win.Gauges.State.StateIndicatorComponent();
@@ -57,20 +69,26 @@ namespace PowerSourceControlApp
             this.PowerSourceList = new DevExpress.XtraGrid.GridControl();
             this.gridView1 = new DevExpress.XtraGrid.Views.Grid.GridView();
             this.PowerSourceIP = new DevExpress.XtraGrid.Columns.GridColumn();
-            this.layoutViewCard1 = new DevExpress.XtraGrid.Views.Layout.LayoutViewCard();
-            this.layoutViewField_layoutViewColumn1_6 = new DevExpress.XtraGrid.Views.Layout.LayoutViewField();
-            this.layoutViewField_layoutViewColumn1 = new DevExpress.XtraGrid.Views.Layout.LayoutViewField();
-            this.layoutViewField_layoutViewColumn1_3 = new DevExpress.XtraGrid.Views.Layout.LayoutViewField();
-            this.layoutViewField_layoutViewColumn1_7 = new DevExpress.XtraGrid.Views.Layout.LayoutViewField();
-            this.item1 = new DevExpress.XtraLayout.SimpleSeparator();
-            this.item2 = new DevExpress.XtraLayout.SimpleSeparator();
-            this.layoutViewField_layoutViewColumn1_1 = new DevExpress.XtraGrid.Views.Layout.LayoutViewField();
-            this.layoutViewField_layoutViewColumn1_2 = new DevExpress.XtraGrid.Views.Layout.LayoutViewField();
-            this.layoutViewField_layoutViewColumn1_4 = new DevExpress.XtraGrid.Views.Layout.LayoutViewField();
-            this.layoutViewField_layoutViewColumn1_5 = new DevExpress.XtraGrid.Views.Layout.LayoutViewField();
             this.separatorControl1 = new DevExpress.XtraEditors.SeparatorControl();
+            this.defaultLookAndFeel1 = new DevExpress.LookAndFeel.DefaultLookAndFeel(this.components);
+            this.ChanelTabs = new DevExpress.XtraTab.XtraTabControl();
+            this.ChanelStatus = new DevExpress.XtraTab.XtraTabPage();
+            this.ChanelLog = new DevExpress.XtraTab.XtraTabPage();
+            this.ChanelSettings = new DevExpress.XtraTab.XtraTabPage();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.PowerSourceChanelList)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutView1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.layoutViewField_layoutViewColumn1_5)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.layoutViewField_layoutViewColumn1_4)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.layoutViewField_layoutViewColumn1_3)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.layoutViewField_layoutViewColumn1_2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.layoutViewField_layoutViewColumn1_1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.layoutViewField_layoutViewColumn1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.layoutViewField_layoutViewColumn1_6)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.layoutViewField_layoutViewColumn1_7)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.layoutViewCard1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.item1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.item2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.stateIndicatorGauge1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.stateIndicatorComponent1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dGauge1)).BeginInit();
@@ -80,28 +98,20 @@ namespace PowerSourceControlApp
             ((System.ComponentModel.ISupportInitialize)(this.toggleSwitch1.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.PowerSourceList)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridView1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.layoutViewCard1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.layoutViewField_layoutViewColumn1_6)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.layoutViewField_layoutViewColumn1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.layoutViewField_layoutViewColumn1_3)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.layoutViewField_layoutViewColumn1_7)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.item1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.item2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.layoutViewField_layoutViewColumn1_1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.layoutViewField_layoutViewColumn1_2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.layoutViewField_layoutViewColumn1_4)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.layoutViewField_layoutViewColumn1_5)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.separatorControl1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ChanelTabs)).BeginInit();
+            this.ChanelTabs.SuspendLayout();
             this.SuspendLayout();
             // 
             // PowerSourceChanelList
             // 
-            this.PowerSourceChanelList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.PowerSourceChanelList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.PowerSourceChanelList.Location = new System.Drawing.Point(333, 0);
             this.PowerSourceChanelList.MainView = this.layoutView1;
             this.PowerSourceChanelList.Name = "PowerSourceChanelList";
-            this.PowerSourceChanelList.Size = new System.Drawing.Size(1062, 441);
+            this.PowerSourceChanelList.Size = new System.Drawing.Size(1104, 370);
             this.PowerSourceChanelList.TabIndex = 0;
             this.PowerSourceChanelList.ViewCollection.AddRange(new DevExpress.XtraGrid.Views.Base.BaseView[] {
             this.layoutView1});
@@ -130,8 +140,6 @@ namespace PowerSourceControlApp
             this.layoutView1.OptionsCustomization.AllowSort = false;
             this.layoutView1.OptionsView.ShowHeaderPanel = false;
             this.layoutView1.TemplateCard = this.layoutViewCard1;
-            this.layoutView1.FocusedRowChanged += new DevExpress.XtraGrid.Views.Base.FocusedRowChangedEventHandler(this.ChanelRowFocus);
-            this.layoutView1.FocusedColumnChanged += new DevExpress.XtraGrid.Views.Base.FocusedColumnChangedEventHandler(this.ChanelColomnFocus);
             // 
             // CalibrationColumn
             // 
@@ -140,12 +148,28 @@ namespace PowerSourceControlApp
             this.CalibrationColumn.LayoutViewField = this.layoutViewField_layoutViewColumn1_5;
             this.CalibrationColumn.Name = "CalibrationColumn";
             // 
+            // layoutViewField_layoutViewColumn1_5
+            // 
+            this.layoutViewField_layoutViewColumn1_5.EditorPreferredWidth = 20;
+            this.layoutViewField_layoutViewColumn1_5.Location = new System.Drawing.Point(0, 0);
+            this.layoutViewField_layoutViewColumn1_5.Name = "layoutViewField_layoutViewColumn1_5";
+            this.layoutViewField_layoutViewColumn1_5.Size = new System.Drawing.Size(198, 98);
+            this.layoutViewField_layoutViewColumn1_5.TextSize = new System.Drawing.Size(55, 13);
+            // 
             // PowerColumn
             // 
             this.PowerColumn.Caption = "W";
             this.PowerColumn.FieldName = "Power";
             this.PowerColumn.LayoutViewField = this.layoutViewField_layoutViewColumn1_4;
             this.PowerColumn.Name = "PowerColumn";
+            // 
+            // layoutViewField_layoutViewColumn1_4
+            // 
+            this.layoutViewField_layoutViewColumn1_4.EditorPreferredWidth = 20;
+            this.layoutViewField_layoutViewColumn1_4.Location = new System.Drawing.Point(0, 0);
+            this.layoutViewField_layoutViewColumn1_4.Name = "layoutViewField_layoutViewColumn1_4";
+            this.layoutViewField_layoutViewColumn1_4.Size = new System.Drawing.Size(198, 98);
+            this.layoutViewField_layoutViewColumn1_4.TextSize = new System.Drawing.Size(55, 13);
             // 
             // CurrentColumn
             // 
@@ -154,12 +178,28 @@ namespace PowerSourceControlApp
             this.CurrentColumn.LayoutViewField = this.layoutViewField_layoutViewColumn1_3;
             this.CurrentColumn.Name = "CurrentColumn";
             // 
+            // layoutViewField_layoutViewColumn1_3
+            // 
+            this.layoutViewField_layoutViewColumn1_3.EditorPreferredWidth = 137;
+            this.layoutViewField_layoutViewColumn1_3.Location = new System.Drawing.Point(0, 52);
+            this.layoutViewField_layoutViewColumn1_3.Name = "layoutViewField_layoutViewColumn1_3";
+            this.layoutViewField_layoutViewColumn1_3.Size = new System.Drawing.Size(181, 24);
+            this.layoutViewField_layoutViewColumn1_3.TextSize = new System.Drawing.Size(35, 13);
+            // 
             // AddressColumn
             // 
             this.AddressColumn.Caption = "Address";
             this.AddressColumn.FieldName = "Address";
             this.AddressColumn.LayoutViewField = this.layoutViewField_layoutViewColumn1_2;
             this.AddressColumn.Name = "AddressColumn";
+            // 
+            // layoutViewField_layoutViewColumn1_2
+            // 
+            this.layoutViewField_layoutViewColumn1_2.EditorPreferredWidth = 20;
+            this.layoutViewField_layoutViewColumn1_2.Location = new System.Drawing.Point(0, 0);
+            this.layoutViewField_layoutViewColumn1_2.Name = "layoutViewField_layoutViewColumn1_2";
+            this.layoutViewField_layoutViewColumn1_2.Size = new System.Drawing.Size(198, 98);
+            this.layoutViewField_layoutViewColumn1_2.TextSize = new System.Drawing.Size(55, 13);
             // 
             // ChanelIdColumn
             // 
@@ -168,12 +208,28 @@ namespace PowerSourceControlApp
             this.ChanelIdColumn.LayoutViewField = this.layoutViewField_layoutViewColumn1_1;
             this.ChanelIdColumn.Name = "ChanelIdColumn";
             // 
+            // layoutViewField_layoutViewColumn1_1
+            // 
+            this.layoutViewField_layoutViewColumn1_1.EditorPreferredWidth = 20;
+            this.layoutViewField_layoutViewColumn1_1.Location = new System.Drawing.Point(0, 0);
+            this.layoutViewField_layoutViewColumn1_1.Name = "layoutViewField_layoutViewColumn1_1";
+            this.layoutViewField_layoutViewColumn1_1.Size = new System.Drawing.Size(198, 98);
+            this.layoutViewField_layoutViewColumn1_1.TextSize = new System.Drawing.Size(55, 13);
+            // 
             // VoltageColumn
             // 
             this.VoltageColumn.Caption = "V";
             this.VoltageColumn.FieldName = "Voltage";
             this.VoltageColumn.LayoutViewField = this.layoutViewField_layoutViewColumn1;
             this.VoltageColumn.Name = "VoltageColumn";
+            // 
+            // layoutViewField_layoutViewColumn1
+            // 
+            this.layoutViewField_layoutViewColumn1.EditorPreferredWidth = 137;
+            this.layoutViewField_layoutViewColumn1.Location = new System.Drawing.Point(0, 28);
+            this.layoutViewField_layoutViewColumn1.Name = "layoutViewField_layoutViewColumn1";
+            this.layoutViewField_layoutViewColumn1.Size = new System.Drawing.Size(181, 24);
+            this.layoutViewField_layoutViewColumn1.TextSize = new System.Drawing.Size(35, 13);
             // 
             // OnOffColumn
             // 
@@ -182,12 +238,59 @@ namespace PowerSourceControlApp
             this.OnOffColumn.LayoutViewField = this.layoutViewField_layoutViewColumn1_6;
             this.OnOffColumn.Name = "OnOffColumn";
             // 
+            // layoutViewField_layoutViewColumn1_6
+            // 
+            this.layoutViewField_layoutViewColumn1_6.EditorPreferredWidth = 137;
+            this.layoutViewField_layoutViewColumn1_6.Location = new System.Drawing.Point(0, 76);
+            this.layoutViewField_layoutViewColumn1_6.Name = "layoutViewField_layoutViewColumn1_6";
+            this.layoutViewField_layoutViewColumn1_6.Size = new System.Drawing.Size(181, 24);
+            this.layoutViewField_layoutViewColumn1_6.TextSize = new System.Drawing.Size(35, 13);
+            // 
             // StatusColumn
             // 
             this.StatusColumn.Caption = "Status";
             this.StatusColumn.FieldName = "Status";
             this.StatusColumn.LayoutViewField = this.layoutViewField_layoutViewColumn1_7;
             this.StatusColumn.Name = "StatusColumn";
+            // 
+            // layoutViewField_layoutViewColumn1_7
+            // 
+            this.layoutViewField_layoutViewColumn1_7.EditorPreferredWidth = 137;
+            this.layoutViewField_layoutViewColumn1_7.Location = new System.Drawing.Point(0, 0);
+            this.layoutViewField_layoutViewColumn1_7.Name = "layoutViewField_layoutViewColumn1_7";
+            this.layoutViewField_layoutViewColumn1_7.Size = new System.Drawing.Size(181, 24);
+            this.layoutViewField_layoutViewColumn1_7.TextSize = new System.Drawing.Size(35, 13);
+            // 
+            // layoutViewCard1
+            // 
+            this.layoutViewCard1.CustomizationFormText = "TemplateCard";
+            this.layoutViewCard1.HeaderButtonsLocation = DevExpress.Utils.GroupElementLocation.AfterText;
+            this.layoutViewCard1.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
+            this.layoutViewField_layoutViewColumn1_6,
+            this.layoutViewField_layoutViewColumn1,
+            this.layoutViewField_layoutViewColumn1_3,
+            this.layoutViewField_layoutViewColumn1_7,
+            this.item1,
+            this.item2});
+            this.layoutViewCard1.Name = "layoutViewCard1";
+            this.layoutViewCard1.OptionsItemText.TextToControlDistance = 5;
+            this.layoutViewCard1.Text = "TemplateCard";
+            // 
+            // item1
+            // 
+            this.item1.AllowHotTrack = false;
+            this.item1.CustomizationFormText = "item1";
+            this.item1.Location = new System.Drawing.Point(0, 24);
+            this.item1.Name = "item1";
+            this.item1.Size = new System.Drawing.Size(181, 2);
+            // 
+            // item2
+            // 
+            this.item2.AllowHotTrack = false;
+            this.item2.CustomizationFormText = "item2";
+            this.item2.Location = new System.Drawing.Point(0, 26);
+            this.item2.Name = "item2";
+            this.item2.Size = new System.Drawing.Size(181, 2);
             // 
             // StatusGauge
             // 
@@ -212,19 +315,19 @@ namespace PowerSourceControlApp
             this.stateIndicatorComponent1.Name = "stateIndicatorComponent1";
             this.stateIndicatorComponent1.Size = new System.Drawing.SizeF(200F, 200F);
             this.stateIndicatorComponent1.StateIndex = 3;
-            indicatorState25.Name = "State1";
-            indicatorState25.ShapeType = DevExpress.XtraGauges.Core.Model.StateIndicatorShapeType.ElectricLight1;
-            indicatorState26.Name = "State2";
-            indicatorState26.ShapeType = DevExpress.XtraGauges.Core.Model.StateIndicatorShapeType.ElectricLight2;
-            indicatorState27.Name = "State3";
-            indicatorState27.ShapeType = DevExpress.XtraGauges.Core.Model.StateIndicatorShapeType.ElectricLight3;
-            indicatorState28.Name = "State4";
-            indicatorState28.ShapeType = DevExpress.XtraGauges.Core.Model.StateIndicatorShapeType.ElectricLight4;
+            indicatorState5.Name = "State1";
+            indicatorState5.ShapeType = DevExpress.XtraGauges.Core.Model.StateIndicatorShapeType.ElectricLight1;
+            indicatorState6.Name = "State2";
+            indicatorState6.ShapeType = DevExpress.XtraGauges.Core.Model.StateIndicatorShapeType.ElectricLight2;
+            indicatorState7.Name = "State3";
+            indicatorState7.ShapeType = DevExpress.XtraGauges.Core.Model.StateIndicatorShapeType.ElectricLight3;
+            indicatorState8.Name = "State4";
+            indicatorState8.ShapeType = DevExpress.XtraGauges.Core.Model.StateIndicatorShapeType.ElectricLight4;
             this.stateIndicatorComponent1.States.AddRange(new DevExpress.XtraGauges.Core.Model.IIndicatorState[] {
-            indicatorState25,
-            indicatorState26,
-            indicatorState27,
-            indicatorState28});
+            indicatorState5,
+            indicatorState6,
+            indicatorState7,
+            indicatorState8});
             // 
             // VoltageGauge
             // 
@@ -301,7 +404,7 @@ namespace PowerSourceControlApp
             this.PowerSourceList.Location = new System.Drawing.Point(-1, 0);
             this.PowerSourceList.MainView = this.gridView1;
             this.PowerSourceList.Name = "PowerSourceList";
-            this.PowerSourceList.Size = new System.Drawing.Size(303, 667);
+            this.PowerSourceList.Size = new System.Drawing.Size(303, 596);
             this.PowerSourceList.TabIndex = 5;
             this.PowerSourceList.ViewCollection.AddRange(new DevExpress.XtraGrid.Views.Base.BaseView[] {
             this.gridView1});
@@ -313,7 +416,6 @@ namespace PowerSourceControlApp
             this.gridView1.GridControl = this.PowerSourceList;
             this.gridView1.Name = "gridView1";
             this.gridView1.OptionsView.ShowGroupPanel = false;
-            this.gridView1.FocusedRowChanged += new DevExpress.XtraGrid.Views.Base.FocusedRowChangedEventHandler(this.PowerSourceRowFocus);
             // 
             // PowerSourceIP
             // 
@@ -323,101 +425,6 @@ namespace PowerSourceControlApp
             this.PowerSourceIP.Visible = true;
             this.PowerSourceIP.VisibleIndex = 0;
             // 
-            // layoutViewCard1
-            // 
-            this.layoutViewCard1.CustomizationFormText = "TemplateCard";
-            this.layoutViewCard1.HeaderButtonsLocation = DevExpress.Utils.GroupElementLocation.AfterText;
-            this.layoutViewCard1.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
-            this.layoutViewField_layoutViewColumn1_6,
-            this.layoutViewField_layoutViewColumn1,
-            this.layoutViewField_layoutViewColumn1_3,
-            this.layoutViewField_layoutViewColumn1_7,
-            this.item1,
-            this.item2});
-            this.layoutViewCard1.Name = "layoutViewCard1";
-            this.layoutViewCard1.OptionsItemText.TextToControlDistance = 5;
-            this.layoutViewCard1.Text = "TemplateCard";
-            // 
-            // layoutViewField_layoutViewColumn1_6
-            // 
-            this.layoutViewField_layoutViewColumn1_6.EditorPreferredWidth = 137;
-            this.layoutViewField_layoutViewColumn1_6.Location = new System.Drawing.Point(0, 76);
-            this.layoutViewField_layoutViewColumn1_6.Name = "layoutViewField_layoutViewColumn1_6";
-            this.layoutViewField_layoutViewColumn1_6.Size = new System.Drawing.Size(181, 24);
-            this.layoutViewField_layoutViewColumn1_6.TextSize = new System.Drawing.Size(35, 13);
-            // 
-            // layoutViewField_layoutViewColumn1
-            // 
-            this.layoutViewField_layoutViewColumn1.EditorPreferredWidth = 137;
-            this.layoutViewField_layoutViewColumn1.Location = new System.Drawing.Point(0, 28);
-            this.layoutViewField_layoutViewColumn1.Name = "layoutViewField_layoutViewColumn1";
-            this.layoutViewField_layoutViewColumn1.Size = new System.Drawing.Size(181, 24);
-            this.layoutViewField_layoutViewColumn1.TextSize = new System.Drawing.Size(35, 13);
-            // 
-            // layoutViewField_layoutViewColumn1_3
-            // 
-            this.layoutViewField_layoutViewColumn1_3.EditorPreferredWidth = 137;
-            this.layoutViewField_layoutViewColumn1_3.Location = new System.Drawing.Point(0, 52);
-            this.layoutViewField_layoutViewColumn1_3.Name = "layoutViewField_layoutViewColumn1_3";
-            this.layoutViewField_layoutViewColumn1_3.Size = new System.Drawing.Size(181, 24);
-            this.layoutViewField_layoutViewColumn1_3.TextSize = new System.Drawing.Size(35, 13);
-            // 
-            // layoutViewField_layoutViewColumn1_7
-            // 
-            this.layoutViewField_layoutViewColumn1_7.EditorPreferredWidth = 137;
-            this.layoutViewField_layoutViewColumn1_7.Location = new System.Drawing.Point(0, 0);
-            this.layoutViewField_layoutViewColumn1_7.Name = "layoutViewField_layoutViewColumn1_7";
-            this.layoutViewField_layoutViewColumn1_7.Size = new System.Drawing.Size(181, 24);
-            this.layoutViewField_layoutViewColumn1_7.TextSize = new System.Drawing.Size(35, 13);
-            // 
-            // item1
-            // 
-            this.item1.AllowHotTrack = false;
-            this.item1.CustomizationFormText = "item1";
-            this.item1.Location = new System.Drawing.Point(0, 24);
-            this.item1.Name = "item1";
-            this.item1.Size = new System.Drawing.Size(181, 2);
-            // 
-            // item2
-            // 
-            this.item2.AllowHotTrack = false;
-            this.item2.CustomizationFormText = "item2";
-            this.item2.Location = new System.Drawing.Point(0, 26);
-            this.item2.Name = "item2";
-            this.item2.Size = new System.Drawing.Size(181, 2);
-            // 
-            // layoutViewField_layoutViewColumn1_1
-            // 
-            this.layoutViewField_layoutViewColumn1_1.EditorPreferredWidth = 20;
-            this.layoutViewField_layoutViewColumn1_1.Location = new System.Drawing.Point(0, 0);
-            this.layoutViewField_layoutViewColumn1_1.Name = "layoutViewField_layoutViewColumn1_1";
-            this.layoutViewField_layoutViewColumn1_1.Size = new System.Drawing.Size(198, 98);
-            this.layoutViewField_layoutViewColumn1_1.TextSize = new System.Drawing.Size(55, 13);
-            // 
-            // layoutViewField_layoutViewColumn1_2
-            // 
-            this.layoutViewField_layoutViewColumn1_2.EditorPreferredWidth = 20;
-            this.layoutViewField_layoutViewColumn1_2.Location = new System.Drawing.Point(0, 0);
-            this.layoutViewField_layoutViewColumn1_2.Name = "layoutViewField_layoutViewColumn1_2";
-            this.layoutViewField_layoutViewColumn1_2.Size = new System.Drawing.Size(198, 98);
-            this.layoutViewField_layoutViewColumn1_2.TextSize = new System.Drawing.Size(55, 13);
-            // 
-            // layoutViewField_layoutViewColumn1_4
-            // 
-            this.layoutViewField_layoutViewColumn1_4.EditorPreferredWidth = 20;
-            this.layoutViewField_layoutViewColumn1_4.Location = new System.Drawing.Point(0, 0);
-            this.layoutViewField_layoutViewColumn1_4.Name = "layoutViewField_layoutViewColumn1_4";
-            this.layoutViewField_layoutViewColumn1_4.Size = new System.Drawing.Size(198, 98);
-            this.layoutViewField_layoutViewColumn1_4.TextSize = new System.Drawing.Size(55, 13);
-            // 
-            // layoutViewField_layoutViewColumn1_5
-            // 
-            this.layoutViewField_layoutViewColumn1_5.EditorPreferredWidth = 20;
-            this.layoutViewField_layoutViewColumn1_5.Location = new System.Drawing.Point(0, 0);
-            this.layoutViewField_layoutViewColumn1_5.Name = "layoutViewField_layoutViewColumn1_5";
-            this.layoutViewField_layoutViewColumn1_5.Size = new System.Drawing.Size(198, 98);
-            this.layoutViewField_layoutViewColumn1_5.TextSize = new System.Drawing.Size(55, 13);
-            // 
             // separatorControl1
             // 
             this.separatorControl1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -426,14 +433,53 @@ namespace PowerSourceControlApp
             this.separatorControl1.LineThickness = 3;
             this.separatorControl1.Location = new System.Drawing.Point(308, 0);
             this.separatorControl1.Name = "separatorControl1";
-            this.separatorControl1.Size = new System.Drawing.Size(19, 667);
+            this.separatorControl1.Size = new System.Drawing.Size(19, 596);
             this.separatorControl1.TabIndex = 6;
+            // 
+            // ChanelTabs
+            // 
+            this.ChanelTabs.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.ChanelTabs.Location = new System.Drawing.Point(333, 376);
+            this.ChanelTabs.Name = "ChanelTabs";
+            this.ChanelTabs.SelectedTabPage = this.ChanelStatus;
+            this.ChanelTabs.Size = new System.Drawing.Size(1104, 220);
+            this.ChanelTabs.TabIndex = 7;
+            this.ChanelTabs.TabPages.AddRange(new DevExpress.XtraTab.XtraTabPage[] {
+            this.ChanelStatus,
+            this.ChanelLog,
+            this.ChanelSettings});
+            // 
+            // ChanelStatus
+            // 
+            this.ChanelStatus.Name = "ChanelStatus";
+            this.ChanelStatus.Size = new System.Drawing.Size(1098, 192);
+            this.ChanelStatus.Text = "Статус";
+            // 
+            // ChanelLog
+            // 
+            this.ChanelLog.Name = "ChanelLog";
+            this.ChanelLog.Size = new System.Drawing.Size(1098, 192);
+            this.ChanelLog.Text = "Лог";
+            // 
+            // ChanelSettings
+            // 
+            this.ChanelSettings.Name = "ChanelSettings";
+            this.ChanelSettings.Size = new System.Drawing.Size(1098, 192);
+            this.ChanelSettings.Text = "Настройки";
+            // 
+            // timer1
+            // 
+            this.timer1.Enabled = true;
+            this.timer1.Interval = 10000;
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1393, 667);
+            this.ClientSize = new System.Drawing.Size(1435, 596);
+            this.Controls.Add(this.ChanelTabs);
             this.Controls.Add(this.separatorControl1);
             this.Controls.Add(this.PowerSourceList);
             this.Controls.Add(this.toggleSwitch1);
@@ -446,6 +492,17 @@ namespace PowerSourceControlApp
             this.Text = "Form1";
             ((System.ComponentModel.ISupportInitialize)(this.PowerSourceChanelList)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutView1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.layoutViewField_layoutViewColumn1_5)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.layoutViewField_layoutViewColumn1_4)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.layoutViewField_layoutViewColumn1_3)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.layoutViewField_layoutViewColumn1_2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.layoutViewField_layoutViewColumn1_1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.layoutViewField_layoutViewColumn1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.layoutViewField_layoutViewColumn1_6)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.layoutViewField_layoutViewColumn1_7)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.layoutViewCard1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.item1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.item2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.stateIndicatorGauge1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.stateIndicatorComponent1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dGauge1)).EndInit();
@@ -455,18 +512,9 @@ namespace PowerSourceControlApp
             ((System.ComponentModel.ISupportInitialize)(this.toggleSwitch1.Properties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.PowerSourceList)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridView1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.layoutViewCard1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.layoutViewField_layoutViewColumn1_6)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.layoutViewField_layoutViewColumn1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.layoutViewField_layoutViewColumn1_3)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.layoutViewField_layoutViewColumn1_7)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.item1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.item2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.layoutViewField_layoutViewColumn1_1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.layoutViewField_layoutViewColumn1_2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.layoutViewField_layoutViewColumn1_4)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.layoutViewField_layoutViewColumn1_5)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.separatorControl1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ChanelTabs)).EndInit();
+            this.ChanelTabs.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -508,6 +556,12 @@ namespace PowerSourceControlApp
         private DevExpress.XtraLayout.SimpleSeparator item1;
         private DevExpress.XtraLayout.SimpleSeparator item2;
         private DevExpress.XtraEditors.SeparatorControl separatorControl1;
+        private DevExpress.LookAndFeel.DefaultLookAndFeel defaultLookAndFeel1;
+        private DevExpress.XtraTab.XtraTabControl ChanelTabs;
+        private DevExpress.XtraTab.XtraTabPage ChanelStatus;
+        private DevExpress.XtraTab.XtraTabPage ChanelLog;
+        private DevExpress.XtraTab.XtraTabPage ChanelSettings;
+        private System.Windows.Forms.Timer timer1;
     }
 }
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Net.Sockets;
 using System.Threading;
 using Dapper;
 using MySql.Data.MySqlClient;
@@ -13,6 +14,7 @@ namespace PowerSourceControlApp
 
     public class Chanel : INotifyPropertyChanged
     {
+        public string Server { get; }
         private bool _isInited;
         public uint ChanelId { get; set; }
         public string ChanelUUID { get; set; }
@@ -29,20 +31,28 @@ namespace PowerSourceControlApp
         [Magic]
         public bool OnOff { get; set; }
 
-        public MySqlConnectionStringBuilder ConnectionString;
         public List<PowerSourceCalibration> CalibrationResult;
         public PowerSourceSettings Settings;
+        private MySqlConnectionStringBuilder connectionString;
 
-        public Chanel(uint chanelId, MySqlConnectionStringBuilder connectionString)
+        public Chanel(uint chanelId, string server)
         {
+            Server = server;
             ChanelId = chanelId;
-            ConnectionString = connectionString;
             _isInited = false;
+
+            connectionString = new MySqlConnectionStringBuilder()
+            {
+                Server = Server,
+                UserID = "root",
+                Password = "123",
+                Database = "local_data_storage"
+            };
         }
 
         public void Init()
         {
-            using (var connection = GetConnection(connectionstring: ConnectionString))
+            using (var connection = GetConnection(connectionstring: connectionString))
             {
                 Settings = connection.Get<PowerSourceSettings>(ChanelId);
 
@@ -68,7 +78,7 @@ namespace PowerSourceControlApp
             Settings.Calibration = Calibration;
             Settings.OnOff = OnOff;
 
-            using (var connection = GetConnection(connectionstring: ConnectionString))
+            using (var connection = GetConnection(connectionstring: connectionString))
             {
                 connection.Open();
                 connection.UpdateAsync(Settings);
@@ -78,10 +88,19 @@ namespace PowerSourceControlApp
         protected virtual void RaisePropertyChanged(string propName)
         {
             if (_isInited)
-            {
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
-                Thread updateThread = new Thread(UpdateSettingsTable);
-                updateThread.Start();
+            {             
+                try
+                {
+                    using (var client = new TcpClient(Server, 10236))
+                    {
+                        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+                        Thread updateThread = new Thread(UpdateSettingsTable);
+                        updateThread.Start();
+                    }
+                }
+                catch (Exception e)
+                {
+                }
             }
         }
 

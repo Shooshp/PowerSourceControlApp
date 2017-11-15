@@ -10,7 +10,6 @@ namespace PowerSourceControlApp
         public string BaseIp;
         public int port;
         public List<Pinger> PingerList;
-        Boolean isDisposed = false;
 
         public NetworkScaner(string baseIp, int port)
         {
@@ -24,7 +23,7 @@ namespace PowerSourceControlApp
                 PingerList.Add(new Pinger(address, this.port));
             }
 
-            Thread.Sleep(500);
+            Thread.Sleep(100);
             PingerList.RemoveAll(x => x.IsOnline == false);
         }
 
@@ -40,6 +39,7 @@ namespace PowerSourceControlApp
                 this.address = address;
 
                 var pingThread = new Thread(CheckAddressAndPort);
+                pingThread.IsBackground = true;
                 pingThread.Start();
             }
 
