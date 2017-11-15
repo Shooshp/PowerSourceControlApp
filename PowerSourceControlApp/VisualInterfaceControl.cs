@@ -31,76 +31,17 @@ namespace PowerSourceControlApp
             FocusedChanelID = 0;
         }
 
+        
+         // TODO: Create NtetworkDeviceDetector handler and implement refresh\redraw of interface upon new device detection
+
+
         public void ConnectToGrids(object powersourcegrid, object chanellistgrid)
         {
             PowerSourceListGrid = (GridControl)powersourcegrid;
             ChanelListGrid = (GridControl)chanellistgrid;
             PowerSourceListGrid.DataSource = DetectedPowerSources;
         }
-
-
-        public void ScanForPowerSources()
-        {
-            var powerSourceListIsEmpty = !DetectedPowerSources.Any();
-            var scaner = new NetworkScaner("192.168.1.", 10236);
-            bool update = false;
-
-
-            if (!powerSourceListIsEmpty)
-            {
-                foreach (var powerSource in DetectedPowerSources)
-                {
-                    var checkIfStillOnline = new Thread(powerSource.Ping);
-                    checkIfStillOnline.Start();
-                }
-
-                foreach (var pinger in scaner.PingerList)
-                {
-                    if (!DetectedPowerSources.Any(x => x.Server == pinger.address))
-                    {
-                        DetectedPowerSources.Add(new PowerSource(pinger.address));
-                        update = true;
-                    }
-                }
-            }
-            else
-            {
-                foreach (var pinger in scaner.PingerList)
-                {
-                    DetectedPowerSources.Add(new PowerSource(pinger.address));
-                    update = true;
-                }
-            }
-
-            powerSourceListIsEmpty = !DetectedPowerSources.Any();
-
-            if (update)
-            {
-                if (FocusedPowerSourceIP == null)
-                {
-                    ChanelListGrid.DataSource = DetectedPowerSources.ElementAt(0).ChanelList;
-                }
-                PowerSourceListGrid.RefreshDataSource();
-                ChanelListGrid.RefreshDataSource();
-            }
-
-            if (!powerSourceListIsEmpty)
-            {
-                if (!DetectedPowerSources.ElementAt(FocusedPowerSourceIndex).isOnline)
-                {
-                    ChanelListGrid.DataSource = null;                    
-                }
-                else
-                {
-                    ChanelListGrid.DataSource = DetectedPowerSources.ElementAt(FocusedPowerSourceIndex).ChanelList;
-                }
-                ChanelListGrid.RefreshDataSource();
-            }
-
-            scaner.PingerList.Clear();
-            GC.Collect();
-        }
-
+   
         public void CurrentPowerSourceChanged(object sender, FocusedRowChangedEventArgs e)
         {
             var powerSourceListIsEmpty = !DetectedPowerSources.Any();

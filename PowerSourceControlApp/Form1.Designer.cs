@@ -115,6 +115,7 @@ namespace PowerSourceControlApp
             this.PowerSourceChanelList.TabIndex = 0;
             this.PowerSourceChanelList.ViewCollection.AddRange(new DevExpress.XtraGrid.Views.Base.BaseView[] {
             this.layoutView1});
+
             // 
             // layoutView1
             // 
@@ -408,6 +409,7 @@ namespace PowerSourceControlApp
             this.PowerSourceList.TabIndex = 5;
             this.PowerSourceList.ViewCollection.AddRange(new DevExpress.XtraGrid.Views.Base.BaseView[] {
             this.gridView1});
+            this.gridView1.FocusedRowChanged += new FocusedRowChangedEventHandler(MainViewControl.CurrentPowerSourceChanged);
             // 
             // gridView1
             // 

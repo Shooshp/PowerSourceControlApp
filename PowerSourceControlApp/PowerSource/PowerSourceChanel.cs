@@ -37,6 +37,8 @@ namespace PowerSourceControlApp
 
         public Chanel(uint chanelId, string server)
         {
+            //TODO: Pass parent PowerSource object to each chanel and use it to ping connection and parametr usage instead of passing as arguments
+
             Server = server;
             ChanelId = chanelId;
             _isInited = false;

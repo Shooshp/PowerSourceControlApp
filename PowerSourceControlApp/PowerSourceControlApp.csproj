@@ -75,7 +75,7 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
-    <Compile Include="NetworkScaner.cs" />
+    <Compile Include="NetworkDeviceDetector.cs" />
     <Compile Include="PowerSource\PowerSource.cs" />
     <Compile Include="PowerSource\PowerSourceChanel.cs" />
     <Compile Include="PowerSource\PowerSourceDapperDTO.cs" />

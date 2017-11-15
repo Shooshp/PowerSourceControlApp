@@ -18,10 +18,15 @@ namespace PowerSourceControlApp
     public partial class Form1 : DevExpress.XtraEditors.XtraForm
     {
         public VisualInterfaceControl MainViewControl;
+        public NetworkDeviceDetector DeviceDetector;
 
         public Form1()
         {
             MainViewControl = new VisualInterfaceControl();
+            DeviceDetector = new NetworkDeviceDetector();
+            DeviceDetector.OnDataReceived += JustSimpleHandler;
+            DeviceDetector.CreateUdpReadThread();
+            
             InitializeComponent();
             MainViewControl.ConnectToGrids(PowerSourceList, PowerSourceChanelList);
             CreateGauge(layoutView1.Columns["Status"], StatusGauge);
@@ -31,7 +36,6 @@ namespace PowerSourceControlApp
             layoutView1.Columns["OnOff"].ColumnEdit = edit;
             edit.EditValueChanged += Edit_EditValueChanged;
 
-            MainViewControl.ScanForPowerSources();
         }
 
         private void Edit_EditValueChanged(object sender, EventArgs e)
@@ -53,7 +57,16 @@ namespace PowerSourceControlApp
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            MainViewControl.ScanForPowerSources();
+          //TODO: Create ping method for all currently connected devices
+        }
+
+        public void JustSimpleHandler(object sender, DataEventArgs e)
+        {
+            var senderip = e.IpAddress.ToString();
+            var sendermessage = System.Text.Encoding.UTF8.GetString(e.Data);
+            Thread.Sleep(15);
+            var message = string.Concat("Get message from ip: ", senderip, " message is: ", sendermessage);
+            Console.WriteLine(message);
         }
     }
 }
