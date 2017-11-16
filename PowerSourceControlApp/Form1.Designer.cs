@@ -31,10 +31,14 @@ namespace PowerSourceControlApp
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            DevExpress.XtraGauges.Core.Model.IndicatorState indicatorState5 = new DevExpress.XtraGauges.Core.Model.IndicatorState();
-            DevExpress.XtraGauges.Core.Model.IndicatorState indicatorState6 = new DevExpress.XtraGauges.Core.Model.IndicatorState();
-            DevExpress.XtraGauges.Core.Model.IndicatorState indicatorState7 = new DevExpress.XtraGauges.Core.Model.IndicatorState();
-            DevExpress.XtraGauges.Core.Model.IndicatorState indicatorState8 = new DevExpress.XtraGauges.Core.Model.IndicatorState();
+            DevExpress.XtraGauges.Core.Model.IndicatorState indicatorState33 = new DevExpress.XtraGauges.Core.Model.IndicatorState();
+            DevExpress.XtraGauges.Core.Model.IndicatorState indicatorState34 = new DevExpress.XtraGauges.Core.Model.IndicatorState();
+            DevExpress.XtraGauges.Core.Model.IndicatorState indicatorState35 = new DevExpress.XtraGauges.Core.Model.IndicatorState();
+            DevExpress.XtraGauges.Core.Model.IndicatorState indicatorState36 = new DevExpress.XtraGauges.Core.Model.IndicatorState();
+            DevExpress.XtraGauges.Core.Model.IndicatorState indicatorState37 = new DevExpress.XtraGauges.Core.Model.IndicatorState();
+            DevExpress.XtraGauges.Core.Model.IndicatorState indicatorState38 = new DevExpress.XtraGauges.Core.Model.IndicatorState();
+            DevExpress.XtraGauges.Core.Model.IndicatorState indicatorState39 = new DevExpress.XtraGauges.Core.Model.IndicatorState();
+            DevExpress.XtraGauges.Core.Model.IndicatorState indicatorState40 = new DevExpress.XtraGauges.Core.Model.IndicatorState();
             this.PowerSourceChanelList = new DevExpress.XtraGrid.GridControl();
             this.layoutView1 = new DevExpress.XtraGrid.Views.Layout.LayoutView();
             this.CalibrationColumn = new DevExpress.XtraGrid.Columns.LayoutViewColumn();
@@ -68,14 +72,19 @@ namespace PowerSourceControlApp
             this.toggleSwitch1 = new DevExpress.XtraEditors.ToggleSwitch();
             this.PowerSourceList = new DevExpress.XtraGrid.GridControl();
             this.gridView1 = new DevExpress.XtraGrid.Views.Grid.GridView();
-            this.PowerSourceIP = new DevExpress.XtraGrid.Columns.GridColumn();
+            this.PowerSourceIPColumn = new DevExpress.XtraGrid.Columns.GridColumn();
+            this.ifOnlineStateColumn = new DevExpress.XtraGrid.Columns.GridColumn();
             this.separatorControl1 = new DevExpress.XtraEditors.SeparatorControl();
             this.defaultLookAndFeel1 = new DevExpress.LookAndFeel.DefaultLookAndFeel(this.components);
             this.ChanelTabs = new DevExpress.XtraTab.XtraTabControl();
             this.ChanelStatus = new DevExpress.XtraTab.XtraTabPage();
             this.ChanelLog = new DevExpress.XtraTab.XtraTabPage();
             this.ChanelSettings = new DevExpress.XtraTab.XtraTabPage();
-            this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.InterfaceRefresh = new System.Windows.Forms.Timer(this.components);
+            this.PingTime = new System.Windows.Forms.Timer(this.components);
+            this.isOnlineGauge = new DevExpress.XtraGauges.Win.GaugeControl();
+            this.stateIndicatorGauge = new DevExpress.XtraGauges.Win.Gauges.State.StateIndicatorGauge();
+            this.OnLineGauge = new DevExpress.XtraGauges.Win.Gauges.State.StateIndicatorComponent();
             ((System.ComponentModel.ISupportInitialize)(this.PowerSourceChanelList)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutViewField_layoutViewColumn1_5)).BeginInit();
@@ -101,6 +110,8 @@ namespace PowerSourceControlApp
             ((System.ComponentModel.ISupportInitialize)(this.separatorControl1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ChanelTabs)).BeginInit();
             this.ChanelTabs.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.stateIndicatorGauge)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.OnLineGauge)).BeginInit();
             this.SuspendLayout();
             // 
             // PowerSourceChanelList
@@ -111,11 +122,10 @@ namespace PowerSourceControlApp
             this.PowerSourceChanelList.Location = new System.Drawing.Point(333, 0);
             this.PowerSourceChanelList.MainView = this.layoutView1;
             this.PowerSourceChanelList.Name = "PowerSourceChanelList";
-            this.PowerSourceChanelList.Size = new System.Drawing.Size(1104, 370);
+            this.PowerSourceChanelList.Size = new System.Drawing.Size(1177, 425);
             this.PowerSourceChanelList.TabIndex = 0;
             this.PowerSourceChanelList.ViewCollection.AddRange(new DevExpress.XtraGrid.Views.Base.BaseView[] {
             this.layoutView1});
-
             // 
             // layoutView1
             // 
@@ -134,7 +144,6 @@ namespace PowerSourceControlApp
             this.layoutView1.HiddenItems.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
             this.layoutViewField_layoutViewColumn1_1,
             this.layoutViewField_layoutViewColumn1_2,
-            this.layoutViewField_layoutViewColumn1_4,
             this.layoutViewField_layoutViewColumn1_5});
             this.layoutView1.Name = "layoutView1";
             this.layoutView1.OptionsCustomization.AllowFilter = false;
@@ -316,19 +325,19 @@ namespace PowerSourceControlApp
             this.stateIndicatorComponent1.Name = "stateIndicatorComponent1";
             this.stateIndicatorComponent1.Size = new System.Drawing.SizeF(200F, 200F);
             this.stateIndicatorComponent1.StateIndex = 3;
-            indicatorState5.Name = "State1";
-            indicatorState5.ShapeType = DevExpress.XtraGauges.Core.Model.StateIndicatorShapeType.ElectricLight1;
-            indicatorState6.Name = "State2";
-            indicatorState6.ShapeType = DevExpress.XtraGauges.Core.Model.StateIndicatorShapeType.ElectricLight2;
-            indicatorState7.Name = "State3";
-            indicatorState7.ShapeType = DevExpress.XtraGauges.Core.Model.StateIndicatorShapeType.ElectricLight3;
-            indicatorState8.Name = "State4";
-            indicatorState8.ShapeType = DevExpress.XtraGauges.Core.Model.StateIndicatorShapeType.ElectricLight4;
+            indicatorState33.Name = "State1";
+            indicatorState33.ShapeType = DevExpress.XtraGauges.Core.Model.StateIndicatorShapeType.ElectricLight1;
+            indicatorState34.Name = "State2";
+            indicatorState34.ShapeType = DevExpress.XtraGauges.Core.Model.StateIndicatorShapeType.ElectricLight2;
+            indicatorState35.Name = "State3";
+            indicatorState35.ShapeType = DevExpress.XtraGauges.Core.Model.StateIndicatorShapeType.ElectricLight3;
+            indicatorState36.Name = "State4";
+            indicatorState36.ShapeType = DevExpress.XtraGauges.Core.Model.StateIndicatorShapeType.ElectricLight4;
             this.stateIndicatorComponent1.States.AddRange(new DevExpress.XtraGauges.Core.Model.IIndicatorState[] {
-            indicatorState5,
-            indicatorState6,
-            indicatorState7,
-            indicatorState8});
+            indicatorState33,
+            indicatorState34,
+            indicatorState35,
+            indicatorState36});
             // 
             // VoltageGauge
             // 
@@ -405,27 +414,36 @@ namespace PowerSourceControlApp
             this.PowerSourceList.Location = new System.Drawing.Point(-1, 0);
             this.PowerSourceList.MainView = this.gridView1;
             this.PowerSourceList.Name = "PowerSourceList";
-            this.PowerSourceList.Size = new System.Drawing.Size(303, 596);
+            this.PowerSourceList.Size = new System.Drawing.Size(303, 651);
             this.PowerSourceList.TabIndex = 5;
             this.PowerSourceList.ViewCollection.AddRange(new DevExpress.XtraGrid.Views.Base.BaseView[] {
             this.gridView1});
-            this.gridView1.FocusedRowChanged += new FocusedRowChangedEventHandler(MainViewControl.CurrentPowerSourceChanged);
             // 
             // gridView1
             // 
             this.gridView1.Columns.AddRange(new DevExpress.XtraGrid.Columns.GridColumn[] {
-            this.PowerSourceIP});
+            this.PowerSourceIPColumn,
+            this.ifOnlineStateColumn});
             this.gridView1.GridControl = this.PowerSourceList;
             this.gridView1.Name = "gridView1";
             this.gridView1.OptionsView.ShowGroupPanel = false;
             // 
-            // PowerSourceIP
+            // PowerSourceIPColumn
             // 
-            this.PowerSourceIP.Caption = "Адрес";
-            this.PowerSourceIP.FieldName = "Server";
-            this.PowerSourceIP.Name = "PowerSourceIP";
-            this.PowerSourceIP.Visible = true;
-            this.PowerSourceIP.VisibleIndex = 0;
+            this.PowerSourceIPColumn.Caption = "Адрес";
+            this.PowerSourceIPColumn.FieldName = "Server";
+            this.PowerSourceIPColumn.Name = "PowerSourceIPColumn";
+            this.PowerSourceIPColumn.Visible = true;
+            this.PowerSourceIPColumn.VisibleIndex = 0;
+            // 
+            // ifOnlineStateColumn
+            // 
+            this.ifOnlineStateColumn.Caption = "Статус";
+            this.ifOnlineStateColumn.FieldName = "IsOnline";
+            this.ifOnlineStateColumn.Name = "ifOnlineStateColumn";
+            this.ifOnlineStateColumn.OptionsColumn.ReadOnly = true;
+            this.ifOnlineStateColumn.Visible = true;
+            this.ifOnlineStateColumn.VisibleIndex = 1;
             // 
             // separatorControl1
             // 
@@ -435,17 +453,17 @@ namespace PowerSourceControlApp
             this.separatorControl1.LineThickness = 3;
             this.separatorControl1.Location = new System.Drawing.Point(308, 0);
             this.separatorControl1.Name = "separatorControl1";
-            this.separatorControl1.Size = new System.Drawing.Size(19, 596);
+            this.separatorControl1.Size = new System.Drawing.Size(19, 651);
             this.separatorControl1.TabIndex = 6;
             // 
             // ChanelTabs
             // 
             this.ChanelTabs.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.ChanelTabs.Location = new System.Drawing.Point(333, 376);
+            this.ChanelTabs.Location = new System.Drawing.Point(333, 431);
             this.ChanelTabs.Name = "ChanelTabs";
             this.ChanelTabs.SelectedTabPage = this.ChanelStatus;
-            this.ChanelTabs.Size = new System.Drawing.Size(1104, 220);
+            this.ChanelTabs.Size = new System.Drawing.Size(1177, 220);
             this.ChanelTabs.TabIndex = 7;
             this.ChanelTabs.TabPages.AddRange(new DevExpress.XtraTab.XtraTabPage[] {
             this.ChanelStatus,
@@ -455,32 +473,75 @@ namespace PowerSourceControlApp
             // ChanelStatus
             // 
             this.ChanelStatus.Name = "ChanelStatus";
-            this.ChanelStatus.Size = new System.Drawing.Size(1098, 192);
+            this.ChanelStatus.Size = new System.Drawing.Size(1171, 192);
             this.ChanelStatus.Text = "Статус";
             // 
             // ChanelLog
             // 
             this.ChanelLog.Name = "ChanelLog";
-            this.ChanelLog.Size = new System.Drawing.Size(1098, 192);
+            this.ChanelLog.Size = new System.Drawing.Size(1171, 192);
             this.ChanelLog.Text = "Лог";
             // 
             // ChanelSettings
             // 
             this.ChanelSettings.Name = "ChanelSettings";
-            this.ChanelSettings.Size = new System.Drawing.Size(1098, 192);
+            this.ChanelSettings.Size = new System.Drawing.Size(1171, 192);
             this.ChanelSettings.Text = "Настройки";
             // 
-            // timer1
+            // InterfaceRefresh
             // 
-            this.timer1.Enabled = true;
-            this.timer1.Interval = 10000;
-            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            this.InterfaceRefresh.Enabled = true;
+            this.InterfaceRefresh.Tick += new System.EventHandler(this.timer1_Tick);
+            // 
+            // PingTime
+            // 
+            this.PingTime.Enabled = true;
+            this.PingTime.Interval = 5000;
+            this.PingTime.Tick += new System.EventHandler(this.PingTime_Tick);
+            // 
+            // isOnlineGauge
+            // 
+            this.isOnlineGauge.Gauges.AddRange(new DevExpress.XtraGauges.Base.IGauge[] {
+            this.stateIndicatorGauge});
+            this.isOnlineGauge.Location = new System.Drawing.Point(117, 118);
+            this.isOnlineGauge.Name = "isOnlineGauge";
+            this.isOnlineGauge.Size = new System.Drawing.Size(35, 35);
+            this.isOnlineGauge.TabIndex = 8;
+            this.isOnlineGauge.Visible = false;
+            // 
+            // stateIndicatorGauge
+            // 
+            this.stateIndicatorGauge.Bounds = new System.Drawing.Rectangle(6, 6, 23, 23);
+            this.stateIndicatorGauge.Indicators.AddRange(new DevExpress.XtraGauges.Win.Gauges.State.StateIndicatorComponent[] {
+            this.OnLineGauge});
+            this.stateIndicatorGauge.Name = "stateIndicatorGauge";
+            // 
+            // OnLineGauge
+            // 
+            this.OnLineGauge.Center = new DevExpress.XtraGauges.Core.Base.PointF2D(124F, 124F);
+            this.OnLineGauge.Name = "stateIndicatorComponent1";
+            this.OnLineGauge.Size = new System.Drawing.SizeF(200F, 200F);
+            this.OnLineGauge.StateIndex = 3;
+            indicatorState37.Name = "State1";
+            indicatorState37.ShapeType = DevExpress.XtraGauges.Core.Model.StateIndicatorShapeType.ElectricLight1;
+            indicatorState38.Name = "State2";
+            indicatorState38.ShapeType = DevExpress.XtraGauges.Core.Model.StateIndicatorShapeType.ElectricLight2;
+            indicatorState39.Name = "State3";
+            indicatorState39.ShapeType = DevExpress.XtraGauges.Core.Model.StateIndicatorShapeType.ElectricLight3;
+            indicatorState40.Name = "State4";
+            indicatorState40.ShapeType = DevExpress.XtraGauges.Core.Model.StateIndicatorShapeType.ElectricLight4;
+            this.OnLineGauge.States.AddRange(new DevExpress.XtraGauges.Core.Model.IIndicatorState[] {
+            indicatorState37,
+            indicatorState38,
+            indicatorState39,
+            indicatorState40});
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1435, 596);
+            this.ClientSize = new System.Drawing.Size(1508, 651);
+            this.Controls.Add(this.isOnlineGauge);
             this.Controls.Add(this.ChanelTabs);
             this.Controls.Add(this.separatorControl1);
             this.Controls.Add(this.PowerSourceList);
@@ -517,6 +578,8 @@ namespace PowerSourceControlApp
             ((System.ComponentModel.ISupportInitialize)(this.separatorControl1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ChanelTabs)).EndInit();
             this.ChanelTabs.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.stateIndicatorGauge)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.OnLineGauge)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -545,7 +608,7 @@ namespace PowerSourceControlApp
         private DevExpress.XtraEditors.ToggleSwitch toggleSwitch1;
         private DevExpress.XtraGrid.GridControl PowerSourceList;
         private DevExpress.XtraGrid.Views.Grid.GridView gridView1;
-        private DevExpress.XtraGrid.Columns.GridColumn PowerSourceIP;
+        private DevExpress.XtraGrid.Columns.GridColumn PowerSourceIPColumn;
         private DevExpress.XtraGrid.Views.Layout.LayoutViewField layoutViewField_layoutViewColumn1_5;
         private DevExpress.XtraGrid.Views.Layout.LayoutViewField layoutViewField_layoutViewColumn1_4;
         private DevExpress.XtraGrid.Views.Layout.LayoutViewField layoutViewField_layoutViewColumn1_3;
@@ -563,7 +626,12 @@ namespace PowerSourceControlApp
         private DevExpress.XtraTab.XtraTabPage ChanelStatus;
         private DevExpress.XtraTab.XtraTabPage ChanelLog;
         private DevExpress.XtraTab.XtraTabPage ChanelSettings;
-        private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.Timer InterfaceRefresh;
+        private System.Windows.Forms.Timer PingTime;
+        private DevExpress.XtraGrid.Columns.GridColumn ifOnlineStateColumn;
+        private DevExpress.XtraGauges.Win.GaugeControl isOnlineGauge;
+        private DevExpress.XtraGauges.Win.Gauges.State.StateIndicatorGauge stateIndicatorGauge;
+        private DevExpress.XtraGauges.Win.Gauges.State.StateIndicatorComponent OnLineGauge;
     }
 }
 

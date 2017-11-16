@@ -1,73 +1,114 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using DevExpress.XtraGrid;
 using DevExpress.XtraGrid.Views.Base;
+using DevExpress.XtraGrid.Views.Grid;
+using DevExpress.XtraGrid.Views.Layout;
 
 namespace PowerSourceControlApp
 {
     public class VisualInterfaceControl
     {
-        public int FocusedPowerSourceIndex;
-        public string FocusedPowerSourceIP;
-        public int FocusedChanelIndex;
-        public int FocusedChanelID;
+        public bool isBusy;
+        private int _focusedPowerSourceIndex;
+        private string _focusedPowerSourceIp;
+        private int _focusedChanelIndex;
+        private int _focusedChanelId;
         public List<PowerSource> DetectedPowerSources;
-        public DevExpress.XtraGrid.GridControl PowerSourceListGrid;
-        public DevExpress.XtraGrid.GridControl ChanelListGrid;
+        private GridControl _powerSourceListGridControl;
+        private GridControl _chanelListGridControl;
+        private GridView _powerSourceListGridView;
+        private LayoutView _chanelListLayoutView;
 
-        public VisualInterfaceControl()
+
+        public VisualInterfaceControl(List<PowerSource> deviceList)
         {
+            DetectedPowerSources = deviceList;
+
+            _focusedPowerSourceIndex = 0;
+            _focusedPowerSourceIp = null;
+            _focusedChanelIndex = 0;
+            _focusedChanelId = 0;
+
+            isBusy = false;
+        }
+
+        public void ConnectToGrids(object powersourcegrid, object chanellistgrid, object powersourcelistgridview, object chanellistlayoutview)
+        {
+            _powerSourceListGridControl = (GridControl)powersourcegrid;
+            _chanelListGridControl = (GridControl)chanellistgrid;
+
+            _powerSourceListGridView = (GridView) powersourcelistgridview;
+            _chanelListLayoutView = (LayoutView) chanellistlayoutview;
+
+            _powerSourceListGridControl.DataSource = DetectedPowerSources;
+
+            _powerSourceListGridView.FocusedRowChanged += CurrentPowerSourceChanged;
+            _chanelListLayoutView.FocusedRowChanged += CurrentChanelChanged;
+        }
+
+        public void UpdateForms()
+        {
+            var powerSourceListIsEmpty = !DetectedPowerSources.Any();
+
+            _powerSourceListGridControl.RefreshDataSource();
+            if (!powerSourceListIsEmpty)
+            {
+                if (!DetectedPowerSources.ElementAt(_focusedPowerSourceIndex).IsOnline)
+                {
+                    _chanelListGridControl.DataSource = null;
+                }
+                else
+                {
+                    if (_focusedPowerSourceIp == null)
+                    {
+                        _chanelListGridControl.DataSource = DetectedPowerSources.ElementAt(0).ChanelList;
+                    }
+                    else
+                    {
+                        _chanelListGridControl.DataSource =
+                            DetectedPowerSources.ElementAt(_focusedPowerSourceIndex).ChanelList;
+                    }
+                }     
+            }
             
-
-            DetectedPowerSources = new List<PowerSource>();
-
-            FocusedPowerSourceIndex = 0;
-            FocusedPowerSourceIP = null;
-            FocusedChanelIndex = 0;
-            FocusedChanelID = 0;
+            _chanelListGridControl.RefreshDataSource();
         }
-
-        
-         // TODO: Create NtetworkDeviceDetector handler and implement refresh\redraw of interface upon new device detection
-
-
-        public void ConnectToGrids(object powersourcegrid, object chanellistgrid)
-        {
-            PowerSourceListGrid = (GridControl)powersourcegrid;
-            ChanelListGrid = (GridControl)chanellistgrid;
-            PowerSourceListGrid.DataSource = DetectedPowerSources;
-        }
-   
+  
         public void CurrentPowerSourceChanged(object sender, FocusedRowChangedEventArgs e)
         {
             var powerSourceListIsEmpty = !DetectedPowerSources.Any();
             var arguments = e;
-            FocusedPowerSourceIndex = arguments.FocusedRowHandle;       
+            _focusedPowerSourceIndex = arguments.FocusedRowHandle;
 
-            if (!powerSourceListIsEmpty)
+            if (!isBusy)  //  Check if object is Busy
             {
-                FocusedPowerSourceIP = DetectedPowerSources.ElementAt(FocusedPowerSourceIndex).Server;
+                isBusy = true; //  Mark object as Busy
 
-                if (DetectedPowerSources.ElementAt(FocusedPowerSourceIndex).isOnline)
-                    ChanelListGrid.DataSource = DetectedPowerSources.ElementAt(FocusedPowerSourceIndex).ChanelList;
-                else
-                    ChanelListGrid.DataSource = null;
+                if (!powerSourceListIsEmpty) // If there are devices on the list
+                {
+                    _focusedPowerSourceIp = DetectedPowerSources.ElementAt(_focusedPowerSourceIndex).Server; // Update IP of currently selected device
+
+                    if (DetectedPowerSources.ElementAt(_focusedPowerSourceIndex).IsOnline) // If device is online we use its chanellist to display
+                        _chanelListGridControl.DataSource = DetectedPowerSources.ElementAt(_focusedPowerSourceIndex).ChanelList;
+                    else // If device is offline we show nothing
+                        _chanelListGridControl.DataSource = null;
+                }
+                else // If there are no devices on the list perhaps event was called on start of application
+                {
+                    _chanelListGridControl.DataSource = null;
+                }
+                _chanelListGridControl.RefreshDataSource();
+
+                isBusy = false; //  Remove Busy Flag
             }
-            else
-            {
-                ChanelListGrid.DataSource = null;
-            }          
-            ChanelListGrid.RefreshDataSource();
         }
 
         public void CurrentChanelChanged(object sender, FocusedRowChangedEventArgs e)
         {
             var arguments = e;
-            FocusedChanelIndex = arguments.FocusedRowHandle;
+            _focusedChanelIndex = arguments.FocusedRowHandle;
         }
     }
 }

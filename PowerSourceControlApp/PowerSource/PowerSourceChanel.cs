@@ -56,6 +56,9 @@ namespace PowerSourceControlApp
         {
             using (var connection = GetConnection(connectionstring: connectionString))
             {
+                connection.Open();
+
+               // Settings = connection.GetAsync<PowerSourceSettings>(ChanelId).Result;
                 Settings = connection.Get<PowerSourceSettings>(ChanelId);
 
                 ChanelUUID = Settings.UUID;
@@ -69,6 +72,8 @@ namespace PowerSourceControlApp
 
                 CalibrationResult = connection.GetList<PowerSourceCalibration>(new { UUID = ChanelUUID }).ToList();
                 _isInited = true;
+
+                connection.Close();
             }
         }
 
@@ -84,6 +89,7 @@ namespace PowerSourceControlApp
             {
                 connection.Open();
                 connection.UpdateAsync(Settings);
+                connection.Close();
             }
         }
 

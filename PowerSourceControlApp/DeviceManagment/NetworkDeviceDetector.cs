@@ -1,19 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
-using DevExpress.XtraPrinting.Native;
 
 namespace PowerSourceControlApp
 {
     public class NetworkDeviceDetector
     {
         private Thread _udpReadThread;
-        private volatile bool _terminateThread;
+        public volatile bool SuspendThread;
+
 
         public event DataEventHandler OnDataReceived;
 
@@ -21,6 +17,7 @@ namespace PowerSourceControlApp
 
         public void CreateUdpReadThread()
         {
+            SuspendThread = false;
             _udpReadThread = new Thread(UdpReadThread) {Name = "UDP Listener"};
             _udpReadThread.Start(new IPEndPoint(IPAddress.Any, 10237));
         }
@@ -32,27 +29,24 @@ namespace PowerSourceControlApp
             udpListener.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveTimeout, 100);
             udpListener.Bind(myEndPoint);
 
-            try
+            while (!SuspendThread)
             {
-                while (!_terminateThread)
+                if (udpListener.Available != 0)
                 {
                     try
                     {
                         var buffer = new byte[1024];
                         var size = udpListener.ReceiveFrom(buffer, ref myEndPoint);
                         Array.Resize(ref buffer, size);
-                        OnDataReceived?.Invoke(((IPEndPoint)(myEndPoint)).Address,new DataEventArgs(((IPEndPoint)(myEndPoint)).Address, buffer));
+                        OnDataReceived?.Invoke(((IPEndPoint) (myEndPoint)).Address,
+                            new DataEventArgs(((IPEndPoint) (myEndPoint)).Address, buffer));
                     }
                     catch (SocketException socketException)
                     {
                     }
                 }
             }
-            finally
-            {
-                udpListener.Shutdown(SocketShutdown.Both);
-                udpListener.Close();
-            }
+
         }
     }
 

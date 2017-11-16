@@ -1,17 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using System.Windows.Forms;
+using System.Threading.Tasks;
 using DevExpress.XtraEditors.CustomEditor;
 using DevExpress.XtraEditors.Repository;
 using DevExpress.XtraGauges.Win;
 using DevExpress.XtraGrid.Columns;
-using DevExpress.XtraGrid.Views.Base;
+using DevExpress.XtraGrid.Views.Grid;
 
 namespace PowerSourceControlApp
 {
@@ -19,19 +15,24 @@ namespace PowerSourceControlApp
     {
         public VisualInterfaceControl MainViewControl;
         public NetworkDeviceDetector DeviceDetector;
+        public DeviceManager PowerSourceCollection;
+        bool ListIsEmpty;
 
         public Form1()
         {
-            MainViewControl = new VisualInterfaceControl();
+            ListIsEmpty = true;
+            PowerSourceCollection = new DeviceManager();
+            MainViewControl = new VisualInterfaceControl(PowerSourceCollection.DetectedPowerSources);
             DeviceDetector = new NetworkDeviceDetector();
             DeviceDetector.OnDataReceived += JustSimpleHandler;
             DeviceDetector.CreateUdpReadThread();
             
             InitializeComponent();
-            MainViewControl.ConnectToGrids(PowerSourceList, PowerSourceChanelList);
+            MainViewControl.ConnectToGrids(PowerSourceList, PowerSourceChanelList, gridView1, layoutView1);
             CreateGauge(layoutView1.Columns["Status"], StatusGauge);
             CreateGauge(layoutView1.Columns["Voltage"], VoltageGauge);
             CreateGauge(layoutView1.Columns["Current"], CurrentGauge);
+            
             var edit = new RepositoryItemToggleSwitch();
             layoutView1.Columns["OnOff"].ColumnEdit = edit;
             edit.EditValueChanged += Edit_EditValueChanged;
@@ -57,16 +58,43 @@ namespace PowerSourceControlApp
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-          //TODO: Create ping method for all currently connected devices
+            if (PowerSourceCollection.isUpdated)
+            {
+                MainViewControl.UpdateForms();
+                PowerSourceCollection.isUpdated = false;
+            }      
         }
 
-        public void JustSimpleHandler(object sender, DataEventArgs e)
+        private  void JustSimpleHandler(object sender, DataEventArgs e)
         {
             var senderip = e.IpAddress.ToString();
-            var sendermessage = System.Text.Encoding.UTF8.GetString(e.Data);
-            Thread.Sleep(15);
-            var message = string.Concat("Get message from ip: ", senderip, " message is: ", sendermessage);
-            Console.WriteLine(message);
+            var sendermessage = Encoding.UTF8.GetString(e.Data);
+
+            if (sendermessage == "Hello!")
+            {
+                if (!PowerSourceCollection.isBusy)
+                {
+                    DeviceDetector.SuspendThread = true;
+                    Thread handleDevice = new Thread(() => PowerSourceCollection.NewDeviceDetectorHanler(senderip));
+                    handleDevice.IsBackground = true;
+                    handleDevice.Start();
+                    DeviceDetector.SuspendThread = false;
+                }
+            } 
+        }
+
+        private void PingTime_Tick(object sender, EventArgs e)
+        {
+            
+            PowerSourceCollection.CheckDevicesOnList();
+            if (PowerSourceCollection.DetectedPowerSources.Any())
+            {
+                if (ListIsEmpty)
+                {
+                    CreateGauge(gridView1.Columns["IsOnline"], isOnlineGauge);
+                    ListIsEmpty = false;
+                }
+            }
         }
     }
 }

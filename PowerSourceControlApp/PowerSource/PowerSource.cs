@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net.NetworkInformation;
 using System.Net.Sockets;
+using System.Threading;
 using Dapper;
 using MySql.Data.MySqlClient;
 
@@ -11,12 +11,14 @@ namespace PowerSourceControlApp
     {
         public string Server { get; }
         public List<Chanel> ChanelList;
-        public bool isOnline;
+        public bool IsOnline { get; set; }
+        public TcpClient tcp;
 
         public PowerSource(string server)
         {
             Server = server;
             ChanelList = new List<Chanel>();
+            tcp = new TcpClient();
 
             var connectionString = new MySqlConnectionStringBuilder
             {
@@ -28,9 +30,7 @@ namespace PowerSourceControlApp
 
             using (var connection = GetConnection(connectionstring: connectionString))
             {
-                connection.Open();
                 var chanels = connection.GetList<PowerSourceSettings>();
-                connection.Close();
 
                 foreach (var chanel in chanels)
                 {
@@ -40,10 +40,11 @@ namespace PowerSourceControlApp
 
             foreach (var chanel in ChanelList)
             {
-                chanel.Init();
+                var initThread = new Thread(() => chanel.Init());
+                initThread.Start();
             }
 
-            isOnline = true;
+            IsOnline = true;
         }
 
         private static MySqlConnection GetConnection(MySqlConnectionStringBuilder connectionstring)
@@ -55,17 +56,27 @@ namespace PowerSourceControlApp
 
         public void Ping()
         {
-            try
+            IsOnline = false;
+            using (var tcpconn = new TcpClient())
             {
-                using (var client = new TcpClient(Server, 10236))
+                if (!tcpconn.Connected)
                 {
-                    isOnline = true;
+                    try
+                    {
+                        tcpconn.Connect(Server, 10236);
+                        IsOnline = true;
+                        Console.WriteLine("Ping: " + Server);
+                    }
+                    catch (Exception e)
+                    {
+                        IsOnline = false;
+                    }
                 }
-            }
-            catch (Exception e)
-            {
-                isOnline = false;
-            }
+                IsOnline = true;
+                tcpconn.Close();
+                tcpconn.Dispose();
+                GC.Collect();
+            } 
         }
     }
 }
