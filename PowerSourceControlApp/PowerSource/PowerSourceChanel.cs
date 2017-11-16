@@ -5,7 +5,6 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Threading;
 using Dapper;
-using MySql.Data.MySqlClient;
 
 namespace PowerSourceControlApp
 {
@@ -14,8 +13,9 @@ namespace PowerSourceControlApp
 
     public class Chanel : INotifyPropertyChanged
     {
-        public string Server { get; }
+        public PowerSource ParentPowerSource { get; }
         private bool _isInited;
+
         public uint ChanelId { get; set; }
         public string ChanelUUID { get; set; }
         public uint Address { get; set; }
@@ -33,32 +33,42 @@ namespace PowerSourceControlApp
 
         public List<PowerSourceCalibration> CalibrationResult;
         public PowerSourceSettings Settings;
-        private MySqlConnectionStringBuilder connectionString;
 
-        public Chanel(uint chanelId, string server)
+        public Chanel(uint chanelId, PowerSource parent)
         {
-            //TODO: Pass parent PowerSource object to each chanel and use it to ping connection and parametr usage instead of passing as arguments
-
-            Server = server;
+            ParentPowerSource = parent;
             ChanelId = chanelId;
             _isInited = false;
-
-            connectionString = new MySqlConnectionStringBuilder()
-            {
-                Server = Server,
-                UserID = "root",
-                Password = "123",
-                Database = "local_data_storage"
-            };
         }
 
         public void Init()
+        {   
+            GetSettingsTable();
+            _isInited = true;
+        }
+
+        private void SetSettingsTable()
         {
-            using (var connection = GetConnection(connectionstring: connectionString))
+            Settings.Voltage = Voltage;
+            Settings.Current = Current;
+            Settings.Power = Power;
+            Settings.Calibration = Calibration;
+            Settings.OnOff = OnOff;
+
+            using (var connection = ParentPowerSource.GetConnection())
+            {
+                connection.Open();
+                connection.UpdateAsync(Settings);
+                connection.Close();
+            }
+        }
+
+        private void GetSettingsTable()
+        {
+            using (var connection = ParentPowerSource.GetConnection())
             {
                 connection.Open();
 
-               // Settings = connection.GetAsync<PowerSourceSettings>(ChanelId).Result;
                 Settings = connection.Get<PowerSourceSettings>(ChanelId);
 
                 ChanelUUID = Settings.UUID;
@@ -71,24 +81,7 @@ namespace PowerSourceControlApp
                 Status = Settings.Status;
 
                 CalibrationResult = connection.GetList<PowerSourceCalibration>(new { UUID = ChanelUUID }).ToList();
-                _isInited = true;
 
-                connection.Close();
-            }
-        }
-
-        private void UpdateSettingsTable()
-        {
-            Settings.Voltage = Voltage;
-            Settings.Current = Current;
-            Settings.Power = Power;
-            Settings.Calibration = Calibration;
-            Settings.OnOff = OnOff;
-
-            using (var connection = GetConnection(connectionstring: connectionString))
-            {
-                connection.Open();
-                connection.UpdateAsync(Settings);
                 connection.Close();
             }
         }
@@ -99,10 +92,10 @@ namespace PowerSourceControlApp
             {             
                 try
                 {
-                    using (var client = new TcpClient(Server, 10236))
+                    using (var client = new TcpClient(ParentPowerSource.Server, 10236))
                     {
                         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
-                        Thread updateThread = new Thread(UpdateSettingsTable);
+                        Thread updateThread = new Thread(SetSettingsTable);
                         updateThread.Start();
                     }
                 }
@@ -110,13 +103,6 @@ namespace PowerSourceControlApp
                 {
                 }
             }
-        }
-
-        private static MySqlConnection GetConnection(MySqlConnectionStringBuilder connectionstring)
-        {
-            var connection = new MySqlConnection(connectionstring.ToString());
-            SimpleCRUD.SetDialect(SimpleCRUD.Dialect.MySQL);
-            return connection;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

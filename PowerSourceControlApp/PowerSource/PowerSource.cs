@@ -12,15 +12,17 @@ namespace PowerSourceControlApp
         public string Server { get; }
         public List<Chanel> ChanelList;
         public bool IsOnline { get; set; }
-        public TcpClient tcp;
+        public bool IsBusy;
+        private MySqlConnectionStringBuilder connectionString;
+        public TcpClient Tcp;
 
         public PowerSource(string server)
         {
             Server = server;
             ChanelList = new List<Chanel>();
-            tcp = new TcpClient();
+            Tcp = new TcpClient();
 
-            var connectionString = new MySqlConnectionStringBuilder
+            connectionString = new MySqlConnectionStringBuilder
             {
                 Server = Server,
                 UserID = "root",
@@ -28,13 +30,13 @@ namespace PowerSourceControlApp
                 Database = "local_data_storage"
             };
 
-            using (var connection = GetConnection(connectionstring: connectionString))
+            using (var connection = GetConnection())
             {
                 var chanels = connection.GetList<PowerSourceSettings>();
 
                 foreach (var chanel in chanels)
                 {
-                    ChanelList.Add(new Chanel(chanel.Id, Server));
+                    ChanelList.Add(new Chanel(chanel.Id, this));
                 }
             }
 
@@ -47,9 +49,9 @@ namespace PowerSourceControlApp
             IsOnline = true;
         }
 
-        private static MySqlConnection GetConnection(MySqlConnectionStringBuilder connectionstring)
+        public MySqlConnection GetConnection()
         {
-            var connection = new MySqlConnection(connectionstring.ToString());
+            var connection = new MySqlConnection(connectionString.ToString());
             SimpleCRUD.SetDialect(SimpleCRUD.Dialect.MySQL);
             return connection;
         }
@@ -65,9 +67,9 @@ namespace PowerSourceControlApp
                     {
                         tcpconn.Connect(Server, 10236);
                         IsOnline = true;
-                        Console.WriteLine("Ping: " + Server);
+                        Console.WriteLine(@"Ping: " + Server);
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
                         IsOnline = false;
                     }

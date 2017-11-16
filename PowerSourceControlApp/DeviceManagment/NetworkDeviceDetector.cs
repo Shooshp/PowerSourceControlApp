@@ -41,7 +41,7 @@ namespace PowerSourceControlApp
                         OnDataReceived?.Invoke(((IPEndPoint) (myEndPoint)).Address,
                             new DataEventArgs(((IPEndPoint) (myEndPoint)).Address, buffer));
                     }
-                    catch (SocketException socketException)
+                    catch (SocketException)
                     {
                     }
                 }
