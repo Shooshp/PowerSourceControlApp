@@ -431,7 +431,7 @@ namespace PowerSourceControlApp
             // PowerSourceIPColumn
             // 
             this.PowerSourceIPColumn.Caption = "Адрес";
-            this.PowerSourceIPColumn.FieldName = "Server";
+            this.PowerSourceIPColumn.FieldName = "IpAddress";
             this.PowerSourceIPColumn.Name = "PowerSourceIPColumn";
             this.PowerSourceIPColumn.Visible = true;
             this.PowerSourceIPColumn.VisibleIndex = 0;

@@ -88,7 +88,7 @@ namespace PowerSourceControlApp
 
                 if (!powerSourceListIsEmpty) // If there are devices on the list
                 {
-                    _focusedPowerSourceIp = DetectedPowerSources.ElementAt(_focusedPowerSourceIndex).Server; // Update IP of currently selected device
+                    _focusedPowerSourceIp = DetectedPowerSources.ElementAt(_focusedPowerSourceIndex).IpAddress; // Update IP of currently selected device
 
                     if (DetectedPowerSources.ElementAt(_focusedPowerSourceIndex).IsOnline) // If device is online we use its chanellist to display
                         _chanelListGridControl.DataSource = DetectedPowerSources.ElementAt(_focusedPowerSourceIndex).ChanelList;

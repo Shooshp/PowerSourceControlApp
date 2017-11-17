@@ -92,7 +92,7 @@ namespace PowerSourceControlApp
             {             
                 try
                 {
-                    using (var client = new TcpClient(ParentPowerSource.Server, 10236))
+                    using (var client = new TcpClient(ParentPowerSource.IpAddress, 10236))
                     {
                         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
                         Thread updateThread = new Thread(SetSettingsTable);

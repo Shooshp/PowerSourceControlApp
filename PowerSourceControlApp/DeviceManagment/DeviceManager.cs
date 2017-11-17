@@ -26,40 +26,28 @@ namespace PowerSourceControlApp
 
                 if (!powerSourceListIsEmpty) //  If there are devices on the list
                 {
-                    if (DetectedPowerSources.Any(p => p.Server == address)) //  If device is already on list
+                    if (DetectedPowerSources.Any(p => p.IpAddress == address)) //  If device is already on list
                     {
-                        if (DetectedPowerSources.Single(p => p.Server == address).IsOnline == false) // If device is offline by any reason
+                        if (DetectedPowerSources.Single(p => p.IpAddress == address).IsOnline == false) // If device is offline by any reason
                         {
-                            DetectedPowerSources.Single(p => p.Server == address).IsOnline = true;
+                            DetectedPowerSources.Single(p => p.IpAddress == address).IsOnline = true;
+                            DetectedPowerSources.Single(p => p.IpAddress == address).Pinger.Start();
                             isUpdated = true;
                         }
                     }
                     else // If device is not on the list than add device to list
                     {
-                        DetectedPowerSources.Add(new PowerSource(address));
+                        DetectedPowerSources.Add(new PowerSource(address, this));
                         isUpdated = true;
                     }
                 }
                 else // No devices on the list so we will add new one
                 {
-                    DetectedPowerSources.Add(new PowerSource(address));
+                    DetectedPowerSources.Add(new PowerSource(address, this));
                     isUpdated = true;
                 }
                 isBusy = false; //  Remove Busy Flag
             }
-        }
-
-        public void CheckDevicesOnList()
-        {
-            foreach (var powerSource in DetectedPowerSources)
-            {
-                var checkIfStillOnline = new Thread(powerSource.Ping)
-                {
-                    IsBackground = true
-                };
-                checkIfStillOnline.Start();
-            }
-            isUpdated = true;
         }
     }
 }

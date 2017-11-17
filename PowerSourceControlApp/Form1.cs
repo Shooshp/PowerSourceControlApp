@@ -84,9 +84,7 @@ namespace PowerSourceControlApp
         }
 
         private void PingTime_Tick(object sender, EventArgs e)
-        {
-            
-            PowerSourceCollection.CheckDevicesOnList();
+        {          
             if (PowerSourceCollection.DetectedPowerSources.Any())
             {
                 if (ListIsEmpty)

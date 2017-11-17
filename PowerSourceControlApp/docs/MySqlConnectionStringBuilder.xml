@@ -1,5 +1,5 @@
 <docs>
-  <Server>
+  <IpAddress>
     <summary>
       Gets or sets the name or address of the MySQL instance to connect to.
     </summary>
@@ -10,7 +10,7 @@
     </remarks>
     <example>
     </example>
-  </Server>
+  </IpAddress>
 
   <Database>
     <summary>
