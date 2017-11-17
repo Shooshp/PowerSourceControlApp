@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace PowerSourceControlApp.DeviceManagment
 {
@@ -35,6 +32,7 @@ namespace PowerSourceControlApp.DeviceManagment
             {
                 Name = threadName,
                 IsBackground = true,
+                Priority = ThreadPriority.AboveNormal
             };
             _errorCounter = 0;
             _chekThread.Start();
@@ -42,20 +40,20 @@ namespace PowerSourceControlApp.DeviceManagment
 
         private void StatusChekerThread()
         {
-             
             var incomingbuffer = new byte[_bufferSize];
             var message = Encoding.UTF8.GetBytes("What your state?");
-
+            var watch = System.Diagnostics.Stopwatch.StartNew();
 
             while (ParentPowerSource.IsOnline)
             {
-                Thread.Sleep(100 + _randomNumberGenerator.Next(0, 100));
+                Thread.Sleep(_randomNumberGenerator.Next(100, 200));
 
                 if (!_statusSocket.Connected) // Connection does not exist
                 {
                     try // Create new connection
                     {
                         _statusSocket.Connect(ParentPowerSource.IpAddress, ParentPowerSource.StatusPort);
+                        _statusSocket.ReceiveTimeout = 100;
                         _errorCounter = 0;
                     }
                     catch (Exception e) // Wait for an error
@@ -67,7 +65,6 @@ namespace PowerSourceControlApp.DeviceManagment
                 {
                     if ((_statusStream == null) || (_statusStream.CanRead == false && _statusStream.CanWrite == false)) // Stream does not exist
                     {
-                        var huy = 0;
                         try // Create new stream
                         {
                             _statusStream = _statusSocket.GetStream();
@@ -96,6 +93,7 @@ namespace PowerSourceControlApp.DeviceManagment
                             {
                                 ParentPowerSource.Status = Encoding.UTF8.GetString(incomingbuffer);
                                 _errorCounter = 0;
+                                watch.Restart();
                             }
                             else
                             {
@@ -108,9 +106,14 @@ namespace PowerSourceControlApp.DeviceManagment
                         }
                     }
                 }
-
-                if (_errorCounter > 4)
+                var time = watch.ElapsedMilliseconds;
+                if ((_errorCounter > 4)||(time > 1000))
                 {
+                    while (ParentPowerSource.Collection.isBusy)
+                    {
+                        Thread.Sleep(1);
+                    }
+                    ParentPowerSource.Collection.isBusy = true;
                     ParentPowerSource.IsOnline = false;
                     ParentPowerSource.Collection.isUpdated = true;
                     if (_statusStream != null)
@@ -124,6 +127,8 @@ namespace PowerSourceControlApp.DeviceManagment
                         _statusSocket.Dispose();
                     }
                     GC.Collect();
+                    watch.Stop();
+                    ParentPowerSource.Collection.isBusy = false;
                     return;
                 }
             }

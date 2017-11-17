@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Net.Sockets;
 using System.Threading;
 using Dapper;
 using MySql.Data.MySqlClient;
 using PowerSourceControlApp.DeviceManagment;
+using Renci.SshNet;
 
 namespace PowerSourceControlApp
 {
@@ -18,17 +20,21 @@ namespace PowerSourceControlApp
         public readonly int StatusPort;
         public DeviceManager Collection;
         public StatusChecker Pinger;
+        public SshClient SshConnector;
+        private static readonly DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Unspecified);
 
 
         public PowerSource(string ipAddress, DeviceManager collection)
         {
             Pinger = new StatusChecker(this);
+            ChanelList = new List<Chanel>();
             IpAddress = ipAddress;
             Collection = collection;
             StatusPort = 10236;
-            ChanelList = new List<Chanel>();
             Status = "Inited";
- 
+
+
+            SshConnector = new SshClient(IpAddress, "pi", "raspberry");
 
             connectionString = new MySqlConnectionStringBuilder
             {
@@ -55,7 +61,28 @@ namespace PowerSourceControlApp
             }
 
             IsOnline = true;
+            GetRemoteSystemTime();
             Pinger.Start();
+        }
+
+        public void GetRemoteSystemTime()
+        {
+            var date = RunSSHCommand("date +%s");
+            date = date.Remove(date.Length - 1);
+            var time = epoch.AddSeconds(Convert.ToInt64(date)).ToLocalTime();
+            Console.WriteLine(DateTime.Now);
+            Console.WriteLine(time);
+
+            var diffinseconds = (DateTime.Now - time).TotalSeconds;
+        }
+
+        private string RunSSHCommand(string command)
+        {
+            SshConnector.Connect();
+            var cmd = SshConnector.CreateCommand(command);
+            var result = cmd.Execute();
+            SshConnector.Disconnect();
+            return result;
         }
 
         public MySqlConnection GetConnection()

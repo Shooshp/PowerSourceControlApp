@@ -42,7 +42,27 @@ namespace PowerSourceControlApp
         }
 
         public void Init()
-        {   
+        {
+            if (ParentPowerSource.IsOnline)
+            {
+                try
+                {
+                    var name = string.Concat("GettingSettingsForPS:", ParentPowerSource.IpAddress, "Chanel:", ChanelId);
+
+                    var initialSettingsReadThread = new Thread(GetSettingsTable)
+                    {
+                        Name = name,
+                        IsBackground = true,
+                        Priority = ThreadPriority.Normal
+                    };
+
+                    initialSettingsReadThread.Start();
+                }
+                catch (Exception)
+                {
+                }
+            }
+
             GetSettingsTable();
             _isInited = true;
         }
@@ -84,23 +104,31 @@ namespace PowerSourceControlApp
 
                 connection.Close();
             }
+            if (!_isInited)
+            {
+                _isInited = true;
+            }
         }
 
         protected virtual void RaisePropertyChanged(string propName)
         {
             if (_isInited)
-            {             
-                try
+            {
+                if (ParentPowerSource.IsOnline)
                 {
-                    using (var client = new TcpClient(ParentPowerSource.IpAddress, 10236))
+                    try
                     {
                         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
-                        Thread updateThread = new Thread(SetSettingsTable);
+                        var updateThread = new Thread(SetSettingsTable)
+                        {
+                            IsBackground = true,
+                            Priority = ThreadPriority.Normal
+                        };
                         updateThread.Start();
                     }
-                }
-                catch (Exception e)
-                {
+                    catch (Exception)
+                    {
+                    }
                 }
             }
         }

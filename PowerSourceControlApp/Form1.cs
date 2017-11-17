@@ -2,12 +2,10 @@
 using System.Linq;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using DevExpress.XtraEditors.CustomEditor;
 using DevExpress.XtraEditors.Repository;
 using DevExpress.XtraGauges.Win;
 using DevExpress.XtraGrid.Columns;
-using DevExpress.XtraGrid.Views.Grid;
 
 namespace PowerSourceControlApp
 {
