@@ -5,6 +5,7 @@ using DevExpress.XtraGrid;
 using DevExpress.XtraGrid.Views.Base;
 using DevExpress.XtraGrid.Views.Grid;
 using DevExpress.XtraGrid.Views.Layout;
+using PowerSourceControlApp.PowerSource;
 
 namespace PowerSourceControlApp
 {
@@ -15,14 +16,14 @@ namespace PowerSourceControlApp
         private string _focusedPowerSourceIp;
         private int _focusedChanelIndex;
         private int _focusedChanelId;
-        public List<PowerSource> DetectedPowerSources;
+        public List<Device> DetectedPowerSources;
         private GridControl _powerSourceListGridControl;
         private GridControl _chanelListGridControl;
         private GridView _powerSourceListGridView;
         private LayoutView _chanelListLayoutView;
 
 
-        public VisualInterfaceControl(List<PowerSource> deviceList)
+        public VisualInterfaceControl(List<Device> deviceList)
         {
             DetectedPowerSources = deviceList;
 

@@ -1,17 +1,18 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using PowerSourceControlApp.PowerSource;
 
 namespace PowerSourceControlApp
 {
     public class DeviceManager
     {
-        public List<PowerSource> DetectedPowerSources;
+        public List<Device> DetectedPowerSources;
         public bool isUpdated;
         public bool isBusy;
 
         public DeviceManager()
         {
-            DetectedPowerSources = new List<PowerSource>();
+            DetectedPowerSources = new List<Device>();
             isUpdated = false;
             isBusy = false;
         }
@@ -36,13 +37,13 @@ namespace PowerSourceControlApp
                     }
                     else // If device is not on the list than add device to list
                     {
-                        DetectedPowerSources.Add(new PowerSource(address, this));
+                        DetectedPowerSources.Add(new Device(address, this));
                         isUpdated = true;
                     }
                 }
                 else // No devices on the list so we will add new one
                 {
-                    DetectedPowerSources.Add(new PowerSource(address, this));
+                    DetectedPowerSources.Add(new Device(address, this));
                     isUpdated = true;
                 }
                 isBusy = false; //  Remove Busy Flag

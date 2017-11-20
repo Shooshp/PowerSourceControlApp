@@ -2,12 +2,13 @@
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using PowerSourceControlApp.PowerSource;
 
 namespace PowerSourceControlApp.DeviceManagment
 {
     public class StatusChecker
     {
-        private PowerSource ParentPowerSource { get; }
+        private Device ParentDevice { get; }
         private uint _errorCounter;
         private readonly int _bufferSize;
         private readonly Random _randomNumberGenerator;
@@ -16,18 +17,18 @@ namespace PowerSourceControlApp.DeviceManagment
         private NetworkStream _statusStream;
         
 
-        public StatusChecker(PowerSource parent)
+        public StatusChecker(Device parent)
         {
             _randomNumberGenerator = new Random();
-            ParentPowerSource = parent;
+            ParentDevice = parent;
             _bufferSize = 1024;
         }
 
         public void Start()
         {
-            ParentPowerSource.IsOnline = true;
+            ParentDevice.IsOnline = true;
             _statusSocket = new TcpClient();
-            var threadName = string.Concat("StatusCheker:", ParentPowerSource.IpAddress);
+            var threadName = string.Concat("StatusCheker:", ParentDevice.IpAddress);
             _chekThread = new Thread(StatusChekerThread)
             {
                 Name = threadName,
@@ -44,7 +45,7 @@ namespace PowerSourceControlApp.DeviceManagment
             var message = Encoding.UTF8.GetBytes("What your state?");
             var watch = System.Diagnostics.Stopwatch.StartNew();
 
-            while (ParentPowerSource.IsOnline)
+            while (ParentDevice.IsOnline)
             {
                 Thread.Sleep(_randomNumberGenerator.Next(100, 200));
 
@@ -52,7 +53,7 @@ namespace PowerSourceControlApp.DeviceManagment
                 {
                     try // Create new connection
                     {
-                        _statusSocket.Connect(ParentPowerSource.IpAddress, ParentPowerSource.StatusPort);
+                        _statusSocket.Connect(ParentDevice.IpAddress, ParentDevice.StatusPort);
                         _statusSocket.ReceiveTimeout = 100;
                         _errorCounter = 0;
                     }
@@ -91,7 +92,7 @@ namespace PowerSourceControlApp.DeviceManagment
                             _statusStream.Read(incomingbuffer, 0, _bufferSize);
                             if (incomingbuffer.Length > 0 && incomingbuffer.ToString() != "")
                             {
-                                ParentPowerSource.Status = Encoding.UTF8.GetString(incomingbuffer);
+                                ParentDevice.Status = Encoding.UTF8.GetString(incomingbuffer);
                                 _errorCounter = 0;
                                 watch.Restart();
                             }
@@ -109,13 +110,13 @@ namespace PowerSourceControlApp.DeviceManagment
                 var time = watch.ElapsedMilliseconds;
                 if ((_errorCounter > 4)||(time > 1000))
                 {
-                    while (ParentPowerSource.Collection.isBusy)
+                    while (ParentDevice.Collection.isBusy)
                     {
                         Thread.Sleep(1);
                     }
-                    ParentPowerSource.Collection.isBusy = true;
-                    ParentPowerSource.IsOnline = false;
-                    ParentPowerSource.Collection.isUpdated = true;
+                    ParentDevice.Collection.isBusy = true;
+                    ParentDevice.IsOnline = false;
+                    ParentDevice.Collection.isUpdated = true;
                     if (_statusStream != null)
                     {
                         _statusStream.Close();
@@ -128,7 +129,7 @@ namespace PowerSourceControlApp.DeviceManagment
                     }
                     GC.Collect();
                     watch.Stop();
-                    ParentPowerSource.Collection.isBusy = false;
+                    ParentDevice.Collection.isBusy = false;
                     return;
                 }
             }

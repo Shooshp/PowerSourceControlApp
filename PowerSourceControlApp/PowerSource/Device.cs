@@ -1,30 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Net.Sockets;
 using System.Threading;
 using Dapper;
 using MySql.Data.MySqlClient;
+using PowerSourceControlApp.DapperDTO;
 using PowerSourceControlApp.DeviceManagment;
 using Renci.SshNet;
 
-namespace PowerSourceControlApp
+namespace PowerSourceControlApp.PowerSource
 {
-    public class PowerSource
+    public class Device
     {
         public string IpAddress { get; }
         public List<Chanel> ChanelList;
         public bool IsOnline { get; set; }
-        private MySqlConnectionStringBuilder connectionString;
+        private MySqlConnectionStringBuilder _connectionString;
         public string Status;
         public readonly int StatusPort;
         public DeviceManager Collection;
         public StatusChecker Pinger;
-        public SshClient SshConnector;
-        private static readonly DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Unspecified);
+        private SshClient _sshConnector;
+        private static readonly DateTime Epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Unspecified);
 
 
-        public PowerSource(string ipAddress, DeviceManager collection)
+        public Device(string ipAddress, DeviceManager collection)
         {
             Pinger = new StatusChecker(this);
             ChanelList = new List<Chanel>();
@@ -34,9 +34,9 @@ namespace PowerSourceControlApp
             Status = "Inited";
 
 
-            SshConnector = new SshClient(IpAddress, "pi", "raspberry");
+            _sshConnector = new SshClient(IpAddress, "pi", "raspberry");
 
-            connectionString = new MySqlConnectionStringBuilder
+            _connectionString = new MySqlConnectionStringBuilder
             {
                 Server = IpAddress,
                 UserID = "root",
@@ -46,7 +46,7 @@ namespace PowerSourceControlApp
 
             using (var connection = GetConnection())
             {
-                var chanels = connection.GetList<PowerSourceSettings>();
+                var chanels = connection.GetList<Settings>();
 
                 foreach (var chanel in chanels)
                 {
@@ -61,33 +61,36 @@ namespace PowerSourceControlApp
             }
 
             IsOnline = true;
-            GetRemoteSystemTime();
+            SyncSystemTime();
             Pinger.Start();
         }
 
-        public void GetRemoteSystemTime()
+        private void SyncSystemTime()
         {
-            var date = RunSSHCommand("date +%s");
+            var date = RunSshCommand("date +%s");
             date = date.Remove(date.Length - 1);
-            var time = epoch.AddSeconds(Convert.ToInt64(date)).ToLocalTime();
-            Console.WriteLine(DateTime.Now);
-            Console.WriteLine(time);
-
+            var time = Epoch.AddSeconds(Convert.ToInt64(date)).ToLocalTime();
+         
             var diffinseconds = (DateTime.Now - time).TotalSeconds;
+            if (diffinseconds > 5)
+            {
+                var reply = RunSshCommand(string.Concat("sudo date +%s -s @", (DateTime.Now - Epoch.ToLocalTime()).TotalSeconds));
+                Console.WriteLine(reply);
+            }
         }
 
-        private string RunSSHCommand(string command)
+        private string RunSshCommand(string command)
         {
-            SshConnector.Connect();
-            var cmd = SshConnector.CreateCommand(command);
+            _sshConnector.Connect();
+            var cmd = _sshConnector.CreateCommand(command);
             var result = cmd.Execute();
-            SshConnector.Disconnect();
+            _sshConnector.Disconnect();
             return result;
         }
 
         public MySqlConnection GetConnection()
         {
-            var connection = new MySqlConnection(connectionString.ToString());
+            var connection = new MySqlConnection(_connectionString.ToString());
             SimpleCRUD.SetDialect(SimpleCRUD.Dialect.MySQL);
             return connection;
         }
