@@ -32,6 +32,7 @@ namespace PowerSourceControlApp
                         {
                             DetectedPowerSources.Single(p => p.IpAddress == address).IsOnline = true;
                             DetectedPowerSources.Single(p => p.IpAddress == address).Pinger.Start();
+                            DetectedPowerSources.Single(p => p.IpAddress == address).DutyManager.ReStart();
                             isUpdated = true;
                         }
                     }

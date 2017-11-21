@@ -13,7 +13,7 @@ namespace PowerSourceControlApp.PowerSource
 
     public class Chanel : INotifyPropertyChanged
     {
-        private Device ParentDevice { get; }
+        public Device ParentDevice { get; }
         private bool _isInited;
 
         public uint ChanelId { get; set; }
@@ -55,7 +55,7 @@ namespace PowerSourceControlApp.PowerSource
                     };
 
                     initialSettingsReadThread.Start();
-
+                    /*
                     var initialCalibrationReadThread = new Thread(GetCalibrationTable)
                     {
                         Name = string.Concat("GettingCalibrationForPS:", ParentDevice.IpAddress, "Chanel:",
@@ -65,6 +65,7 @@ namespace PowerSourceControlApp.PowerSource
                     };
 
                     initialCalibrationReadThread.Start();
+                    */
                 }
                 catch (Exception)
                 {
@@ -113,6 +114,11 @@ namespace PowerSourceControlApp.PowerSource
 
         private void GetSettingsTable()
         {
+            while (ParentDevice.SqlIsBusy)
+            {
+                Thread.Sleep(1);
+            }
+            ParentDevice.SqlIsBusy = true;
             using (var connection = ParentDevice.GetConnection())
             {
                 connection.Open();
@@ -129,6 +135,7 @@ namespace PowerSourceControlApp.PowerSource
 
                 connection.Close();
             }
+            ParentDevice.SqlIsBusy = false;
             if (!_isInited)
             {
                 _isInited = true;
@@ -137,12 +144,18 @@ namespace PowerSourceControlApp.PowerSource
 
         private void GetCalibrationTable()
         {
+            while (ParentDevice.SqlIsBusy)
+            {
+                Thread.Sleep(1);
+            }
+            ParentDevice.SqlIsBusy = true;
             using (var connection = ParentDevice.GetConnection())
             {
                 connection.Open();
                 _calibrationResult = connection.GetList<Calibration>(new { UUID = ChanelUUID }).ToList();
                 connection.Close();
             }
+            ParentDevice.SqlIsBusy = false;
         }
 
         protected virtual void RaisePropertyChanged(string propName)

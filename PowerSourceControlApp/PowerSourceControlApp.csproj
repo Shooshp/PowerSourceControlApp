@@ -90,7 +90,8 @@
     <Compile Include="PowerSource\Device.cs" />
     <Compile Include="PowerSource\Chanel.cs" />
     <Compile Include="DapperDTO\CurrentTasks.cs" />
-    <Compile Include="PowerSource\TaskManager.cs" />
+    <Compile Include="PowerSource\Duty.cs" />
+    <Compile Include="PowerSource\DutyManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="VisualInterfaceControl.cs" />

@@ -9,6 +9,7 @@ namespace PowerSourceControlApp.DeviceManagment
     public class StatusChecker
     {
         private Device ParentDevice { get; }
+        private byte[] _message;
         private uint _errorCounter;
         private readonly int _bufferSize;
         private readonly Random _randomNumberGenerator;
@@ -21,7 +22,7 @@ namespace PowerSourceControlApp.DeviceManagment
         {
             _randomNumberGenerator = new Random();
             ParentDevice = parent;
-            _bufferSize = 1024;
+            _bufferSize = 64;
         }
 
         public void Start()
@@ -41,12 +42,21 @@ namespace PowerSourceControlApp.DeviceManagment
 
         private void StatusChekerThread()
         {
-            var incomingbuffer = new byte[_bufferSize];
-            var message = Encoding.UTF8.GetBytes("What your state?");
+            var incomingbuffer = new byte[_bufferSize];            
             var watch = System.Diagnostics.Stopwatch.StartNew();
 
             while (ParentDevice.IsOnline)
             {
+                if (ParentDevice.Message == "")
+                {
+                    _message = Encoding.UTF8.GetBytes("What your state?");
+                }
+                else
+                {
+                    _message = Encoding.UTF8.GetBytes(ParentDevice.Message);
+                    ParentDevice.Message = "";
+                }
+
                 Thread.Sleep(_randomNumberGenerator.Next(100, 200));
 
                 if (!_statusSocket.Connected) // Connection does not exist
@@ -80,7 +90,7 @@ namespace PowerSourceControlApp.DeviceManagment
                     {
                         try
                         {
-                            _statusStream.Write(message, 0, message.Length);
+                            _statusStream.Write(_message, 0, _message.Length);
                         }
                         catch (Exception e)
                         {
@@ -92,7 +102,7 @@ namespace PowerSourceControlApp.DeviceManagment
                             _statusStream.Read(incomingbuffer, 0, _bufferSize);
                             if (incomingbuffer.Length > 0 && incomingbuffer.ToString() != "")
                             {
-                                ParentDevice.Status = Encoding.UTF8.GetString(incomingbuffer);
+                                ParentDevice.Status = Encoding.UTF8.GetString(incomingbuffer).Replace("\0", "");
                                 _errorCounter = 0;
                                 watch.Restart();
                             }

@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using DevExpress.XtraGrid;
 using DevExpress.XtraGrid.Views.Base;
 using DevExpress.XtraGrid.Views.Grid;
@@ -11,7 +10,7 @@ namespace PowerSourceControlApp
 {
     public class VisualInterfaceControl
     {
-        public bool isBusy;
+        public bool IsBusy;
         private int _focusedPowerSourceIndex;
         private string _focusedPowerSourceIp;
         private int _focusedChanelIndex;
@@ -32,7 +31,7 @@ namespace PowerSourceControlApp
             _focusedChanelIndex = 0;
             _focusedChanelId = 0;
 
-            isBusy = false;
+            IsBusy = false;
         }
 
         public void ConnectToGrids(object powersourcegrid, object chanellistgrid, object powersourcelistgridview, object chanellistlayoutview)
@@ -83,9 +82,9 @@ namespace PowerSourceControlApp
             var arguments = e;
             _focusedPowerSourceIndex = arguments.FocusedRowHandle;
 
-            if (!isBusy)  //  Check if object is Busy
+            if (!IsBusy)  //  Check if object is Busy
             {
-                isBusy = true; //  Mark object as Busy
+                IsBusy = true; //  Mark object as Busy
 
                 if (!powerSourceListIsEmpty) // If there are devices on the list
                 {
@@ -102,7 +101,7 @@ namespace PowerSourceControlApp
                 }
                 _chanelListGridControl.RefreshDataSource();
 
-                isBusy = false; //  Remove Busy Flag
+                IsBusy = false; //  Remove Busy Flag
             }
         }
 

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Threading;
 using Dapper;
 using MySql.Data.MySqlClient;
@@ -13,26 +12,31 @@ namespace PowerSourceControlApp.PowerSource
     public class Device
     {
         public string IpAddress { get; }
-        public List<Chanel> ChanelList;
-        public bool IsOnline { get; set; }
-        private MySqlConnectionStringBuilder _connectionString;
         public string Status;
+        public string Message;
+        public string Reply;
+        public bool IsOnline { get; set; }
+        public bool SqlIsBusy;             
         public readonly int StatusPort;
+        public List<Chanel> ChanelList;
+        public DutyManager DutyManager;
         public DeviceManager Collection;
         public StatusChecker Pinger;
         private SshClient _sshConnector;
+        private MySqlConnectionStringBuilder _connectionString;
         private static readonly DateTime Epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Unspecified);
 
 
         public Device(string ipAddress, DeviceManager collection)
         {
+            Message = "";
             Pinger = new StatusChecker(this);
-            ChanelList = new List<Chanel>();
+            DutyManager = new DutyManager(this);
+            ChanelList = new List<Chanel>();           
             IpAddress = ipAddress;
             Collection = collection;
             StatusPort = 10236;
-            Status = "Inited";
-
+            SqlIsBusy = false;
 
             _sshConnector = new SshClient(IpAddress, "pi", "raspberry");
 
@@ -46,12 +50,17 @@ namespace PowerSourceControlApp.PowerSource
 
             using (var connection = GetConnection())
             {
+                SqlIsBusy = true;
+                connection.Open();
                 var chanels = connection.GetList<Settings>();
 
                 foreach (var chanel in chanels)
                 {
                     ChanelList.Add(new Chanel(chanel.Id, this));
                 }
+
+                connection.Close();
+                SqlIsBusy = false;
             }
 
             foreach (var chanel in ChanelList)
@@ -63,6 +72,11 @@ namespace PowerSourceControlApp.PowerSource
             IsOnline = true;
             SyncSystemTime();
             Pinger.Start();
+            DutyManager.Start();
+
+            Thread.Sleep(100);
+            DutyManager.SetCurrent(ChanelList[0], 1.0m);
+            DutyManager.SetVoltage(ChanelList[0], 5.5m);
         }
 
         private void SyncSystemTime()
@@ -86,6 +100,11 @@ namespace PowerSourceControlApp.PowerSource
             var result = cmd.Execute();
             _sshConnector.Disconnect();
             return result;
+        }
+
+        private void UpdateFromDatabase()
+        {
+            
         }
 
         public MySqlConnection GetConnection()
