@@ -2,13 +2,12 @@
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
-using PowerSourceControlApp.PowerSource;
 
 namespace PowerSourceControlApp.DeviceManagment
 {
     public class StatusChecker
     {
-        private Device ParentDevice { get; }
+        private PowerSource.PowerSource ParentPowerSource { get; }
         private byte[] _message;
         private uint _errorCounter;
         private readonly int _bufferSize;
@@ -18,23 +17,23 @@ namespace PowerSourceControlApp.DeviceManagment
         private NetworkStream _statusStream;
         
 
-        public StatusChecker(Device parent)
+        public StatusChecker(PowerSource.PowerSource parent)
         {
             _randomNumberGenerator = new Random();
-            ParentDevice = parent;
+            ParentPowerSource = parent;
             _bufferSize = 64;
         }
 
         public void Start()
         {
-            ParentDevice.IsOnline = true;
+            ParentPowerSource.IsOnline = true;
             _statusSocket = new TcpClient();
-            var threadName = string.Concat("StatusCheker:", ParentDevice.IpAddress);
+            var threadName = string.Concat("StatusCheker:", ParentPowerSource.IpAddress);
             _chekThread = new Thread(StatusChekerThread)
             {
                 Name = threadName,
                 IsBackground = true,
-                Priority = ThreadPriority.AboveNormal
+                Priority = ThreadPriority.Normal
             };
             _errorCounter = 0;
             _chekThread.Start();
@@ -45,16 +44,16 @@ namespace PowerSourceControlApp.DeviceManagment
             var incomingbuffer = new byte[_bufferSize];            
             var watch = System.Diagnostics.Stopwatch.StartNew();
 
-            while (ParentDevice.IsOnline)
+            while (ParentPowerSource.IsOnline)
             {
-                if (ParentDevice.Message == "")
+                if (ParentPowerSource.Message == "")
                 {
                     _message = Encoding.UTF8.GetBytes("What your state?");
                 }
                 else
                 {
-                    _message = Encoding.UTF8.GetBytes(ParentDevice.Message);
-                    ParentDevice.Message = "";
+                    _message = Encoding.UTF8.GetBytes(ParentPowerSource.Message);
+                    ParentPowerSource.Message = "";
                 }
 
                 Thread.Sleep(_randomNumberGenerator.Next(100, 200));
@@ -63,11 +62,11 @@ namespace PowerSourceControlApp.DeviceManagment
                 {
                     try // Create new connection
                     {
-                        _statusSocket.Connect(ParentDevice.IpAddress, ParentDevice.StatusPort);
+                        _statusSocket.Connect(ParentPowerSource.IpAddress, ParentPowerSource.StatusPort);
                         _statusSocket.ReceiveTimeout = 100;
                         _errorCounter = 0;
                     }
-                    catch (Exception e) // Wait for an error
+                    catch (Exception) // Wait for an error
                     {
                         _errorCounter++;
                     }
@@ -81,7 +80,7 @@ namespace PowerSourceControlApp.DeviceManagment
                             _statusStream = _statusSocket.GetStream();
                             _errorCounter = 0;
                         }
-                        catch (SocketException e) // Wait for an error
+                        catch (SocketException) // Wait for an error
                         {
                             _errorCounter++;
                         }
@@ -92,7 +91,7 @@ namespace PowerSourceControlApp.DeviceManagment
                         {
                             _statusStream.Write(_message, 0, _message.Length);
                         }
-                        catch (Exception e)
+                        catch (Exception)
                         {
                             _errorCounter++;
                         }
@@ -102,7 +101,7 @@ namespace PowerSourceControlApp.DeviceManagment
                             _statusStream.Read(incomingbuffer, 0, _bufferSize);
                             if (incomingbuffer.Length > 0 && incomingbuffer.ToString() != "")
                             {
-                                ParentDevice.Status = Encoding.UTF8.GetString(incomingbuffer).Replace("\0", "");
+                                ParentPowerSource.Status = Encoding.UTF8.GetString(incomingbuffer).Replace("\0", "");
                                 _errorCounter = 0;
                                 watch.Restart();
                             }
@@ -111,7 +110,7 @@ namespace PowerSourceControlApp.DeviceManagment
                                 _errorCounter++;
                             }
                         }
-                        catch (Exception e)
+                        catch (Exception)
                         {
                             _errorCounter++;
                         }
@@ -120,13 +119,13 @@ namespace PowerSourceControlApp.DeviceManagment
                 var time = watch.ElapsedMilliseconds;
                 if ((_errorCounter > 4)||(time > 1000))
                 {
-                    while (ParentDevice.Collection.isBusy)
+                    while (ParentPowerSource.Collection.IsBusy)
                     {
                         Thread.Sleep(1);
                     }
-                    ParentDevice.Collection.isBusy = true;
-                    ParentDevice.IsOnline = false;
-                    ParentDevice.Collection.isUpdated = true;
+                    ParentPowerSource.Collection.IsBusy = true;
+                    ParentPowerSource.IsOnline = false;
+                    ParentPowerSource.Collection.IsUpdated = true;
                     if (_statusStream != null)
                     {
                         _statusStream.Close();
@@ -139,7 +138,7 @@ namespace PowerSourceControlApp.DeviceManagment
                     }
                     GC.Collect();
                     watch.Stop();
-                    ParentDevice.Collection.isBusy = false;
+                    ParentPowerSource.Collection.IsBusy = false;
                     return;
                 }
             }

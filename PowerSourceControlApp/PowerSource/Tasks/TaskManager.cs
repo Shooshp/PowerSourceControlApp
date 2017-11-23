@@ -2,18 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using PowerSourceControlApp.PowerSource.Tasks;
 
 namespace PowerSourceControlApp.PowerSource
 {
-    public class DutyManager
+    public class TaskManager
     {        
         public bool Halt;
-        public List<Duty> TaskList;
+        public List<Task> TaskList;
         private Thread _taskManagerThread;
         private readonly Random _randomNumberGenerator;
-        private Device _parentDevice;
+        private PowerSource _parentPowerSource;
 
-        public bool RunningDutyExist
+        public bool RunningTaskExist
         {
             get
             {
@@ -21,10 +22,7 @@ namespace PowerSourceControlApp.PowerSource
                 {
                     return true;
                 }
-            else
-                {
-                    return false;
-                }
+                return false;
             }
         }
 
@@ -36,30 +34,26 @@ namespace PowerSourceControlApp.PowerSource
                 {
                     return true;
                 }
-                else
-                {
-                    return false;
-                }
+                return false;
             }
         }
 
-        public DutyManager(Device parent)
+        public TaskManager(PowerSource parent)
         {
             _randomNumberGenerator = new Random();
-            _parentDevice = parent;
-            TaskList = new List<Duty>();
+            _parentPowerSource = parent;
+            TaskList = new List<Task>();
             Halt = false;
-
         }
 
         public void Start()
         {
-            var threadName = string.Concat("TaskManager:", _parentDevice.IpAddress);
-            _taskManagerThread = new Thread(DutyManagerThread)
+            var threadName = string.Concat("TaskManager:", _parentPowerSource.IpAddress);
+            _taskManagerThread = new Thread(TaskManagerThread)
             {
                 Name = threadName,
                 IsBackground = true,
-                Priority = ThreadPriority.Normal
+                Priority = ThreadPriority.Highest
             };
             _taskManagerThread.Start();
         }
@@ -70,28 +64,31 @@ namespace PowerSourceControlApp.PowerSource
             Start();
         }
 
-        private void DutyManagerThread()
+        private void TaskManagerThread()
         { 
-            while (!Halt)
+            while (true)
             {
                 Thread.Sleep(_randomNumberGenerator.Next(400, 500));
-
-                if (_parentDevice.IsOnline)
+                if (!Halt)
                 {
-                    if (!RunningDutyExist && _parentDevice.Status == "Idle")
+                    if (_parentPowerSource.IsOnline)
                     {
-                        RemoveComplited();
-                        if (!IsEmpty)
-                        {                           
-                            var nextDuty = TaskList.OrderBy(o => o.DutyNumber).First();
-                            nextDuty.Run();
+                        if (!RunningTaskExist && _parentPowerSource.Status == "Idle")
+                        {
+                            RemoveComplited();
+
+                            if (!IsEmpty)
+                            {
+                                var nextTask = TaskList.OrderBy(o => o.TaskNumber).First();
+                                nextTask.Run();
+                            }
                         }
                     }
-                }
-                else
-                {
-                    Halt = true;
-                }
+                    else
+                    { 
+                        Halt = true;
+                    }
+                }               
             }
         }     
 
@@ -100,17 +97,25 @@ namespace PowerSourceControlApp.PowerSource
             if (!IsEmpty)
             {
                 var nextNumber = TaskList.Count + 1;
-                TaskList.Add(new Duty(chanel, name, argument, Convert.ToUInt32(nextNumber)));
+                TaskList.Add(new Task(chanel, name, argument, Convert.ToUInt32(nextNumber)));
             }
             else
             {
-                TaskList.Add(new Duty(chanel, name, argument, 1));
+                TaskList.Add(new Task(chanel, name, argument, 1));
+            }
+            if (_parentPowerSource.Collection.SelectedPowerSourceIp == _parentPowerSource.IpAddress)
+            {
+                _parentPowerSource.Collection.IsUpdated = true;
             }
         }
 
         private void RemoveComplited()
         {
-            TaskList.RemoveAll(x => x.IsComplited);
+            TaskList.RemoveAll(x => x.IsComplited && x.IsActive == false);
+            if (_parentPowerSource.Collection.SelectedPowerSourceIp == _parentPowerSource.IpAddress)
+            {
+                _parentPowerSource.Collection.IsUpdated = true;
+            }
         }
 
         public void SetVoltage(Chanel chanel, decimal value)

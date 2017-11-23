@@ -9,7 +9,9 @@ using Renci.SshNet;
 
 namespace PowerSourceControlApp.PowerSource
 {
-    public class Device
+    class MagicAttribute : Attribute { }
+
+    public class PowerSource
     {
         public string IpAddress { get; }
         public string Status;
@@ -19,19 +21,20 @@ namespace PowerSourceControlApp.PowerSource
         public bool SqlIsBusy;             
         public readonly int StatusPort;
         public List<Chanel> ChanelList;
-        public DutyManager DutyManager;
+        public TaskManager DutyManager;
         public DeviceManager Collection;
         public StatusChecker Pinger;
         private SshClient _sshConnector;
-        private MySqlConnectionStringBuilder _connectionString;
+        public MySqlConnectionStringBuilder MSQLConnectionString;
+
         private static readonly DateTime Epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Unspecified);
 
 
-        public Device(string ipAddress, DeviceManager collection)
+        public PowerSource(string ipAddress, DeviceManager collection)
         {
             Message = "";
             Pinger = new StatusChecker(this);
-            DutyManager = new DutyManager(this);
+            DutyManager = new TaskManager(this);
             ChanelList = new List<Chanel>();           
             IpAddress = ipAddress;
             Collection = collection;
@@ -40,7 +43,7 @@ namespace PowerSourceControlApp.PowerSource
 
             _sshConnector = new SshClient(IpAddress, "pi", "raspberry");
 
-            _connectionString = new MySqlConnectionStringBuilder
+            MSQLConnectionString = new MySqlConnectionStringBuilder
             {
                 Server = IpAddress,
                 UserID = "root",
@@ -48,9 +51,9 @@ namespace PowerSourceControlApp.PowerSource
                 Database = "local_data_storage"
             };
 
-            using (var connection = GetConnection())
+            using (var connection = new MySqlConnection(MSQLConnectionString.ToString()))
             {
-                SqlIsBusy = true;
+                SimpleCRUD.SetDialect(SimpleCRUD.Dialect.MySQL);
                 connection.Open();
                 var chanels = connection.GetList<Settings>();
 
@@ -60,7 +63,6 @@ namespace PowerSourceControlApp.PowerSource
                 }
 
                 connection.Close();
-                SqlIsBusy = false;
             }
 
             foreach (var chanel in ChanelList)
@@ -74,8 +76,11 @@ namespace PowerSourceControlApp.PowerSource
             Pinger.Start();
             DutyManager.Start();
 
-            Thread.Sleep(100);
-            DutyManager.SetCurrent(ChanelList[0], 1.0m);
+            while (ChanelList.Exists(e => e.IsInited == false)) 
+            {
+                Thread.Sleep(800);
+            }
+            DutyManager.SetCurrent(ChanelList[0], 0.05m);
             DutyManager.SetVoltage(ChanelList[0], 5.5m);
         }
 
@@ -100,18 +105,6 @@ namespace PowerSourceControlApp.PowerSource
             var result = cmd.Execute();
             _sshConnector.Disconnect();
             return result;
-        }
-
-        private void UpdateFromDatabase()
-        {
-            
-        }
-
-        public MySqlConnection GetConnection()
-        {
-            var connection = new MySqlConnection(_connectionString.ToString());
-            SimpleCRUD.SetDialect(SimpleCRUD.Dialect.MySQL);
-            return connection;
         }
     }
 }

@@ -1,27 +1,28 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using PowerSourceControlApp.PowerSource;
 
-namespace PowerSourceControlApp
+namespace PowerSourceControlApp.DeviceManagment
 {
     public class DeviceManager
     {
-        public List<Device> DetectedPowerSources;
-        public bool isUpdated;
-        public bool isBusy;
+        public List<PowerSource.PowerSource> DetectedPowerSources;
+        public bool IsUpdated;
+        public bool IsBusy;
+        public string SelectedPowerSourceIp;
 
         public DeviceManager()
         {
-            DetectedPowerSources = new List<Device>();
-            isUpdated = false;
-            isBusy = false;
+            DetectedPowerSources = new List<PowerSource.PowerSource>();
+            IsUpdated = false;
+            IsBusy = false;
+            SelectedPowerSourceIp = "";
         }
 
         public void NewDeviceDetectorHanler(string address)
         {
-            if (!isBusy) //  Check if object is Busy
+            if (!IsBusy) //  Check if object is Busy
             {
-                isBusy = true; //  Mark object as Busy
+                IsBusy = true; //  Mark object as Busy
                 var powerSourceListIsEmpty = !DetectedPowerSources.Any();
 
                 if (!powerSourceListIsEmpty) //  If there are devices on the list
@@ -33,21 +34,21 @@ namespace PowerSourceControlApp
                             DetectedPowerSources.Single(p => p.IpAddress == address).IsOnline = true;
                             DetectedPowerSources.Single(p => p.IpAddress == address).Pinger.Start();
                             DetectedPowerSources.Single(p => p.IpAddress == address).DutyManager.ReStart();
-                            isUpdated = true;
+                            IsUpdated = true;
                         }
                     }
                     else // If device is not on the list than add device to list
                     {
-                        DetectedPowerSources.Add(new Device(address, this));
-                        isUpdated = true;
+                        DetectedPowerSources.Add(new PowerSource.PowerSource(address, this));
+                        IsUpdated = true;
                     }
                 }
                 else // No devices on the list so we will add new one
                 {
-                    DetectedPowerSources.Add(new Device(address, this));
-                    isUpdated = true;
+                    DetectedPowerSources.Add(new PowerSource.PowerSource(address, this));
+                    IsUpdated = true;
                 }
-                isBusy = false; //  Remove Busy Flag
+                IsBusy = false; //  Remove Busy Flag
             }
         }
     }

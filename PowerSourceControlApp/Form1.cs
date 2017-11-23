@@ -6,27 +6,36 @@ using DevExpress.XtraEditors.CustomEditor;
 using DevExpress.XtraEditors.Repository;
 using DevExpress.XtraGauges.Win;
 using DevExpress.XtraGrid.Columns;
+using PowerSourceControlApp.DeviceManagment;
 
 namespace PowerSourceControlApp
 {
     public partial class Form1 : DevExpress.XtraEditors.XtraForm
     {
-        public VisualInterfaceControl MainViewControl;
-        public NetworkDeviceDetector DeviceDetector;
-        public DeviceManager PowerSourceCollection;
-        bool ListIsEmpty;
+        private VisualInterfaceControl MainViewControl;
+        private NetworkDeviceDetector DeviceDetector;
+        private DeviceManager PowerSourceCollection;
+        bool _listIsEmpty;
 
         public Form1()
         {
-            ListIsEmpty = true;
+            _listIsEmpty = true;
             PowerSourceCollection = new DeviceManager();
-            MainViewControl = new VisualInterfaceControl(PowerSourceCollection.DetectedPowerSources);
+            MainViewControl = new VisualInterfaceControl(PowerSourceCollection);
             DeviceDetector = new NetworkDeviceDetector();
             DeviceDetector.OnDataReceived += JustSimpleHandler;
             DeviceDetector.CreateUdpReadThread();
             
             InitializeComponent();
-            MainViewControl.ConnectToGrids(PowerSourceList, PowerSourceChanelList, gridView1, layoutView1);
+            MainViewControl.ConnectToGrids(
+                powersourcegrid: PowerSourceList, 
+                chanellistgrid: PowerSourceChanelList,
+                tasklistgrid: TaskListControl,
+                voltagechart: VoltageChart,
+                currentchart: CurrentChart,
+                powersourcelistgridview: gridView1,
+                chanellistlayoutview: layoutView1,
+                tasklistgridview: gridView2);
             CreateGauge(layoutView1.Columns["Status"], StatusGauge);
             CreateGauge(layoutView1.Columns["Voltage"], VoltageGauge);
             CreateGauge(layoutView1.Columns["Current"], CurrentGauge);
@@ -56,11 +65,11 @@ namespace PowerSourceControlApp
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            if (PowerSourceCollection.isUpdated)
+            if (PowerSourceCollection.IsUpdated)
             {
                 MainViewControl.UpdateForms();
-                PowerSourceCollection.isUpdated = false;
-            }      
+                PowerSourceCollection.IsUpdated = false;
+            }
         }
 
         private  void JustSimpleHandler(object sender, DataEventArgs e)
@@ -70,10 +79,10 @@ namespace PowerSourceControlApp
 
             if (sendermessage == "Hello!")
             {
-                if (!PowerSourceCollection.isBusy)
+                if (!PowerSourceCollection.IsBusy)
                 {
                     DeviceDetector.SuspendThread = true;
-                    Thread handleDevice = new Thread(() => PowerSourceCollection.NewDeviceDetectorHanler(senderip));
+                    var handleDevice = new Thread(() => PowerSourceCollection.NewDeviceDetectorHanler(senderip));
                     handleDevice.IsBackground = true;
                     handleDevice.Start();
                     DeviceDetector.SuspendThread = false;
@@ -85,12 +94,17 @@ namespace PowerSourceControlApp
         {          
             if (PowerSourceCollection.DetectedPowerSources.Any())
             {
-                if (ListIsEmpty)
+                if (_listIsEmpty)
                 {
                     CreateGauge(gridView1.Columns["IsOnline"], isOnlineGauge);
-                    ListIsEmpty = false;
+                    _listIsEmpty = false;
                 }
             }
+        }
+
+        private void VoltageGraph_EditValueChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

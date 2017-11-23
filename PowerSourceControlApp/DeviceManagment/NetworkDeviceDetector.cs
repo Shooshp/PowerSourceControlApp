@@ -3,7 +3,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 
-namespace PowerSourceControlApp
+namespace PowerSourceControlApp.DeviceManagment
 {
     public class NetworkDeviceDetector
     {
