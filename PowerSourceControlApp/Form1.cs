@@ -35,10 +35,13 @@ namespace PowerSourceControlApp
                 currentchart: CurrentChart,
                 powersourcelistgridview: gridView1,
                 chanellistlayoutview: layoutView1,
-                tasklistgridview: gridView2);
+                tasklistgridview: gridView2,
+                voltageedit: VoltageEdit,
+                currentedit: CurrentEdit);
             CreateGauge(layoutView1.Columns["Status"], StatusGauge);
-            CreateGauge(layoutView1.Columns["Voltage"], VoltageGauge);
-            CreateGauge(layoutView1.Columns["Current"], CurrentGauge);
+            CreateGauge(layoutView1.Columns["RecentVoltageDisplay"], VoltageGauge);
+            CreateGauge(layoutView1.Columns["RecentCurrentDisplay"], CurrentGauge);
+
             
             var edit = new RepositoryItemToggleSwitch();
             layoutView1.Columns["OnOff"].ColumnEdit = edit;
@@ -63,7 +66,7 @@ namespace PowerSourceControlApp
             layoutView1.PostEditor();
         }
 
-        private void timer1_Tick(object sender, EventArgs e)
+        private void Timer1_Tick(object sender, EventArgs e)
         {
             if (PowerSourceCollection.IsUpdated)
             {
@@ -105,6 +108,26 @@ namespace PowerSourceControlApp
         private void VoltageGraph_EditValueChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void PowerSourceList_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void VoltageEdit_EditValueChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void CurrentEdit_EditValueChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void UpdateButton_Click(object sender, EventArgs e)
+        {
+            MainViewControl.UpdateButtonClick();
         }
     }
 }

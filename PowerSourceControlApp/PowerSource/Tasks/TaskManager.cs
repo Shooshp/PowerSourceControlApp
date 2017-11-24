@@ -71,12 +71,12 @@ namespace PowerSourceControlApp.PowerSource
                 Thread.Sleep(_randomNumberGenerator.Next(400, 500));
                 if (!Halt)
                 {
+                    //RemoveMarked();
                     if (_parentPowerSource.IsOnline)
                     {
                         if (!RunningTaskExist && _parentPowerSource.Status == "Idle")
                         {
                             RemoveComplited();
-
                             if (!IsEmpty)
                             {
                                 var nextTask = TaskList.OrderBy(o => o.TaskNumber).First();
@@ -111,7 +111,16 @@ namespace PowerSourceControlApp.PowerSource
 
         private void RemoveComplited()
         {
-            TaskList.RemoveAll(x => x.IsComplited && x.IsActive == false);
+            TaskList.RemoveAll(x => x.IsComplited && x.IsActive == false);            
+            if (_parentPowerSource.Collection.SelectedPowerSourceIp == _parentPowerSource.IpAddress)
+            {
+                _parentPowerSource.Collection.IsUpdated = true;
+            }    
+        }
+
+        private void RemoveMarked()
+        {
+            TaskList.RemoveAll(x => x.MarkForDelite);
             if (_parentPowerSource.Collection.SelectedPowerSourceIp == _parentPowerSource.IpAddress)
             {
                 _parentPowerSource.Collection.IsUpdated = true;

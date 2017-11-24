@@ -31,20 +31,21 @@ namespace PowerSourceControlApp
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            DevExpress.XtraGauges.Core.Model.IndicatorState indicatorState1 = new DevExpress.XtraGauges.Core.Model.IndicatorState();
-            DevExpress.XtraGauges.Core.Model.IndicatorState indicatorState2 = new DevExpress.XtraGauges.Core.Model.IndicatorState();
-            DevExpress.XtraGauges.Core.Model.IndicatorState indicatorState3 = new DevExpress.XtraGauges.Core.Model.IndicatorState();
-            DevExpress.XtraGauges.Core.Model.IndicatorState indicatorState4 = new DevExpress.XtraGauges.Core.Model.IndicatorState();
-            DevExpress.XtraGauges.Core.Model.IndicatorState indicatorState5 = new DevExpress.XtraGauges.Core.Model.IndicatorState();
-            DevExpress.XtraGauges.Core.Model.IndicatorState indicatorState6 = new DevExpress.XtraGauges.Core.Model.IndicatorState();
-            DevExpress.XtraGauges.Core.Model.IndicatorState indicatorState7 = new DevExpress.XtraGauges.Core.Model.IndicatorState();
-            DevExpress.XtraGauges.Core.Model.IndicatorState indicatorState8 = new DevExpress.XtraGauges.Core.Model.IndicatorState();
-            DevExpress.XtraCharts.XYDiagram xyDiagram2 = new DevExpress.XtraCharts.XYDiagram();
-            DevExpress.XtraCharts.Series series2 = new DevExpress.XtraCharts.Series();
-            DevExpress.XtraCharts.LineSeriesView lineSeriesView2 = new DevExpress.XtraCharts.LineSeriesView();
-            DevExpress.XtraCharts.XYDiagram xyDiagram1 = new DevExpress.XtraCharts.XYDiagram();
-            DevExpress.XtraCharts.Series series1 = new DevExpress.XtraCharts.Series();
-            DevExpress.XtraCharts.LineSeriesView lineSeriesView1 = new DevExpress.XtraCharts.LineSeriesView();
+            DevExpress.XtraGauges.Core.Model.IndicatorState indicatorState33 = new DevExpress.XtraGauges.Core.Model.IndicatorState();
+            DevExpress.XtraGauges.Core.Model.IndicatorState indicatorState34 = new DevExpress.XtraGauges.Core.Model.IndicatorState();
+            DevExpress.XtraGauges.Core.Model.IndicatorState indicatorState35 = new DevExpress.XtraGauges.Core.Model.IndicatorState();
+            DevExpress.XtraGauges.Core.Model.IndicatorState indicatorState36 = new DevExpress.XtraGauges.Core.Model.IndicatorState();
+            DevExpress.XtraCharts.XYDiagram xyDiagram9 = new DevExpress.XtraCharts.XYDiagram();
+            DevExpress.XtraCharts.Series series9 = new DevExpress.XtraCharts.Series();
+            DevExpress.XtraCharts.LineSeriesView lineSeriesView9 = new DevExpress.XtraCharts.LineSeriesView();
+            DevExpress.XtraCharts.XYDiagram xyDiagram10 = new DevExpress.XtraCharts.XYDiagram();
+            DevExpress.XtraCharts.Series series10 = new DevExpress.XtraCharts.Series();
+            DevExpress.XtraCharts.LineSeriesView lineSeriesView10 = new DevExpress.XtraCharts.LineSeriesView();
+            DevExpress.XtraGauges.Core.Model.IndicatorState indicatorState37 = new DevExpress.XtraGauges.Core.Model.IndicatorState();
+            DevExpress.XtraGauges.Core.Model.IndicatorState indicatorState38 = new DevExpress.XtraGauges.Core.Model.IndicatorState();
+            DevExpress.XtraGauges.Core.Model.IndicatorState indicatorState39 = new DevExpress.XtraGauges.Core.Model.IndicatorState();
+            DevExpress.XtraGauges.Core.Model.IndicatorState indicatorState40 = new DevExpress.XtraGauges.Core.Model.IndicatorState();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.PowerSourceChanelList = new DevExpress.XtraGrid.GridControl();
             this.layoutView1 = new DevExpress.XtraGrid.Views.Layout.LayoutView();
             this.CalibrationColumn = new DevExpress.XtraGrid.Columns.LayoutViewColumn();
@@ -84,9 +85,13 @@ namespace PowerSourceControlApp
             this.defaultLookAndFeel1 = new DevExpress.LookAndFeel.DefaultLookAndFeel(this.components);
             this.ChanelTabs = new DevExpress.XtraTab.XtraTabControl();
             this.ChanelStatus = new DevExpress.XtraTab.XtraTabPage();
+            this.CurrentEdit = new DevExpress.XtraEditors.TextEdit();
+            this.VoltageEdit = new DevExpress.XtraEditors.TextEdit();
+            this.CurrentChart = new DevExpress.XtraCharts.ChartControl();
+            this.VoltageChart = new DevExpress.XtraCharts.ChartControl();
             this.TaskListControl = new DevExpress.XtraGrid.GridControl();
             this.gridView2 = new DevExpress.XtraGrid.Views.Grid.GridView();
-            this.TaskColumn = new DevExpress.XtraGrid.Columns.GridColumn();
+            this.TaskNameColomn = new DevExpress.XtraGrid.Columns.GridColumn();
             this.ChanelLog = new DevExpress.XtraTab.XtraTabPage();
             this.ChanelSettings = new DevExpress.XtraTab.XtraTabPage();
             this.InterfaceRefresh = new System.Windows.Forms.Timer(this.components);
@@ -94,8 +99,7 @@ namespace PowerSourceControlApp
             this.isOnlineGauge = new DevExpress.XtraGauges.Win.GaugeControl();
             this.stateIndicatorGauge = new DevExpress.XtraGauges.Win.Gauges.State.StateIndicatorGauge();
             this.OnLineGauge = new DevExpress.XtraGauges.Win.Gauges.State.StateIndicatorComponent();
-            this.VoltageChart = new DevExpress.XtraCharts.ChartControl();
-            this.CurrentChart = new DevExpress.XtraCharts.ChartControl();
+            this.UpdateButton = new DevExpress.XtraEditors.SimpleButton();
             ((System.ComponentModel.ISupportInitialize)(this.PowerSourceChanelList)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutViewField_layoutViewColumn1_5)).BeginInit();
@@ -122,18 +126,20 @@ namespace PowerSourceControlApp
             ((System.ComponentModel.ISupportInitialize)(this.ChanelTabs)).BeginInit();
             this.ChanelTabs.SuspendLayout();
             this.ChanelStatus.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.CurrentEdit.Properties)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.VoltageEdit.Properties)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.CurrentChart)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(xyDiagram9)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(series9)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(lineSeriesView9)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.VoltageChart)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(xyDiagram10)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(series10)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(lineSeriesView10)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.TaskListControl)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridView2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.stateIndicatorGauge)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.OnLineGauge)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.VoltageChart)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(xyDiagram2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(series2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(lineSeriesView2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.CurrentChart)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(xyDiagram1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(series1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(lineSeriesView1)).BeginInit();
             this.SuspendLayout();
             // 
             // PowerSourceChanelList
@@ -206,7 +212,7 @@ namespace PowerSourceControlApp
             // CurrentColumn
             // 
             this.CurrentColumn.Caption = "I";
-            this.CurrentColumn.FieldName = "Current";
+            this.CurrentColumn.FieldName = "RecentCurrentDisplay";
             this.CurrentColumn.LayoutViewField = this.layoutViewField_layoutViewColumn1_3;
             this.CurrentColumn.Name = "CurrentColumn";
             // 
@@ -251,7 +257,7 @@ namespace PowerSourceControlApp
             // VoltageColumn
             // 
             this.VoltageColumn.Caption = "V";
-            this.VoltageColumn.FieldName = "Voltage";
+            this.VoltageColumn.FieldName = "RecentVoltageDisplay";
             this.VoltageColumn.LayoutViewField = this.layoutViewField_layoutViewColumn1;
             this.VoltageColumn.Name = "VoltageColumn";
             // 
@@ -347,19 +353,19 @@ namespace PowerSourceControlApp
             this.stateIndicatorComponent1.Name = "stateIndicatorComponent1";
             this.stateIndicatorComponent1.Size = new System.Drawing.SizeF(200F, 200F);
             this.stateIndicatorComponent1.StateIndex = 3;
-            indicatorState1.Name = "State1";
-            indicatorState1.ShapeType = DevExpress.XtraGauges.Core.Model.StateIndicatorShapeType.ElectricLight1;
-            indicatorState2.Name = "State2";
-            indicatorState2.ShapeType = DevExpress.XtraGauges.Core.Model.StateIndicatorShapeType.ElectricLight2;
-            indicatorState3.Name = "State3";
-            indicatorState3.ShapeType = DevExpress.XtraGauges.Core.Model.StateIndicatorShapeType.ElectricLight3;
-            indicatorState4.Name = "State4";
-            indicatorState4.ShapeType = DevExpress.XtraGauges.Core.Model.StateIndicatorShapeType.ElectricLight4;
+            indicatorState33.Name = "State1";
+            indicatorState33.ShapeType = DevExpress.XtraGauges.Core.Model.StateIndicatorShapeType.ElectricLight1;
+            indicatorState34.Name = "State2";
+            indicatorState34.ShapeType = DevExpress.XtraGauges.Core.Model.StateIndicatorShapeType.ElectricLight2;
+            indicatorState35.Name = "State3";
+            indicatorState35.ShapeType = DevExpress.XtraGauges.Core.Model.StateIndicatorShapeType.ElectricLight3;
+            indicatorState36.Name = "State4";
+            indicatorState36.ShapeType = DevExpress.XtraGauges.Core.Model.StateIndicatorShapeType.ElectricLight4;
             this.stateIndicatorComponent1.States.AddRange(new DevExpress.XtraGauges.Core.Model.IIndicatorState[] {
-            indicatorState1,
-            indicatorState2,
-            indicatorState3,
-            indicatorState4});
+            indicatorState33,
+            indicatorState34,
+            indicatorState35,
+            indicatorState36});
             // 
             // VoltageGauge
             // 
@@ -440,6 +446,7 @@ namespace PowerSourceControlApp
             this.PowerSourceList.TabIndex = 5;
             this.PowerSourceList.ViewCollection.AddRange(new DevExpress.XtraGrid.Views.Base.BaseView[] {
             this.gridView1});
+            this.PowerSourceList.Click += new System.EventHandler(this.PowerSourceList_Click);
             // 
             // gridView1
             // 
@@ -453,8 +460,9 @@ namespace PowerSourceControlApp
             // PowerSourceIPColumn
             // 
             this.PowerSourceIPColumn.Caption = "Адрес";
-            this.PowerSourceIPColumn.FieldName = "IpAddress";
+            this.PowerSourceIPColumn.FieldName = "DisplayName";
             this.PowerSourceIPColumn.Name = "PowerSourceIPColumn";
+            this.PowerSourceIPColumn.OptionsColumn.AllowEdit = false;
             this.PowerSourceIPColumn.Visible = true;
             this.PowerSourceIPColumn.VisibleIndex = 0;
             // 
@@ -494,12 +502,84 @@ namespace PowerSourceControlApp
             // 
             // ChanelStatus
             // 
+            this.ChanelStatus.Controls.Add(this.UpdateButton);
+            this.ChanelStatus.Controls.Add(this.CurrentEdit);
+            this.ChanelStatus.Controls.Add(this.VoltageEdit);
             this.ChanelStatus.Controls.Add(this.CurrentChart);
             this.ChanelStatus.Controls.Add(this.VoltageChart);
             this.ChanelStatus.Controls.Add(this.TaskListControl);
             this.ChanelStatus.Name = "ChanelStatus";
             this.ChanelStatus.Size = new System.Drawing.Size(1171, 192);
             this.ChanelStatus.Text = "Статус";
+            // 
+            // CurrentEdit
+            // 
+            this.CurrentEdit.Location = new System.Drawing.Point(367, 95);
+            this.CurrentEdit.Name = "CurrentEdit";
+            this.CurrentEdit.Properties.Appearance.Font = new System.Drawing.Font("Tahoma", 52F);
+            this.CurrentEdit.Properties.Appearance.Options.UseFont = true;
+            this.CurrentEdit.Properties.DisplayFormat.FormatType = DevExpress.Utils.FormatType.Numeric;
+            this.CurrentEdit.Properties.Mask.EditMask = "\\d{1}(\\R.\\d{0,3})";
+            this.CurrentEdit.Properties.Mask.MaskType = DevExpress.XtraEditors.Mask.MaskType.RegEx;
+            this.CurrentEdit.Size = new System.Drawing.Size(200, 90);
+            this.CurrentEdit.TabIndex = 4;
+            this.CurrentEdit.EditValueChanged += new System.EventHandler(this.CurrentEdit_EditValueChanged);
+            // 
+            // VoltageEdit
+            // 
+            this.VoltageEdit.Location = new System.Drawing.Point(367, 3);
+            this.VoltageEdit.Name = "VoltageEdit";
+            this.VoltageEdit.Properties.Appearance.Font = new System.Drawing.Font("Tahoma", 52F);
+            this.VoltageEdit.Properties.Appearance.Options.UseFont = true;
+            this.VoltageEdit.Properties.DisplayFormat.FormatType = DevExpress.Utils.FormatType.Numeric;
+            this.VoltageEdit.Properties.EditFormat.FormatType = DevExpress.Utils.FormatType.Numeric;
+            this.VoltageEdit.Properties.Mask.EditMask = "\\d{1,2}(\\R.\\d{0,3})";
+            this.VoltageEdit.Properties.Mask.MaskType = DevExpress.XtraEditors.Mask.MaskType.RegEx;
+            this.VoltageEdit.Size = new System.Drawing.Size(200, 90);
+            this.VoltageEdit.TabIndex = 3;
+            this.VoltageEdit.EditValueChanged += new System.EventHandler(this.VoltageEdit_EditValueChanged);
+            // 
+            // CurrentChart
+            // 
+            this.CurrentChart.DataBindings = null;
+            xyDiagram9.AxisX.VisibleInPanesSerializable = "-1";
+            xyDiagram9.AxisY.VisibleInPanesSerializable = "-1";
+            this.CurrentChart.Diagram = xyDiagram9;
+            this.CurrentChart.Legend.Name = "Default Legend";
+            this.CurrentChart.Legend.Visibility = DevExpress.Utils.DefaultBoolean.False;
+            this.CurrentChart.Location = new System.Drawing.Point(61, 95);
+            this.CurrentChart.Name = "CurrentChart";
+            series9.ArgumentDataMember = "MeasuredAt";
+            series9.CrosshairHighlightPoints = DevExpress.Utils.DefaultBoolean.False;
+            series9.LabelsVisibility = DevExpress.Utils.DefaultBoolean.False;
+            series9.Name = "VoltageLine";
+            series9.ValueDataMembersSerializable = "Current";
+            series9.View = lineSeriesView9;
+            this.CurrentChart.SeriesSerializable = new DevExpress.XtraCharts.Series[] {
+        series9};
+            this.CurrentChart.Size = new System.Drawing.Size(300, 90);
+            this.CurrentChart.TabIndex = 2;
+            // 
+            // VoltageChart
+            // 
+            this.VoltageChart.DataBindings = null;
+            xyDiagram10.AxisX.VisibleInPanesSerializable = "-1";
+            xyDiagram10.AxisY.VisibleInPanesSerializable = "-1";
+            this.VoltageChart.Diagram = xyDiagram10;
+            this.VoltageChart.Legend.Name = "Default Legend";
+            this.VoltageChart.Legend.Visibility = DevExpress.Utils.DefaultBoolean.False;
+            this.VoltageChart.Location = new System.Drawing.Point(61, 2);
+            this.VoltageChart.Name = "VoltageChart";
+            series10.ArgumentDataMember = "MeasuredAt";
+            series10.CrosshairHighlightPoints = DevExpress.Utils.DefaultBoolean.False;
+            series10.LabelsVisibility = DevExpress.Utils.DefaultBoolean.False;
+            series10.Name = "VoltageLine";
+            series10.ValueDataMembersSerializable = "Voltage";
+            series10.View = lineSeriesView10;
+            this.VoltageChart.SeriesSerializable = new DevExpress.XtraCharts.Series[] {
+        series10};
+            this.VoltageChart.Size = new System.Drawing.Size(300, 90);
+            this.VoltageChart.TabIndex = 1;
             // 
             // TaskListControl
             // 
@@ -514,20 +594,20 @@ namespace PowerSourceControlApp
             // gridView2
             // 
             this.gridView2.Columns.AddRange(new DevExpress.XtraGrid.Columns.GridColumn[] {
-            this.TaskColumn});
+            this.TaskNameColomn});
             this.gridView2.GridControl = this.TaskListControl;
             this.gridView2.Name = "gridView2";
             this.gridView2.OptionsCustomization.AllowFilter = false;
             this.gridView2.OptionsCustomization.AllowSort = false;
             this.gridView2.OptionsView.ShowGroupPanel = false;
             // 
-            // TaskColumn
+            // TaskNameColomn
             // 
-            this.TaskColumn.Caption = "Текущие задачи";
-            this.TaskColumn.FieldName = "DisplayName";
-            this.TaskColumn.Name = "TaskColumn";
-            this.TaskColumn.Visible = true;
-            this.TaskColumn.VisibleIndex = 0;
+            this.TaskNameColomn.Caption = "Текущие задачи";
+            this.TaskNameColomn.FieldName = "DisplayName";
+            this.TaskNameColomn.Name = "TaskNameColomn";
+            this.TaskNameColomn.Visible = true;
+            this.TaskNameColomn.VisibleIndex = 0;
             // 
             // ChanelLog
             // 
@@ -544,7 +624,7 @@ namespace PowerSourceControlApp
             // InterfaceRefresh
             // 
             this.InterfaceRefresh.Enabled = true;
-            this.InterfaceRefresh.Tick += new System.EventHandler(this.timer1_Tick);
+            this.InterfaceRefresh.Tick += new System.EventHandler(this.Timer1_Tick);
             // 
             // PingTime
             // 
@@ -575,61 +655,29 @@ namespace PowerSourceControlApp
             this.OnLineGauge.Name = "stateIndicatorComponent1";
             this.OnLineGauge.Size = new System.Drawing.SizeF(200F, 200F);
             this.OnLineGauge.StateIndex = 3;
-            indicatorState5.Name = "State1";
-            indicatorState5.ShapeType = DevExpress.XtraGauges.Core.Model.StateIndicatorShapeType.ElectricLight1;
-            indicatorState6.Name = "State2";
-            indicatorState6.ShapeType = DevExpress.XtraGauges.Core.Model.StateIndicatorShapeType.ElectricLight2;
-            indicatorState7.Name = "State3";
-            indicatorState7.ShapeType = DevExpress.XtraGauges.Core.Model.StateIndicatorShapeType.ElectricLight3;
-            indicatorState8.Name = "State4";
-            indicatorState8.ShapeType = DevExpress.XtraGauges.Core.Model.StateIndicatorShapeType.ElectricLight4;
+            indicatorState37.Name = "State1";
+            indicatorState37.ShapeType = DevExpress.XtraGauges.Core.Model.StateIndicatorShapeType.ElectricLight1;
+            indicatorState38.Name = "State2";
+            indicatorState38.ShapeType = DevExpress.XtraGauges.Core.Model.StateIndicatorShapeType.ElectricLight2;
+            indicatorState39.Name = "State3";
+            indicatorState39.ShapeType = DevExpress.XtraGauges.Core.Model.StateIndicatorShapeType.ElectricLight3;
+            indicatorState40.Name = "State4";
+            indicatorState40.ShapeType = DevExpress.XtraGauges.Core.Model.StateIndicatorShapeType.ElectricLight4;
             this.OnLineGauge.States.AddRange(new DevExpress.XtraGauges.Core.Model.IIndicatorState[] {
-            indicatorState5,
-            indicatorState6,
-            indicatorState7,
-            indicatorState8});
+            indicatorState37,
+            indicatorState38,
+            indicatorState39,
+            indicatorState40});
             // 
-            // VoltageChart
+            // UpdateButton
             // 
-            this.VoltageChart.DataBindings = null;
-            xyDiagram2.AxisX.VisibleInPanesSerializable = "-1";
-            xyDiagram2.AxisY.VisibleInPanesSerializable = "-1";
-            this.VoltageChart.Diagram = xyDiagram2;
-            this.VoltageChart.Legend.Name = "Default Legend";
-            this.VoltageChart.Legend.Visibility = DevExpress.Utils.DefaultBoolean.False;
-            this.VoltageChart.Location = new System.Drawing.Point(61, 2);
-            this.VoltageChart.Name = "VoltageChart";
-            series2.ArgumentDataMember = "MeasuredAt";
-            series2.CrosshairHighlightPoints = DevExpress.Utils.DefaultBoolean.False;
-            series2.LabelsVisibility = DevExpress.Utils.DefaultBoolean.False;
-            series2.Name = "VoltageLine";
-            series2.ValueDataMembersSerializable = "Voltage";
-            series2.View = lineSeriesView2;
-            this.VoltageChart.SeriesSerializable = new DevExpress.XtraCharts.Series[] {
-        series2};
-            this.VoltageChart.Size = new System.Drawing.Size(300, 90);
-            this.VoltageChart.TabIndex = 1;
-            // 
-            // CurrentChart
-            // 
-            this.CurrentChart.DataBindings = null;
-            xyDiagram1.AxisX.VisibleInPanesSerializable = "-1";
-            xyDiagram1.AxisY.VisibleInPanesSerializable = "-1";
-            this.CurrentChart.Diagram = xyDiagram1;
-            this.CurrentChart.Legend.Name = "Default Legend";
-            this.CurrentChart.Legend.Visibility = DevExpress.Utils.DefaultBoolean.False;
-            this.CurrentChart.Location = new System.Drawing.Point(61, 95);
-            this.CurrentChart.Name = "CurrentChart";
-            series1.ArgumentDataMember = "MeasuredAt";
-            series1.CrosshairHighlightPoints = DevExpress.Utils.DefaultBoolean.False;
-            series1.LabelsVisibility = DevExpress.Utils.DefaultBoolean.False;
-            series1.Name = "VoltageLine";
-            series1.ValueDataMembersSerializable = "Current";
-            series1.View = lineSeriesView1;
-            this.CurrentChart.SeriesSerializable = new DevExpress.XtraCharts.Series[] {
-        series1};
-            this.CurrentChart.Size = new System.Drawing.Size(300, 90);
-            this.CurrentChart.TabIndex = 2;
+            this.UpdateButton.ImageOptions.Image = ((System.Drawing.Image)(resources.GetObject("UpdateButton.ImageOptions.Image")));
+            this.UpdateButton.ImageOptions.ImageToTextAlignment = DevExpress.XtraEditors.ImageAlignToText.TopCenter;
+            this.UpdateButton.Location = new System.Drawing.Point(573, 75);
+            this.UpdateButton.Name = "UpdateButton";
+            this.UpdateButton.Size = new System.Drawing.Size(45, 45);
+            this.UpdateButton.TabIndex = 5;
+            this.UpdateButton.Click += new System.EventHandler(this.UpdateButton_Click);
             // 
             // Form1
             // 
@@ -674,18 +722,20 @@ namespace PowerSourceControlApp
             ((System.ComponentModel.ISupportInitialize)(this.ChanelTabs)).EndInit();
             this.ChanelTabs.ResumeLayout(false);
             this.ChanelStatus.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.CurrentEdit.Properties)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.VoltageEdit.Properties)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(xyDiagram9)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(lineSeriesView9)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(series9)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.CurrentChart)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(xyDiagram10)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(lineSeriesView10)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(series10)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.VoltageChart)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.TaskListControl)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridView2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.stateIndicatorGauge)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.OnLineGauge)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(xyDiagram2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(lineSeriesView2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(series2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.VoltageChart)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(xyDiagram1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(lineSeriesView1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(series1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.CurrentChart)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -740,8 +790,11 @@ namespace PowerSourceControlApp
         private DevExpress.XtraGauges.Win.Gauges.State.StateIndicatorComponent OnLineGauge;
         private DevExpress.XtraGrid.GridControl TaskListControl;
         private DevExpress.XtraGrid.Views.Grid.GridView gridView2;
-        private DevExpress.XtraGrid.Columns.GridColumn TaskColumn;
+        private DevExpress.XtraGrid.Columns.GridColumn TaskNameColomn;
         private DevExpress.XtraCharts.ChartControl VoltageChart;
         private DevExpress.XtraCharts.ChartControl CurrentChart;
+        private DevExpress.XtraEditors.TextEdit VoltageEdit;
+        private DevExpress.XtraEditors.TextEdit CurrentEdit;
+        private DevExpress.XtraEditors.SimpleButton UpdateButton;
     }
 }

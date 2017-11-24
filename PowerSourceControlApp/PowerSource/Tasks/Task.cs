@@ -13,10 +13,11 @@ namespace PowerSourceControlApp.PowerSource.Tasks
         public uint TaskNumber;
         public decimal Argument;
         public string TaskName;
-        private PowerSource _parentPowerSource;
+        private readonly PowerSource _parentPowerSource;
         public Chanel TargetChanel;
         public bool IsActive;
         public bool IsComplited;
+        public bool MarkForDelite;
         public string DisplayName { get; }
 
         public Task(Chanel chanel, string name, decimal argument, uint assignedTaskNumber)
@@ -29,6 +30,7 @@ namespace PowerSourceControlApp.PowerSource.Tasks
             _parentPowerSource = TargetChanel.ParentPowerSource;
             IsActive = false;
             IsComplited = false;
+            MarkForDelite = false;
             TaskNumber = assignedTaskNumber;
 
             if (Argument != 0)
@@ -63,7 +65,7 @@ namespace PowerSourceControlApp.PowerSource.Tasks
         {
             try
             {
-                using (var connection = new MySqlConnection(_parentPowerSource.MSQLConnectionString.ToString()))
+                using (var connection = new MySqlConnection(_parentPowerSource.MsqlConnectionString.ToString()))
                 {
                     SimpleCRUD.SetDialect(SimpleCRUD.Dialect.MySQL);
                     connection.Open();
@@ -97,7 +99,7 @@ namespace PowerSourceControlApp.PowerSource.Tasks
 
             try
             {
-                using (var connection = new MySqlConnection(_parentPowerSource.MSQLConnectionString.ToString()))
+                using (var connection = new MySqlConnection(_parentPowerSource.MsqlConnectionString.ToString()))
                 {
                     SimpleCRUD.SetDialect(SimpleCRUD.Dialect.MySQL);
                     connection.Open();

@@ -93,6 +93,7 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="DeviceManagment\NetworkDeviceDetector.cs" />
+    <Compile Include="PowerSource\Controller.cs" />
     <Compile Include="PowerSource\PowerSource.cs" />
     <Compile Include="PowerSource\Chanel.cs" />
     <Compile Include="DapperDTO\CurrentTasks.cs" />

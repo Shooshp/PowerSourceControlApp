@@ -14,18 +14,18 @@ namespace PowerSourceControlApp.PowerSource
     public class PowerSource
     {
         public string IpAddress { get; }
+        public string Hostname { get; set; }
+        public string DisplayName { get; set; }
         public string Status;
         public string Message;
-        public string Reply;
         public bool IsOnline { get; set; }
-        public bool SqlIsBusy;             
         public readonly int StatusPort;
-        public List<Chanel> ChanelList;
-        public TaskManager DutyManager;
-        public DeviceManager Collection;
-        public StatusChecker Pinger;
-        private SshClient _sshConnector;
-        public MySqlConnectionStringBuilder MSQLConnectionString;
+        public readonly List<Chanel> ChanelList;
+        public readonly TaskManager DutyManager;
+        public readonly DeviceManager Collection;
+        public readonly StatusChecker Pinger;
+        private readonly SshClient _sshConnector;
+        public readonly MySqlConnectionStringBuilder MsqlConnectionString;
 
         private static readonly DateTime Epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Unspecified);
 
@@ -33,17 +33,18 @@ namespace PowerSourceControlApp.PowerSource
         public PowerSource(string ipAddress, DeviceManager collection)
         {
             Message = "";
+            Hostname = "";
+            DisplayName = "";
             Pinger = new StatusChecker(this);
             DutyManager = new TaskManager(this);
             ChanelList = new List<Chanel>();           
             IpAddress = ipAddress;
             Collection = collection;
             StatusPort = 10236;
-            SqlIsBusy = false;
 
             _sshConnector = new SshClient(IpAddress, "pi", "raspberry");
 
-            MSQLConnectionString = new MySqlConnectionStringBuilder
+            MsqlConnectionString = new MySqlConnectionStringBuilder
             {
                 Server = IpAddress,
                 UserID = "root",
@@ -51,7 +52,21 @@ namespace PowerSourceControlApp.PowerSource
                 Database = "local_data_storage"
             };
 
-            using (var connection = new MySqlConnection(MSQLConnectionString.ToString()))
+            IsOnline = true;
+            GetHostname();
+            Pinger.Start();
+            GetChanelList();
+            InitChanels();
+            SyncSystemTime();
+            DutyManager.Start();
+
+            DutyManager.SetCurrent(ChanelList[0], 0.05m);
+            DutyManager.SetVoltage(ChanelList[0], 5.5m);
+        }
+
+        private void GetChanelList()
+        {
+            using (var connection = new MySqlConnection(MsqlConnectionString.ToString()))
             {
                 SimpleCRUD.SetDialect(SimpleCRUD.Dialect.MySQL);
                 connection.Open();
@@ -61,27 +76,33 @@ namespace PowerSourceControlApp.PowerSource
                 {
                     ChanelList.Add(new Chanel(chanel.Id, this));
                 }
-
                 connection.Close();
             }
+        }
 
+        private void InitChanels()
+        {
             foreach (var chanel in ChanelList)
             {
                 var initThread = new Thread(() => chanel.Init());
                 initThread.Start();
             }
-
-            IsOnline = true;
-            SyncSystemTime();
-            Pinger.Start();
-            DutyManager.Start();
-
-            while (ChanelList.Exists(e => e.IsInited == false)) 
+            while (ChanelList.Exists(e => e.IsInited == false))
             {
-                Thread.Sleep(800);
+                Thread.Sleep(1);
             }
-            DutyManager.SetCurrent(ChanelList[0], 0.05m);
-            DutyManager.SetVoltage(ChanelList[0], 5.5m);
+        }
+
+        private void GetHostname()
+        {
+            Hostname = RunSshCommand("hostname");
+            DisplayName = string.Concat(Hostname, "(", IpAddress, ")");
+        }
+
+        private void SetHostname(string name)
+        {
+            RunSshCommand(string.Concat("sudo hostnamectl set-hostname ", name));
+            GetHostname();
         }
 
         private void SyncSystemTime()

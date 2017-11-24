@@ -16,18 +16,24 @@ namespace PowerSourceControlApp.PowerSource
         private readonly Random _randomNumberGenerator;
         public bool IsInited;
 
+        public Settings SettingsOnChanel;
+
         public uint ChanelId { get; set; }
         public string ChanelUUID { get; set; }
         public uint Address { get; set; }
         public uint Status { get; set; }
         public decimal Voltage { get; set; }
         public decimal Current { get; set; }
+
+        public decimal RecentVoltageDisplay { get; set; }
+        public decimal RecentCurrentDisplay { get; set; }
+
         public decimal Power { get; set; }
         public bool Calibration { get; set; }
         [Magic]
         public bool OnOff { get; set; }
 
-        private Settings _settings;
+        
 
         public Chanel(uint chanelId, PowerSource parent)
         {
@@ -36,6 +42,9 @@ namespace PowerSourceControlApp.PowerSource
             ParentPowerSource = parent;
             ChanelId = chanelId;
             IsInited = false;
+
+            RecentVoltageDisplay = 0;
+            RecentCurrentDisplay = 0;
         }
 
         public void Init()
@@ -45,17 +54,17 @@ namespace PowerSourceControlApp.PowerSource
 
         private void SetSettingsTable()
         {
-            _settings.Voltage = Voltage;
-            _settings.Current = Current;
-            _settings.Power = Power;
-            _settings.Calibration = Calibration;
-            _settings.OnOff = OnOff;
+            SettingsOnChanel.Voltage = Voltage;
+            SettingsOnChanel.Current = Current;
+            SettingsOnChanel.Power = Power;
+            SettingsOnChanel.Calibration = Calibration;
+            SettingsOnChanel.OnOff = OnOff;
 
-            using (var connection = new MySqlConnection(ParentPowerSource.MSQLConnectionString.ToString()))
+            using (var connection = new MySqlConnection(ParentPowerSource.MsqlConnectionString.ToString()))
             {
                 SimpleCRUD.SetDialect(SimpleCRUD.Dialect.MySQL);
                 connection.Open();
-                connection.UpdateAsync(_settings);
+                connection.UpdateAsync(SettingsOnChanel);
                 connection.Close();
             }
         }
@@ -82,31 +91,57 @@ namespace PowerSourceControlApp.PowerSource
                 {
                     try
                     {
-                        using (var connection = new MySqlConnection(ParentPowerSource.MSQLConnectionString.ToString()))
+                        using (var connection = new MySqlConnection(ParentPowerSource.MsqlConnectionString.ToString()))
                         {
                             SimpleCRUD.SetDialect(SimpleCRUD.Dialect.MySQL);
                             connection.Open();
 
-                            _settings = connection.Get<Settings>(ChanelId);
-                            ResultsList = connection.GetList<Measurement>("where measured_at > date_sub(now(), interval 1 minute) ").ToList();
+                            SettingsOnChanel = connection.Get<Settings>(ChanelId);
 
-                            ChanelUUID = _settings.UUID;
-                            Address = _settings.Address;
-                            Voltage = _settings.Voltage;
-                            Current = _settings.Current;
-                            Power = _settings.Power;
-                            Calibration = _settings.Calibration;
-                            OnOff = _settings.OnOff;
+                            while (SettingsOnChanel.UUID == null)
+                            {
+                                Thread.Sleep(1);
+                            }
+                                
+                            ResultsList = connection.GetList<Measurement>(" where (measured_at > date_sub(now(), interval 1 minute)) AND ( power_source_measurement_uuid = @ThisUUID )", new { ThisUUID = SettingsOnChanel.UUID}).ToList();
 
+                            if (ResultsList.Count != 0)
+                            {
+                                if (RecentVoltageDisplay != ResultsList[ResultsList.Count - 1].Voltage)
+                                {
+                                    RecentVoltageDisplay = ResultsList[ResultsList.Count - 1].Voltage;
+
+                                    if (ParentPowerSource.Collection.SelectedPowerSourceIp ==
+                                        ParentPowerSource.IpAddress)
+                                    {
+                                        ParentPowerSource.Collection.IsUpdated = true;
+                                    }
+                                }
+                                if (RecentCurrentDisplay != ResultsList[ResultsList.Count - 1].Current)
+                                {
+                                    RecentCurrentDisplay = ResultsList[ResultsList.Count - 1].Current;
+
+                                    if (ParentPowerSource.Collection.SelectedPowerSourceIp ==
+                                        ParentPowerSource.IpAddress)
+                                    {
+                                        ParentPowerSource.Collection.IsUpdated = true;
+                                    }
+                                }
+                            } 
+                            
                             connection.Close();
 
                             if (!IsInited)
-                                IsInited = true;
-
-                           /* if (ParentPowerSource.Collection.SelectedPowerSourceIp == ParentPowerSource.IpAddress)
                             {
-                                ParentPowerSource.Collection.IsUpdated = true;
-                            }*/
+                                ChanelUUID = SettingsOnChanel.UUID;
+                                Address = SettingsOnChanel.Address;
+                                Voltage = SettingsOnChanel.Voltage;
+                                Current = SettingsOnChanel.Current;
+                                Power = SettingsOnChanel.Power;
+                                Calibration = SettingsOnChanel.Calibration;
+                                OnOff = SettingsOnChanel.OnOff;
+                                IsInited = true;
+                            }                             
                         }
                     }
                     catch (Exception e)
