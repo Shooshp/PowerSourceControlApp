@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Globalization;
+using System.Linq;
+using System.Threading;
 using Dapper;
 using MySql.Data.MySqlClient;
 using PowerSourceControlApp.DapperDTO;
@@ -52,6 +54,8 @@ namespace PowerSourceControlApp.PowerSource.Tasks
             {
                 ChekProgress();
             }
+            TargetChanel.SyncSettings(); //Re Update Settings in chanel from DB
+            
             IsActive = false;
             IsComplited = true;
         }

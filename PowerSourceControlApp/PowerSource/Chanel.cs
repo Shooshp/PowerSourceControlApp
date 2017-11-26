@@ -33,7 +33,6 @@ namespace PowerSourceControlApp.PowerSource
         [Magic]
         public bool OnOff { get; set; }
 
-        
 
         public Chanel(uint chanelId, PowerSource parent)
         {
@@ -133,13 +132,7 @@ namespace PowerSourceControlApp.PowerSource
 
                             if (!IsInited)
                             {
-                                ChanelUUID = SettingsOnChanel.UUID;
-                                Address = SettingsOnChanel.Address;
-                                Voltage = SettingsOnChanel.Voltage;
-                                Current = SettingsOnChanel.Current;
-                                Power = SettingsOnChanel.Power;
-                                Calibration = SettingsOnChanel.Calibration;
-                                OnOff = SettingsOnChanel.OnOff;
+                                SyncSettings();
                                 IsInited = true;
                             }                             
                         }
@@ -152,6 +145,17 @@ namespace PowerSourceControlApp.PowerSource
                     }
                 }
             }
+        }
+
+        public void SyncSettings()
+        {
+            ChanelUUID = SettingsOnChanel.UUID;
+            Address = SettingsOnChanel.Address;
+            Voltage = SettingsOnChanel.Voltage;
+            Current = SettingsOnChanel.Current;
+            Power = SettingsOnChanel.Power;
+            Calibration = SettingsOnChanel.Calibration;
+            OnOff = SettingsOnChanel.OnOff;
         }
 
         private void RaisePropertyChanged(string propName)

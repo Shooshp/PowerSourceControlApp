@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using Dapper;
 using MySql.Data.MySqlClient;
@@ -126,6 +127,76 @@ namespace PowerSourceControlApp.PowerSource
             var result = cmd.Execute();
             _sshConnector.Disconnect();
             return result;
+        }
+
+        public void Update(decimal voltage, decimal current, uint chanelId)
+        {
+            var id = (int) chanelId;
+            decimal VoltageSet = ChanelList.Single(p => p.ChanelId == id).Voltage;
+            decimal CurrentSet = ChanelList.Single(p => p.ChanelId == id).Current;
+            bool OnOffSet = ChanelList.Single(p => p.ChanelId == id).OnOff;
+
+            if (VoltageSet == 0) // Chanels voltage is zero
+            {
+                if (CurrentSet == 0) // Chanels current is zero
+                {
+                    if (current != 0) // But update current is not zero
+                    {
+                        DutyManager.SetCurrent(ChanelList[id], current);
+                        if (voltage != 0) 
+                        {
+                            DutyManager.SetVoltage(ChanelList[id], voltage);
+                        }
+                    }
+                    else
+                    {
+                        //TODO: Text Popoup with error: no voltage without current!
+                    }
+                }
+                else // Chanel current is not zero
+                {
+                    if (current != 0)
+                    {
+                        if (CurrentSet != current) // Current not have same value
+                        {
+                            DutyManager.SetCurrent(ChanelList[id], current);
+                        }
+                        if (voltage != 0)
+                        {
+                            DutyManager.SetVoltage(ChanelList[id], voltage);
+                        }
+                    }
+                    else
+                    {
+                        //TODO: Text Popoup with error: no voltage without current!
+                    }
+                }
+            }
+            else
+            {
+                if (voltage == 0)
+                {
+                    DutyManager.ShutDown(ChanelList[id]);
+                }
+                else
+                {
+                    if (current != 0)
+                    {
+                        if (CurrentSet != current)
+                        {
+                            DutyManager.SetCurrent(ChanelList[id], current);
+                        }
+                        if (VoltageSet != voltage)
+                        {
+                            DutyManager.SetVoltage(ChanelList[id], voltage);
+                        }
+                    }
+                    else
+                    {
+                        //TODO: Text Popoup with error: no voltage without current!
+                    }
+                }
+            }
         }
     }
 }

@@ -24,7 +24,7 @@ namespace PowerSourceControlApp
             MainViewControl = new VisualInterfaceControl(PowerSourceCollection);
             DeviceDetector = new NetworkDeviceDetector();
             DeviceDetector.OnDataReceived += JustSimpleHandler;
-            DeviceDetector.CreateUdpReadThread();
+            
             
             InitializeComponent();
             MainViewControl.ConnectToGrids(
@@ -37,16 +37,18 @@ namespace PowerSourceControlApp
                 chanellistlayoutview: layoutView1,
                 tasklistgridview: gridView2,
                 voltageedit: VoltageEdit,
-                currentedit: CurrentEdit);
+                currentedit: CurrentEdit,
+                updatebutton: UpdateButton);
             CreateGauge(layoutView1.Columns["Status"], StatusGauge);
             CreateGauge(layoutView1.Columns["RecentVoltageDisplay"], VoltageGauge);
             CreateGauge(layoutView1.Columns["RecentCurrentDisplay"], CurrentGauge);
 
-            
             var edit = new RepositoryItemToggleSwitch();
             layoutView1.Columns["OnOff"].ColumnEdit = edit;
             edit.EditValueChanged += Edit_EditValueChanged;
 
+            MainViewControl.UpdateForms();
+            DeviceDetector.CreateUdpReadThread();
         }
 
         private void Edit_EditValueChanged(object sender, EventArgs e)

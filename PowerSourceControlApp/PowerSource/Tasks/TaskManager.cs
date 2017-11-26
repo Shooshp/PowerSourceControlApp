@@ -94,18 +94,37 @@ namespace PowerSourceControlApp.PowerSource
 
         private void Add(Chanel chanel, string name, decimal argument)
         {
+            bool taskListIsUpdated = false;
+
             if (!IsEmpty)
             {
                 var nextNumber = TaskList.Count + 1;
-                TaskList.Add(new Task(chanel, name, argument, Convert.ToUInt32(nextNumber)));
+                if (!TaskList.Exists(x => x.TargetChanel == chanel && x.TaskName == name && x.Argument == argument))
+                {
+                    if (TaskList.Exists(x => x.TargetChanel == chanel && x.TaskName == name && x.IsActive == false && x.IsComplited == false))
+                    { // If There is exist task to the same chanel with the same duty 
+                      // but with different argument, then just update thet task
+                        TaskList.Single(x =>
+                            x.TargetChanel == chanel && 
+                            x.TaskName == name && 
+                            x.IsActive == false &&
+                            x.IsComplited == false).Argument = argument;
+
+                        taskListIsUpdated = true;
+                    }
+                    // Add task only if its on exist already
+                    TaskList.Add(new Task(chanel, name, argument, Convert.ToUInt32(nextNumber)));
+                    taskListIsUpdated = true;
+                }
             }
             else
             {
                 TaskList.Add(new Task(chanel, name, argument, 1));
+                taskListIsUpdated = true;
             }
-            if (_parentPowerSource.Collection.SelectedPowerSourceIp == _parentPowerSource.IpAddress)
+            if (taskListIsUpdated && (_parentPowerSource.Collection.SelectedPowerSourceIp == _parentPowerSource.IpAddress))
             {
-                _parentPowerSource.Collection.IsUpdated = true;
+                _parentPowerSource.Collection.IsUpdated = true; //TODO:: Need to refresh ONLY task list for selected powersource if it's the case
             }
         }
 
