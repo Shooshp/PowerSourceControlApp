@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using DevExpress.XtraCharts;
 using DevExpress.XtraEditors;
 using DevExpress.XtraGrid;
@@ -30,10 +32,11 @@ namespace PowerSourceControlApp
         private GridView _taskListGridView;
         private LayoutView _chanelListLayoutView;
 
-        private TextEdit _voltageEdit;
-        private TextEdit _currentEdit;
+        private SpinEdit _voltageEdit;
+        private SpinEdit _currentEdit;
 
         private SimpleButton _updateButton;
+        private ToggleSwitch _onOffSwitch;
 
         private DeviceManager PowerSourceCollection;
 
@@ -62,7 +65,8 @@ namespace PowerSourceControlApp
             object tasklistgridview,
             object voltageedit,
             object currentedit,
-            object updatebutton)
+            object updatebutton,
+            object onoffswitch)
         {
             _powerSourceListGridControl = (GridControl)powersourcegrid;
             _chanelListGridControl = (GridControl)chanellistgrid;
@@ -75,10 +79,12 @@ namespace PowerSourceControlApp
             _chanelListLayoutView = (LayoutView) chanellistlayoutview;
             _taskListGridView = (GridView) tasklistgridview;
 
-            _voltageEdit = (TextEdit) voltageedit;
-            _currentEdit = (TextEdit) currentedit;
+            _voltageEdit = (SpinEdit) voltageedit;
+            _currentEdit = (SpinEdit) currentedit;
 
             _updateButton = (SimpleButton) updatebutton;
+
+            _onOffSwitch = (ToggleSwitch) onoffswitch;
 
             _powerSourceListGridControl.DataSource = DetectedPowerSources;
 
@@ -99,6 +105,7 @@ namespace PowerSourceControlApp
                     ChartsDs(-1, -1);
                     EditorsDs(-1, -1);
                     UpdateButtonIsVisible(false);
+                    OnOffSwitchIsVisible(false);
                     PowerSourceCollection.SelectedPowerSourceIp = null;
                 }
                 else
@@ -109,6 +116,8 @@ namespace PowerSourceControlApp
                         ChartsDs(0, 0);
                         EditorsDs(0, 0);
                         UpdateButtonIsVisible(true);
+                        OnOffSwitchIsVisible(true);
+                        OnOffSwitchState(0, 0);
                         PowerSourceCollection.SelectedPowerSourceIp = DetectedPowerSources.ElementAt(0).IpAddress;
                     }
                     else
@@ -117,6 +126,8 @@ namespace PowerSourceControlApp
                         ChartsDs(_focusedPowerSourceIndex, _focusedChanelIndex);
                         EditorsDs(_focusedPowerSourceIndex, _focusedChanelIndex);
                         UpdateButtonIsVisible(true);
+                        OnOffSwitchIsVisible(true);
+                        OnOffSwitchState(_focusedPowerSourceIndex, _focusedChanelIndex);
                         PowerSourceCollection.SelectedPowerSourceIp = DetectedPowerSources.ElementAt(_focusedPowerSourceIndex).IpAddress;
                     }
                 }     
@@ -127,6 +138,7 @@ namespace PowerSourceControlApp
                 ChartsDs(-1, -1);
                 EditorsDs(-1, -1);
                 UpdateButtonIsVisible(false);
+                OnOffSwitchIsVisible(false);
             }
             RefreshCharts();
             RefreshLists();
@@ -153,6 +165,8 @@ namespace PowerSourceControlApp
                         ChartsDs(_focusedPowerSourceIndex, 0);
                         EditorsDs(_focusedPowerSourceIndex, 0);
                         UpdateButtonIsVisible(true);
+                        OnOffSwitchIsVisible(true);
+                        OnOffSwitchState(_focusedPowerSourceIndex, 0);
                         PowerSourceCollection.SelectedPowerSourceIp = DetectedPowerSources.ElementAt(_focusedPowerSourceIndex).IpAddress;
                     }
                     else // If device is offline we show nothing
@@ -161,6 +175,7 @@ namespace PowerSourceControlApp
                         TaskAndChanelListDs(-1);
                         EditorsDs(-1, -1);
                         UpdateButtonIsVisible(false);
+                        OnOffSwitchIsVisible(false);
                         PowerSourceCollection.SelectedPowerSourceIp = null;
                     }      
                 }
@@ -170,6 +185,7 @@ namespace PowerSourceControlApp
                     TaskAndChanelListDs(-1);
                     EditorsDs(-1, -1);
                     UpdateButtonIsVisible(false);
+                    OnOffSwitchIsVisible(false);
                     PowerSourceCollection.SelectedPowerSourceIp = null;
                 }
 
@@ -198,12 +214,15 @@ namespace PowerSourceControlApp
                         ChartsDs(_focusedPowerSourceIndex, _focusedChanelIndex);
                         EditorsDs(_focusedPowerSourceIndex, _focusedChanelIndex);
                         UpdateButtonIsVisible(true);
+                        OnOffSwitchIsVisible(true);
+                        OnOffSwitchState(_focusedPowerSourceIndex, _focusedChanelIndex);
                     }
                     else // If device is offline we show nothing
                     {
                         ChartsDs(-1, -1);
                         EditorsDs(-1, -1);
                         UpdateButtonIsVisible(false);
+                        OnOffSwitchIsVisible(false);
                     }
                 }
                 else // If there are no devices on the list perhaps event was called on start of application
@@ -211,6 +230,7 @@ namespace PowerSourceControlApp
                     ChartsDs(-1, -1);
                     EditorsDs(-1, -1);
                     UpdateButtonIsVisible(false);
+                    OnOffSwitchIsVisible(false);
                 }
                 RefreshCharts();
 
@@ -224,14 +244,35 @@ namespace PowerSourceControlApp
 
         public void UpdateButtonClick()
         {
-            decimal voltage = (decimal) _voltageEdit.EditValue;
-            decimal current = (decimal) _currentEdit.EditValue;
+            decimal voltage = Convert.ToDecimal(_voltageEdit.EditValue);
+            decimal current = Convert.ToDecimal(_currentEdit.EditValue);
             uint chanelId = DetectedPowerSources.ElementAt(_focusedPowerSourceIndex).ChanelList.ElementAt(_focusedChanelIndex).ChanelId;
 
             if (DetectedPowerSources.ElementAt(_focusedPowerSourceIndex).IsOnline)
             {
                 PowerSourceCollection.DetectedPowerSources.Single(p => p.IpAddress == _focusedPowerSourceIp).Update(voltage, current, chanelId);
             }                  
+        }
+
+        public void OnOffSwitchToggled()
+        {
+            uint chanelId = DetectedPowerSources.ElementAt(_focusedPowerSourceIndex).ChanelList.ElementAt(_focusedChanelIndex).ChanelId;
+            bool state = _onOffSwitch.IsOn;
+
+            if (DetectedPowerSources.ElementAt(_focusedPowerSourceIndex).IsOnline)
+            {
+                PowerSourceCollection.DetectedPowerSources.Single(p => p.IpAddress == _focusedPowerSourceIp).Switch(chanelId, state);
+            }
+            while (DetectedPowerSources.ElementAt(_focusedPowerSourceIndex).ChanelList.ElementAt(_focusedChanelIndex).OnOff != state)
+            {
+                DetectedPowerSources.ElementAt(_focusedPowerSourceIndex).ChanelList.ElementAt(_focusedChanelIndex).SyncSettings();
+                Thread.Sleep(1);
+            }
+        }
+
+        private void OnOffSwitchState(int powersourceindex, int chanelindex)
+        {
+            _onOffSwitch.EditValue = DetectedPowerSources.ElementAt(powersourceindex).ChanelList.ElementAt(chanelindex).OnOff;
         }
 
         private void TaskAndChanelListDs(int powersourceindex)
@@ -254,15 +295,15 @@ namespace PowerSourceControlApp
         {
             if (powersourceindex == -1)
             { //Empty Chanel List or empty PowerSource List
-                _voltageEdit.EditValue = null;
-                _currentEdit.EditValue = null;
+               /* _voltageEdit.EditValue = null;
+                _currentEdit.EditValue = null;*/
                 EditorsIsVisible(false);
             }
             else
             {
-                _voltageEdit.EditValue = DetectedPowerSources.ElementAt(powersourceindex).ChanelList.ElementAt(chanelindex).Voltage;
+              /*  _voltageEdit.EditValue = DetectedPowerSources.ElementAt(powersourceindex).ChanelList.ElementAt(chanelindex).Voltage;
                 _currentEdit.EditValue = DetectedPowerSources.ElementAt(powersourceindex).ChanelList.ElementAt(chanelindex).Current;
-                EditorsIsVisible(true);
+               */ EditorsIsVisible(true);
             }
         }
 
@@ -285,14 +326,6 @@ namespace PowerSourceControlApp
                         ElementAt(chanelindex).ResultsList;
 
                 ChartsIsVisible(true);
-            }
-        }
-
-        public void RefreshGauges(string ip, int chanelindex)
-        {
-            if (ip == _focusedPowerSourceIp)
-            {
-                _chanelListLayoutView.RefreshRow(chanelindex);
             }
         }
 
@@ -334,6 +367,11 @@ namespace PowerSourceControlApp
         private void UpdateButtonIsVisible(bool state)
         {
             _updateButton.Visible = state;
+        }
+
+        private void OnOffSwitchIsVisible(bool state)
+        {
+            _onOffSwitch.Visible = state;
         }
     }
 }

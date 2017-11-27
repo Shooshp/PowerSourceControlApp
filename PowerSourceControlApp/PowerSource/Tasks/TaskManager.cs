@@ -8,7 +8,7 @@ namespace PowerSourceControlApp.PowerSource
 {
     public class TaskManager
     {        
-        public bool Halt;
+        public bool IsActive;
         public List<Task> TaskList;
         private Thread _taskManagerThread;
         private readonly Random _randomNumberGenerator;
@@ -18,9 +18,13 @@ namespace PowerSourceControlApp.PowerSource
         {
             get
             {
-                if (TaskList.Exists(e => e.IsActive))
+                if (!IsEmpty)
                 {
-                    return true;
+                    if (TaskList.Exists(e => e.IsExecuting))
+                    {
+                        return true;
+                    }
+                    return false;
                 }
                 return false;
             }
@@ -43,10 +47,10 @@ namespace PowerSourceControlApp.PowerSource
             _randomNumberGenerator = new Random();
             _parentPowerSource = parent;
             TaskList = new List<Task>();
-            Halt = false;
+            IsActive = true;
         }
 
-        public void Start()
+        public void StartTaskManagerThread()
         {
             var threadName = string.Concat("TaskManager:", _parentPowerSource.IpAddress);
             _taskManagerThread = new Thread(TaskManagerThread)
@@ -58,37 +62,36 @@ namespace PowerSourceControlApp.PowerSource
             _taskManagerThread.Start();
         }
 
+        public void StopTaskManagerThread()
+        {
+            IsActive = false;
+            GC.Collect();
+        }
+
         public void ReStart()
         {
             TaskList.Clear();
-            Start();
+            StartTaskManagerThread();
         }
 
         private void TaskManagerThread()
-        { 
-            while (true)
-            {
-                Thread.Sleep(_randomNumberGenerator.Next(400, 500));
-                if (!Halt)
+        {
+            Thread.Sleep(_randomNumberGenerator.Next(400, 500));
+            while (IsActive)
+            {               
+                //RemoveMarked();
+                if (_parentPowerSource.IsOnline)
                 {
-                    //RemoveMarked();
-                    if (_parentPowerSource.IsOnline)
+                    if (!RunningTaskExist && _parentPowerSource.Status == "Idle")
                     {
-                        if (!RunningTaskExist && _parentPowerSource.Status == "Idle")
+                        RemoveComplited();
+                        if (!IsEmpty)
                         {
-                            RemoveComplited();
-                            if (!IsEmpty)
-                            {
-                                var nextTask = TaskList.OrderBy(o => o.TaskNumber).First();
-                                nextTask.Run();
-                            }
+                            var nextTask = TaskList.OrderBy(o => o.TaskNumber).First();
+                            nextTask.Run();
                         }
                     }
-                    else
-                    { 
-                        Halt = true;
-                    }
-                }               
+                }              
             }
         }     
 
@@ -101,13 +104,13 @@ namespace PowerSourceControlApp.PowerSource
                 var nextNumber = TaskList.Count + 1;
                 if (!TaskList.Exists(x => x.TargetChanel == chanel && x.TaskName == name && x.Argument == argument))
                 {
-                    if (TaskList.Exists(x => x.TargetChanel == chanel && x.TaskName == name && x.IsActive == false && x.IsComplited == false))
+                    if (TaskList.Exists(x => x.TargetChanel == chanel && x.TaskName == name && x.IsExecuting == false && x.IsComplited == false))
                     { // If There is exist task to the same chanel with the same duty 
                       // but with different argument, then just update thet task
                         TaskList.Single(x =>
                             x.TargetChanel == chanel && 
                             x.TaskName == name && 
-                            x.IsActive == false &&
+                            x.IsExecuting == false &&
                             x.IsComplited == false).Argument = argument;
 
                         taskListIsUpdated = true;
@@ -130,11 +133,14 @@ namespace PowerSourceControlApp.PowerSource
 
         private void RemoveComplited()
         {
-            TaskList.RemoveAll(x => x.IsComplited && x.IsActive == false);            
-            if (_parentPowerSource.Collection.SelectedPowerSourceIp == _parentPowerSource.IpAddress)
+            if (!IsEmpty)
             {
-                _parentPowerSource.Collection.IsUpdated = true;
-            }    
+                TaskList.RemoveAll(x => x.IsComplited && x.IsExecuting == false);
+                if (_parentPowerSource.Collection.SelectedPowerSourceIp == _parentPowerSource.IpAddress)
+                {
+                    _parentPowerSource.Collection.IsUpdated = true;
+                }
+            }
         }
 
         private void RemoveMarked()

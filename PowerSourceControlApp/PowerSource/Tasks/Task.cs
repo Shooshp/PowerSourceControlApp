@@ -17,7 +17,7 @@ namespace PowerSourceControlApp.PowerSource.Tasks
         public string TaskName;
         private readonly PowerSource _parentPowerSource;
         public Chanel TargetChanel;
-        public bool IsActive;
+        public bool IsExecuting;
         public bool IsComplited;
         public bool MarkForDelite;
         public string DisplayName { get; }
@@ -30,7 +30,7 @@ namespace PowerSourceControlApp.PowerSource.Tasks
             TaskName = name;
             TargetChanel = chanel;
             _parentPowerSource = TargetChanel.ParentPowerSource;
-            IsActive = false;
+            IsExecuting = false;
             IsComplited = false;
             MarkForDelite = false;
             TaskNumber = assignedTaskNumber;
@@ -39,11 +39,15 @@ namespace PowerSourceControlApp.PowerSource.Tasks
             {
                 DisplayName = string.Concat(TaskName, ": ", Argument.ToString(CultureInfo.InvariantCulture), " to Chanel:", TargetChanel.ChanelId.ToString());  
             }
+            else
+            {
+                DisplayName = string.Concat(TaskName, " Chanel:", TargetChanel.ChanelId.ToString());
+            }
         }
 
         public void Run()
         {
-            IsActive = true;
+            IsExecuting = true;
             CommitToDeviceDb();
             if (_parentPowerSource.Collection.SelectedPowerSourceIp == _parentPowerSource.IpAddress)
             {
@@ -56,7 +60,7 @@ namespace PowerSourceControlApp.PowerSource.Tasks
             }
             TargetChanel.SyncSettings(); //Re Update Settings in chanel from DB
             
-            IsActive = false;
+            IsExecuting = false;
             IsComplited = true;
         }
 

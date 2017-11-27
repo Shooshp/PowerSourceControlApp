@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using DevExpress.XtraEditors.CustomEditor;
@@ -24,9 +25,15 @@ namespace PowerSourceControlApp
             MainViewControl = new VisualInterfaceControl(PowerSourceCollection);
             DeviceDetector = new NetworkDeviceDetector();
             DeviceDetector.OnDataReceived += JustSimpleHandler;
-            
-            
+
             InitializeComponent();
+
+
+            Version version = Assembly.GetExecutingAssembly().GetName().Version;
+            this.Text = "PowerSource Control " + version.Major + "." + version.Minor + " (build " + version.Build + ")";
+
+
+
             MainViewControl.ConnectToGrids(
                 powersourcegrid: PowerSourceList, 
                 chanellistgrid: PowerSourceChanelList,
@@ -38,17 +45,22 @@ namespace PowerSourceControlApp
                 tasklistgridview: gridView2,
                 voltageedit: VoltageEdit,
                 currentedit: CurrentEdit,
-                updatebutton: UpdateButton);
+                updatebutton: UpdateButton,
+                onoffswitch: OnOffSwitch);
+
             CreateGauge(layoutView1.Columns["Status"], StatusGauge);
             CreateGauge(layoutView1.Columns["RecentVoltageDisplay"], VoltageGauge);
             CreateGauge(layoutView1.Columns["RecentCurrentDisplay"], CurrentGauge);
 
-            var edit = new RepositoryItemToggleSwitch();
-            layoutView1.Columns["OnOff"].ColumnEdit = edit;
-            edit.EditValueChanged += Edit_EditValueChanged;
 
             MainViewControl.UpdateForms();
             DeviceDetector.CreateUdpReadThread();
+        }
+
+        public sealed override string Text
+        {
+            get { return base.Text; }
+            set { base.Text = value; }
         }
 
         private void Edit_EditValueChanged(object sender, EventArgs e)
@@ -87,8 +99,8 @@ namespace PowerSourceControlApp
                 if (!PowerSourceCollection.IsBusy)
                 {
                     DeviceDetector.SuspendThread = true;
-                    var handleDevice = new Thread(() => PowerSourceCollection.NewDeviceDetectorHanler(senderip));
-                    handleDevice.IsBackground = true;
+                    var handleDevice =
+                        new Thread(() => PowerSourceCollection.NewDeviceDetectorHanler(senderip)) {IsBackground = true};
                     handleDevice.Start();
                     DeviceDetector.SuspendThread = false;
                 }
@@ -107,29 +119,14 @@ namespace PowerSourceControlApp
             }
         }
 
-        private void VoltageGraph_EditValueChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void PowerSourceList_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void VoltageEdit_EditValueChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void CurrentEdit_EditValueChanged(object sender, EventArgs e)
-        {
-
-        }
-
         private void UpdateButton_Click(object sender, EventArgs e)
         {
             MainViewControl.UpdateButtonClick();
+        }
+
+        private void ToggleSwitch2_Toggled(object sender, EventArgs e)
+        {
+            MainViewControl.OnOffSwitchToggled();
         }
     }
 }

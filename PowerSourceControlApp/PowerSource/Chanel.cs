@@ -9,14 +9,14 @@ using PowerSourceControlApp.DapperDTO;
 
 namespace PowerSourceControlApp.PowerSource
 {
-    public sealed class Chanel : INotifyPropertyChanged
+    public sealed class Chanel 
     {
         public PowerSource ParentPowerSource { get; }
+        public Settings SettingsOnChanel;
         public List<Measurement> ResultsList;
         private readonly Random _randomNumberGenerator;
         public bool IsInited;
-
-        public Settings SettingsOnChanel;
+        public bool IsActive;
 
         public uint ChanelId { get; set; }
         public string ChanelUUID { get; set; }
@@ -30,9 +30,7 @@ namespace PowerSourceControlApp.PowerSource
 
         public decimal Power { get; set; }
         public bool Calibration { get; set; }
-        [Magic]
         public bool OnOff { get; set; }
-
 
         public Chanel(uint chanelId, PowerSource parent)
         {
@@ -46,30 +44,10 @@ namespace PowerSourceControlApp.PowerSource
             RecentCurrentDisplay = 0;
         }
 
-        public void Init()
+        public void StartSyncThread()
         {
-            SyncWithTables();
-        }
+            IsActive = true;
 
-        private void SetSettingsTable()
-        {
-            SettingsOnChanel.Voltage = Voltage;
-            SettingsOnChanel.Current = Current;
-            SettingsOnChanel.Power = Power;
-            SettingsOnChanel.Calibration = Calibration;
-            SettingsOnChanel.OnOff = OnOff;
-
-            using (var connection = new MySqlConnection(ParentPowerSource.MsqlConnectionString.ToString()))
-            {
-                SimpleCRUD.SetDialect(SimpleCRUD.Dialect.MySQL);
-                connection.Open();
-                connection.UpdateAsync(SettingsOnChanel);
-                connection.Close();
-            }
-        }
-
-        private void SyncWithTables()
-        {           
             var syncTableThread = new Thread(SyncThread)
             {
                 Name = string.Concat("SyncSettingsAndResultsForPS:", ParentPowerSource.IpAddress, "Chanel:", ChanelId),
@@ -77,14 +55,37 @@ namespace PowerSourceControlApp.PowerSource
                 Priority = ThreadPriority.Normal
             };
 
+
             syncTableThread.Start();
+        }
+
+        public void StopSyncThread()
+        {
+            IsActive = false;
+            GC.Collect();
         }
          
         private void SyncThread()
         {
-            while (true)
+            while (IsActive)
             {
-                Thread.Sleep(_randomNumberGenerator.Next(1000, 1100));
+                Thread.Sleep(_randomNumberGenerator.Next(500, 600));
+
+                if (!OnOff)
+                {
+                    Status = 0;
+                }
+                else
+                {
+                    if (Calibration)
+                    {
+                        Status = 3;
+                    }
+                    else
+                    {
+                        Status = 2;
+                    }
+                }
 
                 if (ParentPowerSource.IsOnline)
                 {
@@ -106,19 +107,26 @@ namespace PowerSourceControlApp.PowerSource
 
                             if (ResultsList.Count != 0)
                             {
+                                if (!OnOff)
+                                {
+                                    ResultsList[ResultsList.Count - 1].Voltage = 0;
+                                    ResultsList[ResultsList.Count - 1].Current = 0;
+                                }
+
                                 if (RecentVoltageDisplay != ResultsList[ResultsList.Count - 1].Voltage)
                                 {
                                     RecentVoltageDisplay = ResultsList[ResultsList.Count - 1].Voltage;
-
+                               
                                     if (ParentPowerSource.Collection.SelectedPowerSourceIp ==
                                         ParentPowerSource.IpAddress)
                                     {
                                         ParentPowerSource.Collection.IsUpdated = true;
                                     }
                                 }
+
                                 if (RecentCurrentDisplay != ResultsList[ResultsList.Count - 1].Current)
                                 {
-                                    RecentCurrentDisplay = ResultsList[ResultsList.Count - 1].Current;
+                                        RecentCurrentDisplay = ResultsList[ResultsList.Count - 1].Current;
 
                                     if (ParentPowerSource.Collection.SelectedPowerSourceIp ==
                                         ParentPowerSource.IpAddress)
@@ -126,22 +134,26 @@ namespace PowerSourceControlApp.PowerSource
                                         ParentPowerSource.Collection.IsUpdated = true;
                                     }
                                 }
-                            } 
-                            
+                            }
+                           
                             connection.Close();
 
                             if (!IsInited)
                             {
                                 SyncSettings();
-                                IsInited = true;
-                            }                             
+                            }
                         }
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
-                        Console.WriteLine(e);
-                        throw;
-                        //TODO: Need to implement some kind of SQL disconnect handler
+                        if (!ParentPowerSource.IsOnline)
+                        {
+                            IsActive = false;
+                        }
+                        else
+                        {
+                            Thread.Sleep(100);
+                        }
                     }
                 }
             }
@@ -156,32 +168,8 @@ namespace PowerSourceControlApp.PowerSource
             Power = SettingsOnChanel.Power;
             Calibration = SettingsOnChanel.Calibration;
             OnOff = SettingsOnChanel.OnOff;
+
+            IsInited = true;
         }
-
-        private void RaisePropertyChanged(string propName)
-        {
-            if (IsInited)
-            {
-                if (ParentPowerSource.IsOnline)
-                {
-                    try
-                    {
-                        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
-
-                        var updateThread = new Thread(SetSettingsTable)
-                        {
-                            IsBackground = true,
-                            Priority = ThreadPriority.Normal
-                        };
-                        updateThread.Start();
-                    }
-                    catch (Exception)
-                    {
-                    }
-                }
-            }
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
     }
 }
