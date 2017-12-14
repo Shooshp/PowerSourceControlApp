@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading;
+using System.Windows.Forms;
 using Dapper;
 using MySql.Data.MySqlClient;
 using PowerSourceControlApp.DapperDTO;
@@ -22,10 +23,15 @@ namespace PowerSourceControlApp.PowerSource
         public string Message;
         [Magic]
         public bool IsOnline { get; set; }
+
+        private int _hash;
+
+
         public readonly int StatusPort;
+        private List<Settings> SettingsList;
+        private List<Measurement> MeasurementList;
         public readonly List<Chanel> ChanelList;
         public readonly TaskManager DutyManager;
-        public readonly DeviceManager Collection;
         public readonly StatusChecker Pinger;
         private readonly SshClient _sshConnector;
         public readonly MySqlConnectionStringBuilder MsqlConnectionString;
@@ -33,7 +39,7 @@ namespace PowerSourceControlApp.PowerSource
         private static readonly DateTime Epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Unspecified);
 
 
-        public PowerSource(string ipAddress, DeviceManager collection)
+        public PowerSource(string ipAddress)
         {
             Message = "";
             Hostname = "";
@@ -42,8 +48,12 @@ namespace PowerSourceControlApp.PowerSource
             DutyManager = new TaskManager(this);
             ChanelList = new List<Chanel>();           
             IpAddress = ipAddress;
-            Collection = collection;
             StatusPort = 10236;
+
+            _hash = 0;
+
+            SettingsList = new List<Settings>();
+            MeasurementList = new List<Measurement>();
 
             _sshConnector = new SshClient(IpAddress, "pi", "raspberry");
 
@@ -59,67 +69,107 @@ namespace PowerSourceControlApp.PowerSource
             GetHostname();
             Pinger.Start();
             GetChanelList();
-            InitChanels();
             SyncSystemTime();
             DutyManager.StartTaskManagerThread();
+            StartSyncChanelsThread();
         }
 
         private void GetChanelList()
         {
-            using (var connection = new MySqlConnection(MsqlConnectionString.ToString()))
+            try
             {
-                SimpleCRUD.SetDialect(SimpleCRUD.Dialect.MySQL);
-                connection.Open();
-                var chanels = connection.GetList<Settings>();
+                using (var connection = new MySqlConnection(MsqlConnectionString.ToString()))
+                {
+                    SimpleCRUD.SetDialect(SimpleCRUD.Dialect.MySQL);
+                    connection.Open();
+                    SettingsList = connection.GetList<Settings>().ToList();
+                    connection.Close();
+                }
+            }
+            catch (Exception)
+            {
+                if (IsOnline)
+                {
+                    Thread.Sleep(100);
+                }
+            }
 
-                foreach (var chanel in chanels)
+            if (SettingsList.Count != 0)
+            {
+                foreach (var chanel in SettingsList)
                 {
                     ChanelList.Add(new Chanel(chanel.Id, this));
+
+                    ChanelList.Single(c => c.ChanelId == chanel.Id).ChanelUUID = chanel.UUID;
+                    ChanelList.Single(c => c.ChanelId == chanel.Id).Address = chanel.Address;
+                    ChanelList.Single(c => c.ChanelId == chanel.Id).Voltage = chanel.Voltage;
+                    ChanelList.Single(c => c.ChanelId == chanel.Id).Current = chanel.Current;
+                    ChanelList.Single(c => c.ChanelId == chanel.Id).Power = chanel.Power;
+                    ChanelList.Single(c => c.ChanelId == chanel.Id).Calibration = chanel.Calibration;
+                    ChanelList.Single(c => c.ChanelId == chanel.Id).OnOff = chanel.OnOff;
                 }
-                connection.Close();
             }
         }
 
-        private void InitChanels()
+        private void StartSyncChanelsThread()
         {
-            foreach (var chanel in ChanelList)
+            var syncChanelsThread = new Thread(SyncChanelsThread)
             {
-                var initThread = new Thread(() => chanel.StartSyncThread());
-                initThread.Start();
-            }
-            while (ChanelList.Exists(e => e.IsInited == false))
-            {
-                Thread.Sleep(1);
-            }
+                Name = string.Concat("SyncChanelsThread", IpAddress),
+            };
+
+            syncChanelsThread.Start();
         }
 
-        private void StopChanels()
+        private void SyncChanelsThread()
         {
-            foreach (var chanel in ChanelList)
+            while (IsOnline)
             {
-                var stopThread = new Thread(() => chanel.StopSyncThread());
-                stopThread.Start();
-            }
-            while (ChanelList.Exists(e => e.IsActive == true))
-            {
-                Thread.Sleep(1);
-            }
-        }
+                Thread.Sleep(100);
 
-        private void RestartChanels()
-        {
-            foreach (var chanel in ChanelList)
-            {
-                if (chanel.IsInited)
+                try
                 {
-                    var restartThread = new Thread(() => chanel.StartSyncThread());
-                    restartThread.Start();
-                }                
+                    using (var connection = new MySqlConnection(MsqlConnectionString.ToString()))
+                    {
+                        SimpleCRUD.SetDialect(SimpleCRUD.Dialect.MySQL);
+                        connection.Open();
+                        SettingsList = connection.GetList<Settings>().ToList();
+                        MeasurementList = connection.GetList<Measurement>("where (measured_at > date_sub(now(), interval 1 minute))").ToList();
+                        connection.Close();
+                    }
+                }
+                catch (Exception)
+                {
+                    if (IsOnline)
+                    {
+                        Thread.Sleep(100);
+                    }
+                }
+
+                if (ChanelList.Count != 0)
+                {
+                    foreach (var chanel in SettingsList)
+                    {
+                        ChanelList.Single(c => c.ChanelId == chanel.Id).Voltage = chanel.Voltage;
+                        ChanelList.Single(c => c.ChanelId == chanel.Id).Current = chanel.Current;
+                        ChanelList.Single(c => c.ChanelId == chanel.Id).Power = chanel.Power;
+                        ChanelList.Single(c => c.ChanelId == chanel.Id).Calibration = chanel.Calibration;
+                        ChanelList.Single(c => c.ChanelId == chanel.Id).OnOff = chanel.OnOff;
+
+                        ChanelList.Single(c => c.ChanelId == chanel.Id).ResultsList =
+                             MeasurementList.Where(a => a.UUID == chanel.UUID).ToList();
+
+                        ChanelList.Single(c => c.ChanelId == chanel.Id).Update();
+                    }
+                }
+
+                if (_hash != CheckHash())
+                {
+                    _hash = CheckHash();
+                    DeviceManager.DeviceRefresh(IpAddress);
+                }
             }
-            while (ChanelList.Exists(e => e.IsActive == false))
-            {
-                Thread.Sleep(1);
-            }
+            _hash = 0;
         }
 
         private void GetHostname()
@@ -228,21 +278,18 @@ namespace PowerSourceControlApp.PowerSource
             }
         }
 
-        public void Switch(uint chanelId, bool state)
+        public void Switch(uint chanelId)
         {
             var index = ChanelList.FindIndex(a => a.ChanelId == chanelId);
 
-            if (state != ChanelList[index].OnOff)
+            if (ChanelList[index].OnOff)
             {
-                if (state)
-                {
-                    DutyManager.TurnOn(ChanelList[index]);
-                }
-                else
-                {
-                    DutyManager.ShutDown(ChanelList[index]);
-                }
-            } 
+                DutyManager.ShutDown(ChanelList[index]);
+            }
+            else
+            {
+                DutyManager.TurnOn(ChanelList[index]);
+            }
         }
 
         private void RaisePropertyChanged(string propName)
@@ -251,15 +298,52 @@ namespace PowerSourceControlApp.PowerSource
             {
                 if (!IsOnline)
                 {
-                    StopChanels();
+                    Thread.Sleep(110);
+                    DutyManager.StopTaskManagerThread();
                 }
                 else
                 {
-                    RestartChanels();
+                    StartSyncChanelsThread();
+                    if (DutyManager != null)
+                    {
+                        DutyManager.ReStart();
+                    }
+                    else
+                    {
+                        DutyManager.StartTaskManagerThread();
+                    }
                 }
             }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        private int CheckHash()
+        {
+            var currentHash = 0;
+
+            if (DutyManager.TaskList != null)
+            {
+                currentHash += DutyManager.TaskList.GetHashCode();
+            }
+
+            if (ChanelList != null)
+            {
+                currentHash += ChanelList.GetHashCode();
+            }
+
+            if (SettingsList != null)
+            {
+                currentHash += SettingsList.GetHashCode();
+            }
+
+            if (MeasurementList != null)
+            {
+                currentHash += MeasurementList.GetHashCode();
+            }
+
+            currentHash += IsOnline.GetHashCode();
+            return currentHash;
+        }
     }
 }

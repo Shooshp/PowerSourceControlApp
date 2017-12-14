@@ -56,8 +56,6 @@ namespace PowerSourceControlApp.PowerSource
             _taskManagerThread = new Thread(TaskManagerThread)
             {
                 Name = threadName,
-                IsBackground = true,
-                Priority = ThreadPriority.Highest
             };
             _taskManagerThread.Start();
         }
@@ -76,7 +74,7 @@ namespace PowerSourceControlApp.PowerSource
 
         private void TaskManagerThread()
         {
-            Thread.Sleep(_randomNumberGenerator.Next(400, 500));
+            Thread.Sleep(300);
             while (IsActive)
             {               
                 //RemoveMarked();
@@ -97,8 +95,6 @@ namespace PowerSourceControlApp.PowerSource
 
         private void Add(Chanel chanel, string name, decimal argument)
         {
-            bool taskListIsUpdated = false;
-
             if (!IsEmpty)
             {
                 var nextNumber = TaskList.Count + 1;
@@ -113,21 +109,14 @@ namespace PowerSourceControlApp.PowerSource
                             x.IsExecuting == false &&
                             x.IsComplited == false).Argument = argument;
 
-                        taskListIsUpdated = true;
                     }
                     // Add task only if its on exist already
                     TaskList.Add(new Task(chanel, name, argument, Convert.ToUInt32(nextNumber)));
-                    taskListIsUpdated = true;
                 }
             }
             else
             {
                 TaskList.Add(new Task(chanel, name, argument, 1));
-                taskListIsUpdated = true;
-            }
-            if (taskListIsUpdated && (_parentPowerSource.Collection.SelectedPowerSourceIp == _parentPowerSource.IpAddress))
-            {
-                _parentPowerSource.Collection.IsUpdated = true; //TODO:: Need to refresh ONLY task list for selected powersource if it's the case
             }
         }
 
@@ -136,19 +125,6 @@ namespace PowerSourceControlApp.PowerSource
             if (!IsEmpty)
             {
                 TaskList.RemoveAll(x => x.IsComplited && x.IsExecuting == false);
-                if (_parentPowerSource.Collection.SelectedPowerSourceIp == _parentPowerSource.IpAddress)
-                {
-                    _parentPowerSource.Collection.IsUpdated = true;
-                }
-            }
-        }
-
-        private void RemoveMarked()
-        {
-            TaskList.RemoveAll(x => x.MarkForDelite);
-            if (_parentPowerSource.Collection.SelectedPowerSourceIp == _parentPowerSource.IpAddress)
-            {
-                _parentPowerSource.Collection.IsUpdated = true;
             }
         }
 

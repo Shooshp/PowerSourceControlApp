@@ -119,13 +119,12 @@ namespace PowerSourceControlApp.DeviceManagment
                 var time = watch.ElapsedMilliseconds;
                 if ((_errorCounter > 4)||(time > 1000))
                 {
-                    while (ParentPowerSource.Collection.IsBusy)
+                    while (DeviceManager.IsBusy)
                     {
                         Thread.Sleep(1);
                     }
-                    ParentPowerSource.Collection.IsBusy = true;
+                    DeviceManager.IsBusy = true;
                     ParentPowerSource.IsOnline = false;
-                    ParentPowerSource.Collection.IsUpdated = true;
                     if (_statusStream != null)
                     {
                         _statusStream.Close();
@@ -138,7 +137,7 @@ namespace PowerSourceControlApp.DeviceManagment
                     }
                     GC.Collect();
                     watch.Stop();
-                    ParentPowerSource.Collection.IsBusy = false;
+                    DeviceManager.IsBusy = false;
                     return;
                 }
             }

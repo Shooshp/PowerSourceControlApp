@@ -3,39 +3,28 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading;
+using System.Windows.Forms;
 using DevExpress.XtraEditors.CustomEditor;
-using DevExpress.XtraEditors.Repository;
 using DevExpress.XtraGauges.Win;
 using DevExpress.XtraGrid.Columns;
 using PowerSourceControlApp.DeviceManagment;
 
 namespace PowerSourceControlApp
 {
-    public partial class Form1 : DevExpress.XtraEditors.XtraForm
+    public partial  class Form1: DevExpress.XtraEditors.XtraForm
     {
-        private VisualInterfaceControl MainViewControl;
         private NetworkDeviceDetector DeviceDetector;
-        private DeviceManager PowerSourceCollection;
-        bool _listIsEmpty;
 
         public Form1()
         {
-            _listIsEmpty = true;
-            PowerSourceCollection = new DeviceManager();
-            MainViewControl = new VisualInterfaceControl(PowerSourceCollection);
+            DeviceManager.Init();
             DeviceDetector = new NetworkDeviceDetector();
-            DeviceDetector.OnDataReceived += JustSimpleHandler;
+            DeviceDetector.OnDataReceived += NewDeviceHandler;
 
             InitializeComponent();
 
-
-            Version version = Assembly.GetExecutingAssembly().GetName().Version;
-            this.Text = "PowerSource Control " + version.Major + "." + version.Minor + " (build " + version.Build + ")";
-
-
-
-            MainViewControl.ConnectToGrids(
-                powersourcegrid: PowerSourceList, 
+            VisualInterfaceControl.ConnectToGrids(
+                powersourcegrid: PowerSourceList,
                 chanellistgrid: PowerSourceChanelList,
                 tasklistgrid: TaskListControl,
                 voltagechart: VoltageChart,
@@ -46,15 +35,20 @@ namespace PowerSourceControlApp
                 voltageedit: VoltageEdit,
                 currentedit: CurrentEdit,
                 updatebutton: UpdateButton,
-                onoffswitch: OnOffSwitch);
+                onoffbutton: OnButton);
+
+            Version version = Assembly.GetExecutingAssembly().GetName().Version;
+            this.Text = "PowerSource Control " + version.Major + "." + version.Minor + " (build " + version.Build + ")";
 
             CreateGauge(layoutView1.Columns["Status"], StatusGauge);
             CreateGauge(layoutView1.Columns["RecentVoltageDisplay"], VoltageGauge);
             CreateGauge(layoutView1.Columns["RecentCurrentDisplay"], CurrentGauge);
 
-
-            MainViewControl.UpdateForms();
             DeviceDetector.CreateUdpReadThread();
+            DeviceManager.StartHashTread();
+
+            DeviceManager.DeviceListUpdate += UpdateFormsHandler;
+            DeviceManager.DeviceUpdate += UpdateDeviceHandler;
         }
 
         public sealed override string Text
@@ -80,53 +74,42 @@ namespace PowerSourceControlApp
             layoutView1.PostEditor();
         }
 
-        private void Timer1_Tick(object sender, EventArgs e)
+        public void UpdateFormsHandler()
         {
-            if (PowerSourceCollection.IsUpdated)
-            {
-                MainViewControl.UpdateForms();
-                PowerSourceCollection.IsUpdated = false;
-            }
+            Invoke((MethodInvoker)VisualInterfaceControl.UpdateForms);
         }
 
-        private  void JustSimpleHandler(object sender, DataEventArgs e)
+        public void UpdateDeviceHandler()
+        {
+            Invoke((MethodInvoker)VisualInterfaceControl.UpdateDevice);
+        }
+
+        private void NewDeviceHandler(object sender, DataEventArgs e)
         {
             var senderip = e.IpAddress.ToString();
             var sendermessage = Encoding.UTF8.GetString(e.Data);
 
             if (sendermessage == "Hello!")
             {
-                if (!PowerSourceCollection.IsBusy)
+                if (!DeviceManager.IsBusy)
                 {
                     DeviceDetector.SuspendThread = true;
                     var handleDevice =
-                        new Thread(() => PowerSourceCollection.NewDeviceDetectorHanler(senderip)) {IsBackground = true};
+                        new Thread(() => DeviceManager.NewDeviceDetectorHanler(senderip)) {IsBackground = true};
                     handleDevice.Start();
                     DeviceDetector.SuspendThread = false;
                 }
             } 
         }
 
-        private void PingTime_Tick(object sender, EventArgs e)
-        {          
-            if (PowerSourceCollection.DetectedPowerSources.Any())
-            {
-                if (_listIsEmpty)
-                {
-                    CreateGauge(gridView1.Columns["IsOnline"], isOnlineGauge);
-                    _listIsEmpty = false;
-                }
-            }
-        }
-
         private void UpdateButton_Click(object sender, EventArgs e)
         {
-            MainViewControl.UpdateButtonClick();
+            Invoke((MethodInvoker)VisualInterfaceControl.UpdateButtonClick);
         }
 
-        private void ToggleSwitch2_Toggled(object sender, EventArgs e)
+        private void OnButton_Click(object sender, EventArgs e)
         {
-            MainViewControl.OnOffSwitchToggled();
+            Invoke((MethodInvoker)VisualInterfaceControl.OnOffButtonClick);
         }
     }
 }

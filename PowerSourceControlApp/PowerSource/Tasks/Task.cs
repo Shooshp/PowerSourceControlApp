@@ -49,16 +49,12 @@ namespace PowerSourceControlApp.PowerSource.Tasks
         {
             IsExecuting = true;
             CommitToDeviceDb();
-            if (_parentPowerSource.Collection.SelectedPowerSourceIp == _parentPowerSource.IpAddress)
-            {
-                _parentPowerSource.Collection.IsUpdated = true;
-            }
             SendMessage();           
             while (_parentPowerSource.IsOnline && Progress != 100)
             {
                 ChekProgress();
             }
-            TargetChanel.SyncSettings(); //Re Update Settings in chanel from DB
+            Thread.Sleep(110); //Wait for powersource to reupdate settings table
             
             IsExecuting = false;
             IsComplited = true;
@@ -118,7 +114,6 @@ namespace PowerSourceControlApp.PowerSource.Tasks
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                throw;
                 //TODO: Need to implement some kind of SQL disconnect handler
             }
             if (!state)
@@ -126,7 +121,8 @@ namespace PowerSourceControlApp.PowerSource.Tasks
                 if (_parentPowerSource.Status.Contains("task") && _parentPowerSource.Status.Contains("progress"))
                 {
                     var message = _parentPowerSource.Status.Split(':');
-                    if (Convert.ToUInt32(message[1]) == TaskId)
+                    var curTask = (int)Char.GetNumericValue(message[1][1]);
+                    if (curTask == TaskId)
                     {
                         Progress = Convert.ToUInt32(message[3]);
                     }

@@ -18,7 +18,12 @@ namespace PowerSourceControlApp.DeviceManagment
         public void CreateUdpReadThread()
         {
             SuspendThread = false;
-            _udpReadThread = new Thread(UdpReadThread) {Name = "UDP Listener"};
+            _udpReadThread = new Thread(UdpReadThread)
+            {
+                Name = "UDP Listener",
+                IsBackground = true,
+                Priority = ThreadPriority.Normal
+            };
             _udpReadThread.Start(new IPEndPoint(IPAddress.Any, 10237));
         }
 
@@ -27,6 +32,7 @@ namespace PowerSourceControlApp.DeviceManagment
             var myEndPoint = (EndPoint) endPoint;
             var udpListener = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             udpListener.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveTimeout, 100);
+            udpListener.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
             udpListener.Bind(myEndPoint);
 
             while (!SuspendThread)

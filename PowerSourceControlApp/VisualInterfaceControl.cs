@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using DevExpress.XtraCharts;
 using DevExpress.XtraEditors;
 using DevExpress.XtraGrid;
@@ -12,49 +11,43 @@ using PowerSourceControlApp.DeviceManagment;
 
 namespace PowerSourceControlApp
 {
-    public class VisualInterfaceControl
+    public static class VisualInterfaceControl
     {
-        public bool IsBusy;
-        private int _focusedPowerSourceIndex;
-        private string _focusedPowerSourceIp;
-        private int _focusedChanelIndex;
-        private int _focusedChanelId;
+        public static bool IsBusy;
+        
+        private static int _focusedPowerSourceIndex;
+        private static string _focusedPowerSourceIp;
+        private static int _focusedChanelIndex;
+        private static int _focusedChanelId;
 
-        public List<PowerSource.PowerSource> DetectedPowerSources;
-        private GridControl _taskListGridControl;
-        private GridControl _powerSourceListGridControl;
-        private GridControl _chanelListGridControl;
+        private static int _focusedPowerSourceHash;
 
-        private ChartControl _voltageGraphChartControl;
-        private ChartControl _currentGraphChartControl;
+        private static GridControl _taskListGridControl;
+        private static GridControl _powerSourceListGridControl;
+        private static GridControl _chanelListGridControl;
+        private static ChartControl _voltageGraphChartControl;
+        private static ChartControl _currentGraphChartControl;
+        private static GridView _powerSourceListGridView;
+        private static GridView _taskListGridView;
+        private static LayoutView _chanelListLayoutView;
+        private static SpinEdit _voltageEdit;
+        private static SpinEdit _currentEdit;
+        private static SimpleButton _updateButton;
+        private static SimpleButton _onoffButton;
 
-        private GridView _powerSourceListGridView;
-        private GridView _taskListGridView;
-        private LayoutView _chanelListLayoutView;
-
-        private SpinEdit _voltageEdit;
-        private SpinEdit _currentEdit;
-
-        private SimpleButton _updateButton;
-        private ToggleSwitch _onOffSwitch;
-
-        private DeviceManager PowerSourceCollection;
-
-
-        public VisualInterfaceControl(DeviceManager powersourcecollection)
+        private static bool PowerSourceListIsEmpty
         {
-            PowerSourceCollection = powersourcecollection;
-            DetectedPowerSources = PowerSourceCollection.DetectedPowerSources;
-
-            _focusedPowerSourceIndex = 0;
-            _focusedPowerSourceIp = null;
-            _focusedChanelIndex = 0;
-            _focusedChanelId = 0;
-
-            IsBusy = false;
+            get
+            {
+                if (DeviceManager.DeviceList.Count == 0)
+                {
+                    return true;
+                }
+                return false;
+            }
         }
 
-        public void ConnectToGrids(
+        public static void ConnectToGrids(
             object powersourcegrid, 
             object chanellistgrid, 
             object tasklistgrid, 
@@ -66,8 +59,15 @@ namespace PowerSourceControlApp
             object voltageedit,
             object currentedit,
             object updatebutton,
-            object onoffswitch)
+            object onoffbutton)
         {
+            _focusedPowerSourceIndex = 0;
+            _focusedPowerSourceIp = null;
+            _focusedChanelIndex = 0;
+            _focusedChanelId = 0;
+
+            IsBusy = false;
+
             _powerSourceListGridControl = (GridControl)powersourcegrid;
             _chanelListGridControl = (GridControl)chanellistgrid;
             _taskListGridControl = (GridControl) tasklistgrid;
@@ -83,158 +83,143 @@ namespace PowerSourceControlApp
             _currentEdit = (SpinEdit) currentedit;
 
             _updateButton = (SimpleButton) updatebutton;
+            _onoffButton = (SimpleButton) onoffbutton;
 
-            _onOffSwitch = (ToggleSwitch) onoffswitch;
-
-            _powerSourceListGridControl.DataSource = DetectedPowerSources;
+            _powerSourceListGridControl.DataSource = DeviceManager.DeviceList;
 
             _powerSourceListGridView.FocusedRowChanged += CurrentPowerSourceChanged;
             _chanelListLayoutView.FocusedRowChanged += CurrentChanelChanged;
         }
 
-        public void UpdateForms()
+        public static void UpdateForms()
         {
-            var powerSourceListIsEmpty = !DetectedPowerSources.Any();
+            _powerSourceListGridControl?.RefreshDataSource();
 
-            _powerSourceListGridControl.RefreshDataSource();
-            if (!powerSourceListIsEmpty)
+            if (!PowerSourceListIsEmpty)
             {
-                if (!DetectedPowerSources.ElementAt(_focusedPowerSourceIndex).IsOnline)
+                if (!DeviceManager.DeviceList.ElementAt(_focusedPowerSourceIndex).IsOnline)
                 {
-                    TaskAndChanelListDs(-1);
-                    ChartsDs(-1, -1);
-                    EditorsDs(-1, -1);
-                    UpdateButtonIsVisible(false);
-                    OnOffSwitchIsVisible(false);
-                    PowerSourceCollection.SelectedPowerSourceIp = null;
+                    SelectPowerSource(-1);
                 }
                 else
                 {
                     if (_focusedPowerSourceIp == null)
-                    {   // If no PowerSource was selected before select first in list
-                        TaskAndChanelListDs(0);
-                        ChartsDs(0, 0);
-                        EditorsDs(0, 0);
-                        UpdateButtonIsVisible(true);
-                        OnOffSwitchIsVisible(true);
-                        OnOffSwitchState(0, 0);
-                        PowerSourceCollection.SelectedPowerSourceIp = DetectedPowerSources.ElementAt(0).IpAddress;
+                    {
+                        SelectPowerSource(0);
                     }
                     else
-                    {   // Use selected PowerSource fo DAtaSources
-                        TaskAndChanelListDs(_focusedPowerSourceIndex);
-                        ChartsDs(_focusedPowerSourceIndex, _focusedChanelIndex);
-                        EditorsDs(_focusedPowerSourceIndex, _focusedChanelIndex);
-                        UpdateButtonIsVisible(true);
-                        OnOffSwitchIsVisible(true);
-                        OnOffSwitchState(_focusedPowerSourceIndex, _focusedChanelIndex);
-                        PowerSourceCollection.SelectedPowerSourceIp = DetectedPowerSources.ElementAt(_focusedPowerSourceIndex).IpAddress;
+                    {
+                        SelectPowerSource(_focusedPowerSourceIndex);
+                        SelectChanel(_focusedChanelIndex);
                     }
-                }     
+                }
             }
             else
-            {   // If PowerSource List is Empty we draw nothing
-                TaskAndChanelListDs(-1);
-                ChartsDs(-1, -1);
-                EditorsDs(-1, -1);
-                UpdateButtonIsVisible(false);
-                OnOffSwitchIsVisible(false);
+            {
+                SelectPowerSource(-1);
             }
-            RefreshCharts();
+
+        }
+
+        public static void UpdateDevice()
+        {
+            if (!PowerSourceListIsEmpty && _focusedPowerSourceIp != null && DeviceManager.DeviceList.ElementAt(_focusedPowerSourceIndex).IsOnline)
+            {
+                RefreshLists();
+                SelectChanel(_focusedChanelIndex);
+            }
+        }
+
+        private static void SelectPowerSource(int powersourceindex)
+        {
+            if (powersourceindex > -1)
+            {
+                _focusedPowerSourceIp = DeviceManager.DeviceList.ElementAt(_focusedPowerSourceIndex).IpAddress;
+                _focusedPowerSourceHash = DeviceManager.DeviceList.ElementAt(_focusedPowerSourceIndex).GetHashCode();
+                DeviceManager.SelectedPowerSourceIp = _focusedPowerSourceIp;
+                TaskAndChanelListDs(powersourceindex);
+                SelectChanel(0);
+            }
+            else
+            {
+                TaskAndChanelListDs(-1);
+                SelectChanel(-1);
+                DeviceManager.SelectedPowerSourceIp = null;
+            }
             RefreshLists();
         }
-  
-        public void CurrentPowerSourceChanged(object sender, FocusedRowChangedEventArgs e)
+
+        private static void SelectChanel(int chanelindex)
         {
-            var powerSourceListIsEmpty = !DetectedPowerSources.Any();
-            var arguments = e;
+            if (chanelindex > -1)
+            {
+                ChartsDs(_focusedPowerSourceIndex, chanelindex);
+                EditorsDs(_focusedPowerSourceIndex, chanelindex);
+                ButtonsIsVisible(true);
+                DeviceManager.SelectedChanelUUID = DeviceManager.DeviceList.
+                    ElementAt(_focusedPowerSourceIndex).ChanelList.ElementAt(chanelindex).ChanelUUID;
+            }
+            else
+            {
+                ChartsDs(-1, -1);
+                EditorsDs(-1, -1);
+                ButtonsIsVisible(false);
+                DeviceManager.SelectedChanelUUID = null;
+            }
+            RefreshCharts();
+            RefreshEditors();
+        }
+
+        public static void UpdateChanelData()
+        {
+            _chanelListGridControl.RefreshDataSource();
+            RefreshCharts();
+        }
+
+        public static void UpdateTaskList()
+        {
+            _taskListGridControl.RefreshDataSource();
+        }
+
+        public static void CurrentPowerSourceChanged(object sender, FocusedRowChangedEventArgs arguments)
+        {
             _focusedPowerSourceIndex = arguments.FocusedRowHandle;
 
-            if (!IsBusy)  //  Check if object is Busy
+            if (!PowerSourceListIsEmpty) 
             {
-                IsBusy = true; //  Mark object as Busy
-
-                if (!powerSourceListIsEmpty) // If there are devices on the list
-                {
-                    _focusedPowerSourceIp = DetectedPowerSources.ElementAt(_focusedPowerSourceIndex).IpAddress; // Update IP of currently selected device
-
-                    if (DetectedPowerSources.ElementAt(_focusedPowerSourceIndex).IsOnline
-                    ) // If device is online we use its chanellist to display
-                    {
-                        TaskAndChanelListDs(_focusedPowerSourceIndex);
-                        ChartsDs(_focusedPowerSourceIndex, 0);
-                        EditorsDs(_focusedPowerSourceIndex, 0);
-                        UpdateButtonIsVisible(true);
-                        OnOffSwitchIsVisible(true);
-                        OnOffSwitchState(_focusedPowerSourceIndex, 0);
-                        PowerSourceCollection.SelectedPowerSourceIp = DetectedPowerSources.ElementAt(_focusedPowerSourceIndex).IpAddress;
-                    }
-                    else // If device is offline we show nothing
-                    {
-                        ChartsDs(-1, -1);
-                        TaskAndChanelListDs(-1);
-                        EditorsDs(-1, -1);
-                        UpdateButtonIsVisible(false);
-                        OnOffSwitchIsVisible(false);
-                        PowerSourceCollection.SelectedPowerSourceIp = null;
-                    }      
+                if (DeviceManager.DeviceList.ElementAt(_focusedPowerSourceIndex).IsOnline)
+                {   
+                    SelectPowerSource(_focusedPowerSourceIndex);
                 }
-                else // If there are no devices on the list perhaps event was called on start of application
+                else 
                 {
-                    ChartsDs(-1, -1);
-                    TaskAndChanelListDs(-1);
-                    EditorsDs(-1, -1);
-                    UpdateButtonIsVisible(false);
-                    OnOffSwitchIsVisible(false);
-                    PowerSourceCollection.SelectedPowerSourceIp = null;
-                }
-
-                RefreshLists();
-                RefreshCharts();
-                RefreshEditors();
-                IsBusy = false; //  Remove Busy Flag
+                    SelectPowerSource(-1);
+                }      
+            }
+            else 
+            {
+                SelectPowerSource(-1);
             }
         }
 
-        public void CurrentChanelChanged(object sender, FocusedRowChangedEventArgs e)
+        public static void CurrentChanelChanged(object sender, FocusedRowChangedEventArgs arguments)
         {
-            var powerSourceListIsEmpty = !DetectedPowerSources.Any();
-            var arguments = e;
             _focusedChanelIndex = arguments.FocusedRowHandle;
 
-            if (!IsBusy)  //  Check if object is Busy
+            if (!PowerSourceListIsEmpty)
+            { 
+                if (DeviceManager.DeviceList.ElementAt(_focusedPowerSourceIndex).IsOnline)             
+                {
+                    SelectChanel(_focusedChanelIndex);
+                }
+                else 
+                {
+                    SelectChanel(-1);
+                }
+            }
+            else 
             {
-                IsBusy = true; //  Mark object as Busy
-
-                if (!powerSourceListIsEmpty) // If there are devices on the list
-                {
-                    if (DetectedPowerSources.ElementAt(_focusedPowerSourceIndex).IsOnline
-                    ) // If device is online we use its chanellist to display
-                    {
-                        ChartsDs(_focusedPowerSourceIndex, _focusedChanelIndex);
-                        EditorsDs(_focusedPowerSourceIndex, _focusedChanelIndex);
-                        UpdateButtonIsVisible(true);
-                        OnOffSwitchIsVisible(true);
-                        OnOffSwitchState(_focusedPowerSourceIndex, _focusedChanelIndex);
-                    }
-                    else // If device is offline we show nothing
-                    {
-                        ChartsDs(-1, -1);
-                        EditorsDs(-1, -1);
-                        UpdateButtonIsVisible(false);
-                        OnOffSwitchIsVisible(false);
-                    }
-                }
-                else // If there are no devices on the list perhaps event was called on start of application
-                {
-                    ChartsDs(-1, -1);
-                    EditorsDs(-1, -1);
-                    UpdateButtonIsVisible(false);
-                    OnOffSwitchIsVisible(false);
-                }
-                RefreshCharts();
-
-                IsBusy = false; //  Remove Busy Flag
+                SelectChanel(-1);
             }
         }
 
@@ -242,42 +227,33 @@ namespace PowerSourceControlApp
         /// Working private routines
         /// </summary>
 
-        public void UpdateButtonClick()
+        public static void UpdateButtonClick()
         {
             decimal voltage = Convert.ToDecimal(_voltageEdit.EditValue);
             decimal current = Convert.ToDecimal(_currentEdit.EditValue);
-            uint chanelId = DetectedPowerSources.ElementAt(_focusedPowerSourceIndex).ChanelList.ElementAt(_focusedChanelIndex).ChanelId;
+            uint chanelId = DeviceManager.DeviceList.ElementAt(_focusedPowerSourceIndex).ChanelList.ElementAt(_focusedChanelIndex).ChanelId;
 
-            if (DetectedPowerSources.ElementAt(_focusedPowerSourceIndex).IsOnline)
+            if (DeviceManager.DeviceList.ElementAt(_focusedPowerSourceIndex).IsOnline)
             {
-                PowerSourceCollection.DetectedPowerSources.Single(p => p.IpAddress == _focusedPowerSourceIp).Update(voltage, current, chanelId);
+                DeviceManager.DeviceList.Single(p => p.IpAddress == _focusedPowerSourceIp).Update(voltage, current, chanelId);
+                ChartsDs(_focusedPowerSourceIndex, _focusedChanelIndex);
+                RefreshCharts();
+                UpdateChanelData();
             }                  
         }
 
-        public void OnOffSwitchToggled()
+        public static void OnOffButtonClick()
         {
-            uint chanelId = DetectedPowerSources.ElementAt(_focusedPowerSourceIndex).ChanelList.ElementAt(_focusedChanelIndex).ChanelId;
-            bool state = _onOffSwitch.IsOn;
-
-            if (DetectedPowerSources.ElementAt(_focusedPowerSourceIndex).IsOnline)
+            uint chanelId = DeviceManager.DeviceList.ElementAt(_focusedPowerSourceIndex).ChanelList.ElementAt(_focusedChanelIndex).ChanelId;
+            if (DeviceManager.DeviceList.ElementAt(_focusedPowerSourceIndex).IsOnline)
             {
-                PowerSourceCollection.DetectedPowerSources.Single(p => p.IpAddress == _focusedPowerSourceIp).Switch(chanelId, state);
-            }
-            while (DetectedPowerSources.ElementAt(_focusedPowerSourceIndex).ChanelList.ElementAt(_focusedChanelIndex).OnOff != state)
-            {
-                DetectedPowerSources.ElementAt(_focusedPowerSourceIndex).ChanelList.ElementAt(_focusedChanelIndex).SyncSettings();
-                Thread.Sleep(1);
+                DeviceManager.DeviceList.Single(p => p.IpAddress == _focusedPowerSourceIp).Switch(chanelId);
             }
         }
 
-        private void OnOffSwitchState(int powersourceindex, int chanelindex)
+        private static void TaskAndChanelListDs(int powersourceindex)
         {
-            _onOffSwitch.EditValue = DetectedPowerSources.ElementAt(powersourceindex).ChanelList.ElementAt(chanelindex).OnOff;
-        }
-
-        private void TaskAndChanelListDs(int powersourceindex)
-        {
-            if (powersourceindex == -1)
+            if (powersourceindex < 0 )
             {
                 _chanelListGridControl.DataSource = null;
                 _taskListGridControl.DataSource = null;
@@ -285,31 +261,29 @@ namespace PowerSourceControlApp
             }
             else
             {
-                _chanelListGridControl.DataSource = DetectedPowerSources.ElementAt(powersourceindex).ChanelList;
-                _taskListGridControl.DataSource = DetectedPowerSources.ElementAt(powersourceindex).DutyManager.TaskList;
+                _chanelListGridControl.DataSource = DeviceManager.DeviceList.ElementAt(powersourceindex).ChanelList;
+                _taskListGridControl.DataSource = DeviceManager.DeviceList.ElementAt(powersourceindex).DutyManager.TaskList;
                 TaskListIsVisible(true);
             }
         }
- 
-        private void EditorsDs(int powersourceindex, int chanelindex)
+
+        private static void EditorsDs(int powersourceindex, int chanelindex)
         {
-            if (powersourceindex == -1)
+            if (powersourceindex < 0 || chanelindex < 0)
             { //Empty Chanel List or empty PowerSource List
-               /* _voltageEdit.EditValue = null;
-                _currentEdit.EditValue = null;*/
+                _voltageEdit.EditValue = null;
+                _currentEdit.EditValue = null;
                 EditorsIsVisible(false);
             }
             else
             {
-              /*  _voltageEdit.EditValue = DetectedPowerSources.ElementAt(powersourceindex).ChanelList.ElementAt(chanelindex).Voltage;
-                _currentEdit.EditValue = DetectedPowerSources.ElementAt(powersourceindex).ChanelList.ElementAt(chanelindex).Current;
-               */ EditorsIsVisible(true);
+                 EditorsIsVisible(true);
             }
         }
 
-        private void ChartsDs(int powersourceindex, int chanelindex)
+        private static void ChartsDs(int powersourceindex, int chanelindex)
         {
-            if (powersourceindex == -1)
+            if (powersourceindex < 0 || chanelindex < 0)
             {
                 _voltageGraphChartControl.DataSource = null;
                 _currentGraphChartControl.DataSource = null;
@@ -318,60 +292,57 @@ namespace PowerSourceControlApp
             else
             {
                 _voltageGraphChartControl.DataSource =
-                    DetectedPowerSources.ElementAt(powersourceindex).ChanelList.
+                    DeviceManager.DeviceList.ElementAt(powersourceindex).ChanelList.
                         ElementAt(chanelindex).ResultsList;
 
                 _currentGraphChartControl.DataSource =
-                    DetectedPowerSources.ElementAt(powersourceindex).ChanelList.
+                    DeviceManager.DeviceList.ElementAt(powersourceindex).ChanelList.
                         ElementAt(chanelindex).ResultsList;
 
                 ChartsIsVisible(true);
             }
         }
 
-        private void RefreshLists()
+        private static void RefreshLists()
         {
             _chanelListGridControl.RefreshDataSource();
             _taskListGridControl.RefreshDataSource();
         }
 
-        private void RefreshCharts()
+        private static void RefreshCharts()
         {
+
             _voltageGraphChartControl.RefreshData();
-            _voltageGraphChartControl.RefreshData();
+            _currentGraphChartControl.RefreshData();
         }
 
-        private void RefreshEditors()
+        private static void RefreshEditors()
         {
             _voltageEdit.Refresh();
             _currentEdit.Refresh();
         }
 
-        private void TaskListIsVisible(bool state)
+        private static void TaskListIsVisible(bool state)
         {
             _taskListGridControl.Visible = state;
         }
 
-        private void EditorsIsVisible(bool state)
+        private static void EditorsIsVisible(bool state)
         {
             _voltageEdit.Visible = state;
             _currentEdit.Visible = state;
         }
 
-        private void ChartsIsVisible(bool state)
+        private static void ChartsIsVisible(bool state)
         {
             _voltageGraphChartControl.Visible = state;
             _currentGraphChartControl.Visible = state;
         }
 
-        private void UpdateButtonIsVisible(bool state)
+        private static void ButtonsIsVisible(bool state)
         {
             _updateButton.Visible = state;
-        }
-
-        private void OnOffSwitchIsVisible(bool state)
-        {
-            _onOffSwitch.Visible = state;
+            _onoffButton.Visible = state;
         }
     }
 }
