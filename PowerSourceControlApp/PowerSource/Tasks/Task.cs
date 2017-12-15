@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Globalization;
-using System.Linq;
 using System.Threading;
 using Dapper;
 using MySql.Data.MySqlClient;
 using PowerSourceControlApp.DapperDTO;
+using PowerSourceControlApp.DeviceManagment;
 
 namespace PowerSourceControlApp.PowerSource.Tasks
 {
-    public class Task
+    public class Task : IDisposable
     {
         public int TaskId;
         public uint Progress;
@@ -16,11 +16,12 @@ namespace PowerSourceControlApp.PowerSource.Tasks
         public decimal Argument;
         public string TaskName;
         private readonly PowerSource _parentPowerSource;
+        private readonly TaskManager _parentTaskManager;
         public Chanel TargetChanel;
         public bool IsExecuting;
         public bool IsComplited;
-        public bool MarkForDelite;
         public string DisplayName { get; }
+
 
         public Task(Chanel chanel, string name, decimal argument, uint assignedTaskNumber)
         {
@@ -30,9 +31,9 @@ namespace PowerSourceControlApp.PowerSource.Tasks
             TaskName = name;
             TargetChanel = chanel;
             _parentPowerSource = TargetChanel.ParentPowerSource;
+            _parentTaskManager = _parentPowerSource.DutyManager;
             IsExecuting = false;
             IsComplited = false;
-            MarkForDelite = false;
             TaskNumber = assignedTaskNumber;
 
             if (Argument != 0)
@@ -45,8 +46,12 @@ namespace PowerSourceControlApp.PowerSource.Tasks
             }
         }
 
-        public void Run()
+        public void Run(int timetoexecute)
         {
+            var wd = new Watchdog(timetoexecute);
+            wd.TimeToDie += Dispose;
+            wd.Start();
+
             IsExecuting = true;
             CommitToDeviceDb();
             SendMessage();           
@@ -54,10 +59,12 @@ namespace PowerSourceControlApp.PowerSource.Tasks
             {
                 ChekProgress();
             }
-            Thread.Sleep(110); //Wait for powersource to reupdate settings table
+            Thread.Sleep(810); //Wait for powersource to reupdate settings table
             
             IsExecuting = false;
             IsComplited = true;
+            wd.Dispose();
+            _parentTaskManager.StartNextTask();
         }
 
         private void SendMessage()
@@ -101,6 +108,7 @@ namespace PowerSourceControlApp.PowerSource.Tasks
         {
             bool state = false;
 
+            Thread.Sleep(100);
             try
             {
                 using (var connection = new MySqlConnection(_parentPowerSource.MsqlConnectionString.ToString()))
@@ -132,6 +140,17 @@ namespace PowerSourceControlApp.PowerSource.Tasks
             {
                 Progress = 100;
             }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        private void Dispose(bool disposing)
+        {
+            Progress = 100;
         }
     }
 }

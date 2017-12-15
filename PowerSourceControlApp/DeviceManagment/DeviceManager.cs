@@ -52,7 +52,6 @@ namespace PowerSourceControlApp.DeviceManagment
                         {
                             DeviceList.Single(p => p.IpAddress == address).IsOnline = true;
                             DeviceList.Single(p => p.IpAddress == address).Pinger.Start();
-                            DeviceList.Single(p => p.IpAddress == address).DutyManager.ReStart();
                         }
                     }
                     else // If device is not on the list than add device to list
@@ -64,6 +63,7 @@ namespace PowerSourceControlApp.DeviceManagment
                 {
                     DeviceList.Add(new PowerSource.PowerSource(address));
                 }
+                DeviceUpdate?.Invoke();
                 IsBusy = false; //  Remove Busy Flag
             }
         }
@@ -101,6 +101,10 @@ namespace PowerSourceControlApp.DeviceManagment
 
         public static void DeviceRefresh(string ipaddress)
         {
+            if (SelectedPowerSourceIp == null && ipaddress != null)
+            {
+                DeviceListUpdate?.Invoke();
+            }
             if (SelectedPowerSourceIp == ipaddress)
             {
                 DeviceUpdate?.Invoke();

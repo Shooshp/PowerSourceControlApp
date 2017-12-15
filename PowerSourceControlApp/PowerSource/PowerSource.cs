@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading;
-using System.Windows.Forms;
 using Dapper;
 using MySql.Data.MySqlClient;
 using PowerSourceControlApp.DapperDTO;
 using PowerSourceControlApp.DeviceManagment;
+using PowerSourceControlApp.PowerSource.Tasks;
 using Renci.SshNet;
 
 namespace PowerSourceControlApp.PowerSource
@@ -25,11 +25,12 @@ namespace PowerSourceControlApp.PowerSource
         public bool IsOnline { get; set; }
 
         private int _hash;
+        private Thread _syncChanelsThread;
 
 
         public readonly int StatusPort;
-        private List<Settings> SettingsList;
-        private List<Measurement> MeasurementList;
+        private List<Settings> _settingsList;
+        private List<Measurement> _measurementList;
         public readonly List<Chanel> ChanelList;
         public readonly TaskManager DutyManager;
         public readonly StatusChecker Pinger;
@@ -52,8 +53,8 @@ namespace PowerSourceControlApp.PowerSource
 
             _hash = 0;
 
-            SettingsList = new List<Settings>();
-            MeasurementList = new List<Measurement>();
+            _settingsList = new List<Settings>();
+            _measurementList = new List<Measurement>();
 
             _sshConnector = new SshClient(IpAddress, "pi", "raspberry");
 
@@ -70,7 +71,6 @@ namespace PowerSourceControlApp.PowerSource
             Pinger.Start();
             GetChanelList();
             SyncSystemTime();
-            DutyManager.StartTaskManagerThread();
             StartSyncChanelsThread();
         }
 
@@ -82,7 +82,7 @@ namespace PowerSourceControlApp.PowerSource
                 {
                     SimpleCRUD.SetDialect(SimpleCRUD.Dialect.MySQL);
                     connection.Open();
-                    SettingsList = connection.GetList<Settings>().ToList();
+                    _settingsList = connection.GetList<Settings>().ToList();
                     connection.Close();
                 }
             }
@@ -94,9 +94,9 @@ namespace PowerSourceControlApp.PowerSource
                 }
             }
 
-            if (SettingsList.Count != 0)
+            if (_settingsList.Count != 0)
             {
-                foreach (var chanel in SettingsList)
+                foreach (var chanel in _settingsList)
                 {
                     ChanelList.Add(new Chanel(chanel.Id, this));
 
@@ -113,19 +113,24 @@ namespace PowerSourceControlApp.PowerSource
 
         private void StartSyncChanelsThread()
         {
-            var syncChanelsThread = new Thread(SyncChanelsThread)
+            if (_syncChanelsThread == null || _syncChanelsThread.ThreadState == ThreadState.Stopped)
             {
-                Name = string.Concat("SyncChanelsThread", IpAddress),
-            };
-
-            syncChanelsThread.Start();
+                var newThread = new Thread(SyncChanelsThread)
+                {
+                    IsBackground = true,
+                    Name = string.Concat("SyncChanelsThread", IpAddress)
+                };
+                newThread.Start();
+                Thread.MemoryBarrier();
+                _syncChanelsThread = newThread;
+            }
         }
 
         private void SyncChanelsThread()
         {
             while (IsOnline)
             {
-                Thread.Sleep(100);
+                Thread.Sleep(800);
 
                 try
                 {
@@ -133,8 +138,8 @@ namespace PowerSourceControlApp.PowerSource
                     {
                         SimpleCRUD.SetDialect(SimpleCRUD.Dialect.MySQL);
                         connection.Open();
-                        SettingsList = connection.GetList<Settings>().ToList();
-                        MeasurementList = connection.GetList<Measurement>("where (measured_at > date_sub(now(), interval 1 minute))").ToList();
+                        _settingsList = connection.GetList<Settings>().ToList();
+                        _measurementList = connection.GetList<Measurement>("where (measured_at > date_sub(now(), interval 1 minute))").ToList();
                         connection.Close();
                     }
                 }
@@ -148,7 +153,7 @@ namespace PowerSourceControlApp.PowerSource
 
                 if (ChanelList.Count != 0)
                 {
-                    foreach (var chanel in SettingsList)
+                    foreach (var chanel in _settingsList)
                     {
                         ChanelList.Single(c => c.ChanelId == chanel.Id).Voltage = chanel.Voltage;
                         ChanelList.Single(c => c.ChanelId == chanel.Id).Current = chanel.Current;
@@ -157,7 +162,7 @@ namespace PowerSourceControlApp.PowerSource
                         ChanelList.Single(c => c.ChanelId == chanel.Id).OnOff = chanel.OnOff;
 
                         ChanelList.Single(c => c.ChanelId == chanel.Id).ResultsList =
-                             MeasurementList.Where(a => a.UUID == chanel.UUID).ToList();
+                             _measurementList.Where(a => a.UUID == chanel.UUID).ToList();
 
                         ChanelList.Single(c => c.ChanelId == chanel.Id).Update();
                     }
@@ -213,7 +218,6 @@ namespace PowerSourceControlApp.PowerSource
             var index = ChanelList.FindIndex(a => a.ChanelId == chanelId);
             decimal voltageSet = ChanelList.Single(p => p.ChanelId == id).Voltage;
             decimal currentSet = ChanelList.Single(p => p.ChanelId == id).Current;
-            bool onOffSet = ChanelList.Single(p => p.ChanelId == id).OnOff;
 
             if (voltageSet == 0) // Chanels voltage is zero
             {
@@ -296,22 +300,12 @@ namespace PowerSourceControlApp.PowerSource
         {
             if (propName == "IsOnline")
             {
-                if (!IsOnline)
+                if (IsOnline)
                 {
-                    Thread.Sleep(110);
-                    DutyManager.StopTaskManagerThread();
+                    StartSyncChanelsThread();
                 }
                 else
                 {
-                    StartSyncChanelsThread();
-                    if (DutyManager != null)
-                    {
-                        DutyManager.ReStart();
-                    }
-                    else
-                    {
-                        DutyManager.StartTaskManagerThread();
-                    }
                 }
             }
         }
@@ -332,14 +326,14 @@ namespace PowerSourceControlApp.PowerSource
                 currentHash += ChanelList.GetHashCode();
             }
 
-            if (SettingsList != null)
+            if (_settingsList != null)
             {
-                currentHash += SettingsList.GetHashCode();
+                currentHash += _settingsList.GetHashCode();
             }
 
-            if (MeasurementList != null)
+            if (_measurementList != null)
             {
-                currentHash += MeasurementList.GetHashCode();
+                currentHash += _measurementList.GetHashCode();
             }
 
             currentHash += IsOnline.GetHashCode();

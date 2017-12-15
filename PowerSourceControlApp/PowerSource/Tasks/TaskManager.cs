@@ -2,19 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using PowerSourceControlApp.PowerSource.Tasks;
 
-namespace PowerSourceControlApp.PowerSource
+namespace PowerSourceControlApp.PowerSource.Tasks
 {
     public class TaskManager
-    {        
-        public bool IsActive;
-        public List<Task> TaskList;
-        private Thread _taskManagerThread;
-        private readonly Random _randomNumberGenerator;
-        private PowerSource _parentPowerSource;
+    {
+        public List<Task> TaskList { get; }
+        private readonly PowerSource _parentPowerSource;
 
-        public bool RunningTaskExist
+        private bool RunningTaskExist
         {
             get
             {
@@ -44,54 +40,25 @@ namespace PowerSourceControlApp.PowerSource
 
         public TaskManager(PowerSource parent)
         {
-            _randomNumberGenerator = new Random();
             _parentPowerSource = parent;
             TaskList = new List<Task>();
-            IsActive = true;
         }
 
-        public void StartTaskManagerThread()
+        public void StartNextTask()
         {
-            var threadName = string.Concat("TaskManager:", _parentPowerSource.IpAddress);
-            _taskManagerThread = new Thread(TaskManagerThread)
+            RemoveComplitedTasks();
+
+            if (_parentPowerSource.IsOnline && !RunningTaskExist && _parentPowerSource.Status == "Idle")
             {
-                Name = threadName,
-            };
-            _taskManagerThread.Start();
-        }
-
-        public void StopTaskManagerThread()
-        {
-            IsActive = false;
-            GC.Collect();
-        }
-
-        public void ReStart()
-        {
-            TaskList.Clear();
-            StartTaskManagerThread();
-        }
-
-        private void TaskManagerThread()
-        {
-            Thread.Sleep(300);
-            while (IsActive)
-            {               
-                //RemoveMarked();
-                if (_parentPowerSource.IsOnline)
+                if (!IsEmpty)
                 {
-                    if (!RunningTaskExist && _parentPowerSource.Status == "Idle")
-                    {
-                        RemoveComplited();
-                        if (!IsEmpty)
-                        {
-                            var nextTask = TaskList.OrderBy(o => o.TaskNumber).First();
-                            nextTask.Run();
-                        }
-                    }
-                }              
+                    var nextTask = TaskList.OrderBy(o => o.TaskNumber).First();
+                    var taskThread = new Thread(() => nextTask.Run(30000)) {IsBackground = true};
+                    Thread.MemoryBarrier();
+                    taskThread.Start();
+                }
             }
-        }     
+        }
 
         private void Add(Chanel chanel, string name, decimal argument)
         {
@@ -110,22 +77,22 @@ namespace PowerSourceControlApp.PowerSource
                             x.IsComplited == false).Argument = argument;
 
                     }
-                    // Add task only if its on exist already
-                    TaskList.Add(new Task(chanel, name, argument, Convert.ToUInt32(nextNumber)));
+                    else
+                    {
+                        TaskList.Add(new Task(chanel, name, argument, Convert.ToUInt32(nextNumber)));
+                    }
                 }
             }
             else
             {
                 TaskList.Add(new Task(chanel, name, argument, 1));
             }
+            StartNextTask();
         }
 
-        private void RemoveComplited()
+        private void RemoveComplitedTasks()
         {
-            if (!IsEmpty)
-            {
-                TaskList.RemoveAll(x => x.IsComplited && x.IsExecuting == false);
-            }
+            TaskList.RemoveAll(x => x.IsComplited && x.IsExecuting == false);
         }
 
         public void SetVoltage(Chanel chanel, decimal value)
