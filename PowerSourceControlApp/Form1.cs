@@ -1,27 +1,33 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+using DevExpress.XtraEditors;
 using DevExpress.XtraEditors.CustomEditor;
 using DevExpress.XtraGauges.Win;
 using DevExpress.XtraGrid.Columns;
+using DevExpress.XtraGrid.Views.Grid;
+using DevExpress.XtraGrid.Views.Layout.Events;
 using PowerSourceControlApp.DeviceManagment;
 
 namespace PowerSourceControlApp
 {
-    public partial  class Form1: DevExpress.XtraEditors.XtraForm
+    public partial class Form1: XtraForm
     {
-        private NetworkDeviceDetector DeviceDetector;
+        private readonly NetworkDeviceDetector _deviceDetector;
 
         public Form1()
         {
             DeviceManager.Init();
-            DeviceDetector = new NetworkDeviceDetector();
-            DeviceDetector.OnDataReceived += NewDeviceHandler;
+            _deviceDetector = new NetworkDeviceDetector();
+            _deviceDetector.OnDataReceived += NewDeviceHandler;
 
             InitializeComponent();
+
+            var labelList = new List<Label> {CurrentLabel, VoltageLabel, OnOffLabel, UpdateLabel};
 
             VisualInterfaceControl.ConnectToGrids(
                 powersourcegrid: PowerSourceList,
@@ -35,21 +41,25 @@ namespace PowerSourceControlApp
                 voltageedit: VoltageEdit,
                 currentedit: CurrentEdit,
                 updatebutton: UpdateButton,
-                onoffbutton: OnButton);
+                onoffbutton: OnButton,
+                labellist: labelList);
 
-            Version version = Assembly.GetExecutingAssembly().GetName().Version;
-            this.Text = "PowerSource Control " + version.Major + "." + version.Minor + " (build " + version.Build + ")";
+            var version = Assembly.GetExecutingAssembly().GetName().Version;
+            Text = "PowerSource Control " + version.Major + "." + version.Minor + " (build " + version.Build + ")";
 
             CreateGauge(layoutView1.Columns["Status"], StatusGauge);
             CreateGauge(layoutView1.Columns["RecentVoltageDisplay"], VoltageGauge);
             CreateGauge(layoutView1.Columns["RecentCurrentDisplay"], CurrentGauge);
-
-            DeviceDetector.CreateUdpReadThread();
+            _deviceDetector.CreateUdpReadThread();
+            layoutView1.FieldValueClick += ChanelStatusRightClick;
+            gridView1.RowClick += PowerSourceList_DoubleClick;
             DeviceManager.StartHashTread();
 
             DeviceManager.DeviceListUpdate += UpdateFormsHandler;
             DeviceManager.DeviceUpdate += UpdateDeviceHandler;
         }
+
+        
 
         public sealed override string Text
         {
@@ -93,11 +103,11 @@ namespace PowerSourceControlApp
             {
                 if (!DeviceManager.IsBusy)
                 {
-                    DeviceDetector.SuspendThread = true;
+                    _deviceDetector.SuspendThread = true;
                     var handleDevice =
                         new Thread(() => DeviceManager.NewDeviceDetectorHanler(senderip)) {IsBackground = true};
                     handleDevice.Start();
-                    DeviceDetector.SuspendThread = false;
+                    _deviceDetector.SuspendThread = false;
                 }
             } 
         }
@@ -110,6 +120,84 @@ namespace PowerSourceControlApp
         private void OnButton_Click(object sender, EventArgs e)
         {
             Invoke((MethodInvoker)VisualInterfaceControl.OnOffButtonClick);
+        }
+
+        private void ChanelStatusRightClick(object sender, FieldValueClickEventArgs e)
+        {
+            var arguments = e;
+            if (arguments.Button == MouseButtons.Right)
+            {
+                if (arguments.Column.Caption == "Status")
+                {
+                    
+                    var powersourceIp = DeviceManager.SelectedPowerSourceIp;
+                    var powersource = DeviceManager.DeviceList.Single(source => source.IpAddress == powersourceIp);
+
+                    if (powersource.IsOnline)
+                    {
+                        var chanelUUID = DeviceManager.SelectedChanelUUID;
+                        var chanel = powersource.ChanelList.Single(chanel1 => chanel1.ChanelUUID == chanelUUID);
+                        var address = "0x" + chanel.Address.ToString("X");
+                        var calibrationDate = chanel.CalibratedAt;
+                        string text;
+
+                        if (chanel.Calibration)
+                        {
+                            text = "Chanel " + address +
+                                   " is already calibrated at "+ calibrationDate + ". Start recalibration?";
+                        }
+                        else
+                        {
+                            text = "Chanel " + address +
+                                   ". Start calibration?";
+                        }
+
+                        const string caption = "Calibrate?";
+                        const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
+                        const MessageBoxIcon icon = MessageBoxIcon.Question;
+                        var result = XtraMessageBox.Show(text, buttons: buttons, caption: caption, icon: icon);
+
+                        if (result == DialogResult.Yes) 
+                        {
+                            powersource.DutyManager.Calibrate(chanel);
+                        }
+                    }              
+                }
+            }
+        }
+
+        private void PowerSourceList_DoubleClick(object sender, RowClickEventArgs e)
+        {
+            var arguments = e;
+
+            if (arguments.Button == MouseButtons.Right)
+            {
+                var powersource = DeviceManager.DeviceList[arguments.HitInfo.VisibleIndex];
+
+                if (powersource.IsOnline)
+                {
+                    var nameEdit = new TextEdit
+                    {
+                        Text = powersource.Hostname,
+                        Dock = DockStyle.Fill
+                    };
+                    var caption = "Change Hostname for PowerSource " + powersource.IpAddress;
+                    const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
+
+                    var result = XtraDialog.Show(content: nameEdit, caption: caption, buttons: buttons);
+
+                    if (result == DialogResult.Yes)
+                    {
+                        var newName = nameEdit.Text;
+
+                        if (newName != powersource.Hostname)
+                        {
+                            var thread = new Thread(() => powersource.SetHostname(newName)) {IsBackground = true};
+                            thread.Start();
+                        }
+                    }
+                }
+            }
         }
     }
 }

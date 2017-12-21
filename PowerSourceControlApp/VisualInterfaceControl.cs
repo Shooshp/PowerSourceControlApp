@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Forms;
 using DevExpress.XtraCharts;
 using DevExpress.XtraEditors;
 using DevExpress.XtraGrid;
@@ -13,14 +14,10 @@ namespace PowerSourceControlApp
 {
     public static class VisualInterfaceControl
     {
-        public static bool IsBusy;
-        
         private static int _focusedPowerSourceIndex;
         private static string _focusedPowerSourceIp;
         private static int _focusedChanelIndex;
         private static int _focusedChanelId;
-
-        private static int _focusedPowerSourceHash;
 
         private static GridControl _taskListGridControl;
         private static GridControl _powerSourceListGridControl;
@@ -34,6 +31,7 @@ namespace PowerSourceControlApp
         private static SpinEdit _currentEdit;
         private static SimpleButton _updateButton;
         private static SimpleButton _onoffButton;
+        private static List<Label> _labelList;
 
         private static bool PowerSourceListIsEmpty
         {
@@ -59,14 +57,13 @@ namespace PowerSourceControlApp
             object voltageedit,
             object currentedit,
             object updatebutton,
-            object onoffbutton)
+            object onoffbutton,
+            object labellist)
         {
             _focusedPowerSourceIndex = 0;
             _focusedPowerSourceIp = null;
             _focusedChanelIndex = 0;
             _focusedChanelId = 0;
-
-            IsBusy = false;
 
             _powerSourceListGridControl = (GridControl)powersourcegrid;
             _chanelListGridControl = (GridControl)chanellistgrid;
@@ -89,6 +86,8 @@ namespace PowerSourceControlApp
 
             _powerSourceListGridView.FocusedRowChanged += CurrentPowerSourceChanged;
             _chanelListLayoutView.FocusedRowChanged += CurrentChanelChanged;
+
+            _labelList = (List<Label>) labellist;
         }
 
         public static void UpdateForms()
@@ -135,7 +134,6 @@ namespace PowerSourceControlApp
             if (powersourceindex > -1)
             {
                 _focusedPowerSourceIp = DeviceManager.DeviceList.ElementAt(_focusedPowerSourceIndex).IpAddress;
-                _focusedPowerSourceHash = DeviceManager.DeviceList.ElementAt(_focusedPowerSourceIndex).GetHashCode();
                 DeviceManager.SelectedPowerSourceIp = _focusedPowerSourceIp;
                 TaskAndChanelListDs(powersourceindex);
                 SelectChanel(0);
@@ -156,6 +154,7 @@ namespace PowerSourceControlApp
                 ChartsDs(_focusedPowerSourceIndex, chanelindex);
                 EditorsDs(_focusedPowerSourceIndex, chanelindex);
                 ButtonsIsVisible(true);
+                LableIsVisible(true);
                 DeviceManager.SelectedChanelUUID = DeviceManager.DeviceList.
                     ElementAt(_focusedPowerSourceIndex).ChanelList.ElementAt(chanelindex).ChanelUUID;
             }
@@ -164,6 +163,7 @@ namespace PowerSourceControlApp
                 ChartsDs(-1, -1);
                 EditorsDs(-1, -1);
                 ButtonsIsVisible(false);
+                LableIsVisible(false);
                 DeviceManager.SelectedChanelUUID = null;
             }
             RefreshCharts();
@@ -343,6 +343,14 @@ namespace PowerSourceControlApp
         {
             _updateButton.Visible = state;
             _onoffButton.Visible = state;
+        }
+
+        private static void LableIsVisible(bool state)
+        {
+            foreach (var label in _labelList)
+            {
+                label.Visible = state;
+            }
         }
     }
 }

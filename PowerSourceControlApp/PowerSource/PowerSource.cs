@@ -31,6 +31,7 @@ namespace PowerSourceControlApp.PowerSource
         public readonly int StatusPort;
         private List<Settings> _settingsList;
         private List<Measurement> _measurementList;
+        private List<Calibration> _calibrationList;
         public readonly List<Chanel> ChanelList;
         public readonly TaskManager DutyManager;
         public readonly StatusChecker Pinger;
@@ -83,6 +84,7 @@ namespace PowerSourceControlApp.PowerSource
                     SimpleCRUD.SetDialect(SimpleCRUD.Dialect.MySQL);
                     connection.Open();
                     _settingsList = connection.GetList<Settings>().ToList();
+                    _calibrationList = connection.GetList<Calibration>("where voltage_set = '0.0000' LIMIT 8").ToList();
                     connection.Close();
                 }
             }
@@ -107,6 +109,10 @@ namespace PowerSourceControlApp.PowerSource
                     ChanelList.Single(c => c.ChanelId == chanel.Id).Power = chanel.Power;
                     ChanelList.Single(c => c.ChanelId == chanel.Id).Calibration = chanel.Calibration;
                     ChanelList.Single(c => c.ChanelId == chanel.Id).OnOff = chanel.OnOff;
+
+                    var calibration = _calibrationList.Single((calibration1 => calibration1.UUID == chanel.UUID));
+
+                    ChanelList.Single(c => c.ChanelId == chanel.Id).CalibratedAt = calibration.CalibratedAt;
                 }
             }
         }
@@ -183,7 +189,7 @@ namespace PowerSourceControlApp.PowerSource
             DisplayName = string.Concat(Hostname, "(", IpAddress, ")");
         }
 
-        private void SetHostname(string name)
+        public void SetHostname(string name)
         {
             RunSshCommand(string.Concat("sudo hostnamectl set-hostname ", name));
             GetHostname();
@@ -306,6 +312,7 @@ namespace PowerSourceControlApp.PowerSource
                 }
                 else
                 {
+                    DeviceManager.DeviceRefresh(IpAddress);
                 }
             }
         }
@@ -314,30 +321,58 @@ namespace PowerSourceControlApp.PowerSource
 
         private int CheckHash()
         {
-            var currentHash = 0;
+            var taskListHash = 0;
 
             if (DutyManager.TaskList != null)
             {
-                currentHash += DutyManager.TaskList.GetHashCode();
+                taskListHash = DutyManager.TaskList.Count;
             }
 
-            if (ChanelList != null)
-            {
-                currentHash += ChanelList.GetHashCode();
-            }
+            var settingsListHash = GetSettingsHash();
+            var measurementListHash = GetMeasurementHash();
+            var isOnlineHash = IsOnline.GetHashCode();
+
+            var currentHash = taskListHash + settingsListHash + measurementListHash + isOnlineHash + DisplayName.GetHashCode();
+
+            return currentHash;
+        }
+
+        private int GetSettingsHash()
+        {
+            var hash = 0;
 
             if (_settingsList != null)
             {
-                currentHash += _settingsList.GetHashCode();
+                foreach (var chanel in _settingsList)
+                {
+                    hash += Convert.ToInt32(chanel.Current);
+                    hash += Convert.ToInt32(chanel.Voltage);
+                    hash += Convert.ToInt32(chanel.OnOff);
+                    hash += chanel.UUID.GetHashCode();
+                    hash += Convert.ToInt32(chanel.Calibration);
+                }
             }
+
+            return  hash;
+        }
+
+        private int GetMeasurementHash()
+        {
+            var hash = 0;
 
             if (_measurementList != null)
             {
-                currentHash += _measurementList.GetHashCode();
+                foreach (var measurement in _measurementList)
+                {
+                    hash += Convert.ToInt32(measurement.Current);
+                    hash += Convert.ToInt32(measurement.Voltage);
+                    hash += measurement.MeasuredAt.GetHashCode();
+                    hash += measurement.UUID.GetHashCode();
+                    hash += Convert.ToInt32(measurement.IndexId);
+                }
             }
 
-            currentHash += IsOnline.GetHashCode();
-            return currentHash;
+            return hash;
         }
     }
 }

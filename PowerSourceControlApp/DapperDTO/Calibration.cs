@@ -16,6 +16,8 @@ namespace PowerSourceControlApp.DapperDTO
         public decimal VoltageSet { get; set; }
         [Column("voltage_get")]
         public decimal VoltageGet { get; set; }
+        [Column("calibrated_at")]
+        public string CalibratedAt { get; set; }
     }
 
     #endregion

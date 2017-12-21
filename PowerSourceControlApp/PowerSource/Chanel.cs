@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Linq;
-using System.Threading;
-using Dapper;
-using MySql.Data.MySqlClient;
+﻿using System.Collections.Generic;
 using PowerSourceControlApp.DapperDTO;
 
 namespace PowerSourceControlApp.PowerSource
@@ -13,9 +6,7 @@ namespace PowerSourceControlApp.PowerSource
     public sealed class Chanel 
     {
         public PowerSource ParentPowerSource { get; }
-        public Settings SettingsOnChanel;
         public List<Measurement> ResultsList;
-        private readonly Random _randomNumberGenerator;
         public bool IsInited;
         public bool IsActive;
 
@@ -32,11 +23,11 @@ namespace PowerSourceControlApp.PowerSource
         public decimal Power { get; set; }
         public bool Calibration { get; set; }
         public bool OnOff { get; set; }
+        public string CalibratedAt { get; set; }
 
         public Chanel(uint chanelId, PowerSource parent)
         {
             ResultsList = new List<Measurement>();
-            _randomNumberGenerator = new Random();
             ParentPowerSource = parent;
             ChanelId = chanelId;
             IsInited = false;

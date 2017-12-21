@@ -53,14 +53,14 @@ namespace PowerSourceControlApp.PowerSource.Tasks
                 if (!IsEmpty)
                 {
                     var nextTask = TaskList.OrderBy(o => o.TaskNumber).First();
-                    var taskThread = new Thread(() => nextTask.Run(30000)) {IsBackground = true};
+                    var taskThread = new Thread(() => nextTask.Run()) {IsBackground = true};
                     Thread.MemoryBarrier();
                     taskThread.Start();
                 }
             }
         }
 
-        private void Add(Chanel chanel, string name, decimal argument)
+        private void Add(Chanel chanel, string name, decimal argument, int ttl)
         {
             if (!IsEmpty)
             {
@@ -75,17 +75,16 @@ namespace PowerSourceControlApp.PowerSource.Tasks
                             x.TaskName == name && 
                             x.IsExecuting == false &&
                             x.IsComplited == false).Argument = argument;
-
                     }
                     else
                     {
-                        TaskList.Add(new Task(chanel, name, argument, Convert.ToUInt32(nextNumber)));
+                        TaskList.Add(new Task(chanel, name, argument, Convert.ToUInt32(nextNumber), ttl));
                     }
                 }
             }
             else
             {
-                TaskList.Add(new Task(chanel, name, argument, 1));
+                TaskList.Add(new Task(chanel, name, argument, 1, ttl));
             }
             StartNextTask();
         }
@@ -97,27 +96,27 @@ namespace PowerSourceControlApp.PowerSource.Tasks
 
         public void SetVoltage(Chanel chanel, decimal value)
         {
-            Add(chanel, "SetVoltage", value);
+            Add(chanel, "SetVoltage", value, 30000);
         }
 
         public void SetCurrent(Chanel chanel, decimal value)
         {
-            Add(chanel, "SetCurrent", value);
+            Add(chanel, "SetCurrent", value, 5000);
         }
 
         public void Calibrate(Chanel chanel)
         {
-            Add(chanel, "Calibrate", 0);
+            Add(chanel, "Calibrate", 0, 370000);
         }
 
         public void ShutDown(Chanel chanel)
         {
-            Add(chanel, "ShutDown", 0);
+            Add(chanel, "ShutDown", 0, 5000);
         }
 
         public void TurnOn(Chanel chanel)
         {
-            Add(chanel, "TurnOn", 0);
+            Add(chanel, "TurnOn", 0, 5000);
         }
     }
 }

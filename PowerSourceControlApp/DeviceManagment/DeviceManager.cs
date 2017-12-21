@@ -107,6 +107,10 @@ namespace PowerSourceControlApp.DeviceManagment
             }
             if (SelectedPowerSourceIp == ipaddress)
             {
+                if (DeviceList.Single(source => source.IpAddress == ipaddress).IsOnline == false)
+                {
+                    DeviceListUpdate?.Invoke();
+                }
                 DeviceUpdate?.Invoke();
             }
         }

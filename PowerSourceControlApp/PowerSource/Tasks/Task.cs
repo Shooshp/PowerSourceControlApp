@@ -13,6 +13,7 @@ namespace PowerSourceControlApp.PowerSource.Tasks
         public int TaskId;
         public uint Progress;
         public uint TaskNumber;
+        private int _ttl;
         public decimal Argument;
         public string TaskName;
         private readonly PowerSource _parentPowerSource;
@@ -23,7 +24,7 @@ namespace PowerSourceControlApp.PowerSource.Tasks
         public string DisplayName { get; }
 
 
-        public Task(Chanel chanel, string name, decimal argument, uint assignedTaskNumber)
+        public Task(Chanel chanel, string name, decimal argument, uint assignedTaskNumber, int ttl)
         {
             TaskId = 0;
             Progress = 0;
@@ -35,6 +36,7 @@ namespace PowerSourceControlApp.PowerSource.Tasks
             IsExecuting = false;
             IsComplited = false;
             TaskNumber = assignedTaskNumber;
+            _ttl = ttl;
 
             if (Argument != 0)
             {
@@ -46,9 +48,9 @@ namespace PowerSourceControlApp.PowerSource.Tasks
             }
         }
 
-        public void Run(int timetoexecute)
+        public void Run()
         {
-            var wd = new Watchdog(timetoexecute);
+            var wd = new Watchdog(_ttl);
             wd.TimeToDie += Dispose;
             wd.Start();
 
@@ -150,7 +152,10 @@ namespace PowerSourceControlApp.PowerSource.Tasks
 
         private void Dispose(bool disposing)
         {
-            Progress = 100;
+            if (disposing)
+            {
+                Progress = 100;
+            }
         }
     }
 }

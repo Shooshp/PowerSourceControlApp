@@ -35,13 +35,13 @@ namespace PowerSourceControlApp
             DevExpress.XtraGauges.Core.Model.IndicatorState indicatorState2 = new DevExpress.XtraGauges.Core.Model.IndicatorState();
             DevExpress.XtraGauges.Core.Model.IndicatorState indicatorState3 = new DevExpress.XtraGauges.Core.Model.IndicatorState();
             DevExpress.XtraGauges.Core.Model.IndicatorState indicatorState4 = new DevExpress.XtraGauges.Core.Model.IndicatorState();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             DevExpress.XtraCharts.XYDiagram xyDiagram1 = new DevExpress.XtraCharts.XYDiagram();
             DevExpress.XtraCharts.Series series1 = new DevExpress.XtraCharts.Series();
             DevExpress.XtraCharts.LineSeriesView lineSeriesView1 = new DevExpress.XtraCharts.LineSeriesView();
             DevExpress.XtraCharts.XYDiagram xyDiagram2 = new DevExpress.XtraCharts.XYDiagram();
             DevExpress.XtraCharts.Series series2 = new DevExpress.XtraCharts.Series();
             DevExpress.XtraCharts.LineSeriesView lineSeriesView2 = new DevExpress.XtraCharts.LineSeriesView();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             DevExpress.XtraGauges.Core.Model.IndicatorState indicatorState5 = new DevExpress.XtraGauges.Core.Model.IndicatorState();
             DevExpress.XtraGauges.Core.Model.IndicatorState indicatorState6 = new DevExpress.XtraGauges.Core.Model.IndicatorState();
             DevExpress.XtraGauges.Core.Model.IndicatorState indicatorState7 = new DevExpress.XtraGauges.Core.Model.IndicatorState();
@@ -80,24 +80,24 @@ namespace PowerSourceControlApp
             this.defaultLookAndFeel1 = new DevExpress.LookAndFeel.DefaultLookAndFeel(this.components);
             this.ChanelTabs = new DevExpress.XtraTab.XtraTabControl();
             this.ChanelStatus = new DevExpress.XtraTab.XtraTabPage();
-            this.label1 = new System.Windows.Forms.Label();
-            this.OnButton = new DevExpress.XtraEditors.SimpleButton();
+            this.CurrentLabel = new System.Windows.Forms.Label();
+            this.VoltageLabel = new System.Windows.Forms.Label();
+            this.UpdateLabel = new System.Windows.Forms.Label();
             this.CurrentEdit = new DevExpress.XtraEditors.SpinEdit();
+            this.OnOffLabel = new System.Windows.Forms.Label();
             this.VoltageEdit = new DevExpress.XtraEditors.SpinEdit();
-            this.UpdateButton = new DevExpress.XtraEditors.SimpleButton();
             this.CurrentChart = new DevExpress.XtraCharts.ChartControl();
             this.VoltageChart = new DevExpress.XtraCharts.ChartControl();
+            this.OnButton = new DevExpress.XtraEditors.SimpleButton();
             this.TaskListControl = new DevExpress.XtraGrid.GridControl();
             this.gridView2 = new DevExpress.XtraGrid.Views.Grid.GridView();
             this.TaskNameColomn = new DevExpress.XtraGrid.Columns.GridColumn();
+            this.UpdateButton = new DevExpress.XtraEditors.SimpleButton();
             this.ChanelLog = new DevExpress.XtraTab.XtraTabPage();
             this.ChanelSettings = new DevExpress.XtraTab.XtraTabPage();
             this.isOnlineGauge = new DevExpress.XtraGauges.Win.GaugeControl();
             this.stateIndicatorGauge = new DevExpress.XtraGauges.Win.Gauges.State.StateIndicatorGauge();
             this.OnLineGauge = new DevExpress.XtraGauges.Win.Gauges.State.StateIndicatorComponent();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.PowerSourceChanelList)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutViewField_layoutViewColumn1_4)).BeginInit();
@@ -166,10 +166,12 @@ namespace PowerSourceControlApp
             this.layoutViewField_layoutViewColumn1_1,
             this.layoutViewField_layoutViewColumn1_2});
             this.layoutView1.Name = "layoutView1";
+            this.layoutView1.OptionsBehavior.AllowExpandCollapse = false;
             this.layoutView1.OptionsCustomization.AllowFilter = false;
             this.layoutView1.OptionsCustomization.AllowSort = false;
             this.layoutView1.OptionsView.CardsAlignment = DevExpress.XtraGrid.Views.Layout.CardsAlignment.Near;
             this.layoutView1.OptionsView.DefaultColumnCount = 4;
+            this.layoutView1.OptionsView.ShowCardExpandButton = false;
             this.layoutView1.OptionsView.ShowHeaderPanel = false;
             this.layoutView1.OptionsView.ViewMode = DevExpress.XtraGrid.Views.Layout.LayoutViewMode.MultiRow;
             this.layoutView1.TemplateCard = this.layoutViewCard1;
@@ -274,7 +276,7 @@ namespace PowerSourceControlApp
             this.layoutViewField_layoutViewColumn1_7,
             this.item1,
             this.item2});
-            this.layoutViewCard1.Name = "layoutViewCard1";
+            this.layoutViewCard1.Name = "layoutViewTemplateCard";
             this.layoutViewCard1.OptionsItemText.TextToControlDistance = 5;
             this.layoutViewCard1.Text = "TemplateCard";
             // 
@@ -408,6 +410,9 @@ namespace PowerSourceControlApp
             this.ifOnlineStateColumn});
             this.gridView1.GridControl = this.PowerSourceList;
             this.gridView1.Name = "gridView1";
+            this.gridView1.OptionsCustomization.AllowFilter = false;
+            this.gridView1.OptionsCustomization.AllowGroup = false;
+            this.gridView1.OptionsCustomization.AllowSort = false;
             this.gridView1.OptionsView.ShowGroupPanel = false;
             // 
             // PowerSourceIPColumn
@@ -455,11 +460,11 @@ namespace PowerSourceControlApp
             // 
             // ChanelStatus
             // 
-            this.ChanelStatus.Controls.Add(this.label4);
-            this.ChanelStatus.Controls.Add(this.label3);
-            this.ChanelStatus.Controls.Add(this.label1);
+            this.ChanelStatus.Controls.Add(this.CurrentLabel);
+            this.ChanelStatus.Controls.Add(this.VoltageLabel);
+            this.ChanelStatus.Controls.Add(this.UpdateLabel);
             this.ChanelStatus.Controls.Add(this.CurrentEdit);
-            this.ChanelStatus.Controls.Add(this.label2);
+            this.ChanelStatus.Controls.Add(this.OnOffLabel);
             this.ChanelStatus.Controls.Add(this.VoltageEdit);
             this.ChanelStatus.Controls.Add(this.CurrentChart);
             this.ChanelStatus.Controls.Add(this.VoltageChart);
@@ -470,25 +475,35 @@ namespace PowerSourceControlApp
             this.ChanelStatus.Size = new System.Drawing.Size(1171, 192);
             this.ChanelStatus.Text = "Статус";
             // 
-            // label1
+            // CurrentLabel
             // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Nunito Sans", 25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(573, 121);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(133, 46);
-            this.label1.TabIndex = 10;
-            this.label1.Text = "Update";
+            this.CurrentLabel.AutoSize = true;
+            this.CurrentLabel.Font = new System.Drawing.Font("Nunito Sans", 30F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CurrentLabel.Location = new System.Drawing.Point(13, 112);
+            this.CurrentLabel.Name = "CurrentLabel";
+            this.CurrentLabel.Size = new System.Drawing.Size(33, 54);
+            this.CurrentLabel.TabIndex = 13;
+            this.CurrentLabel.Text = "I";
             // 
-            // OnButton
+            // VoltageLabel
             // 
-            this.OnButton.ImageOptions.Image = ((System.Drawing.Image)(resources.GetObject("OnButton.ImageOptions.Image")));
-            this.OnButton.ImageOptions.ImageToTextAlignment = DevExpress.XtraEditors.ImageAlignToText.TopCenter;
-            this.OnButton.Location = new System.Drawing.Point(720, 29);
-            this.OnButton.Name = "OnButton";
-            this.OnButton.Size = new System.Drawing.Size(45, 45);
-            this.OnButton.TabIndex = 9;
-            this.OnButton.Click += new System.EventHandler(this.OnButton_Click);
+            this.VoltageLabel.AutoSize = true;
+            this.VoltageLabel.Font = new System.Drawing.Font("Nunito Sans", 30F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.VoltageLabel.Location = new System.Drawing.Point(4, 27);
+            this.VoltageLabel.Name = "VoltageLabel";
+            this.VoltageLabel.Size = new System.Drawing.Size(51, 54);
+            this.VoltageLabel.TabIndex = 12;
+            this.VoltageLabel.Text = "V";
+            // 
+            // UpdateLabel
+            // 
+            this.UpdateLabel.AutoSize = true;
+            this.UpdateLabel.Font = new System.Drawing.Font("Nunito Sans", 25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.UpdateLabel.Location = new System.Drawing.Point(573, 121);
+            this.UpdateLabel.Name = "UpdateLabel";
+            this.UpdateLabel.Size = new System.Drawing.Size(133, 46);
+            this.UpdateLabel.TabIndex = 10;
+            this.UpdateLabel.Text = "Update";
             // 
             // CurrentEdit
             // 
@@ -513,6 +528,16 @@ namespace PowerSourceControlApp
             this.CurrentEdit.Size = new System.Drawing.Size(200, 90);
             this.CurrentEdit.TabIndex = 8;
             // 
+            // OnOffLabel
+            // 
+            this.OnOffLabel.AutoSize = true;
+            this.OnOffLabel.Font = new System.Drawing.Font("Nunito Sans", 25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.OnOffLabel.Location = new System.Drawing.Point(573, 27);
+            this.OnOffLabel.Name = "OnOffLabel";
+            this.OnOffLabel.Size = new System.Drawing.Size(141, 46);
+            this.OnOffLabel.TabIndex = 11;
+            this.OnOffLabel.Text = "On / Off";
+            // 
             // VoltageEdit
             // 
             this.VoltageEdit.EditValue = new decimal(new int[] {
@@ -535,16 +560,6 @@ namespace PowerSourceControlApp
             0});
             this.VoltageEdit.Size = new System.Drawing.Size(200, 90);
             this.VoltageEdit.TabIndex = 7;
-            // 
-            // UpdateButton
-            // 
-            this.UpdateButton.ImageOptions.Image = ((System.Drawing.Image)(resources.GetObject("UpdateButton.ImageOptions.Image")));
-            this.UpdateButton.ImageOptions.ImageToTextAlignment = DevExpress.XtraEditors.ImageAlignToText.TopCenter;
-            this.UpdateButton.Location = new System.Drawing.Point(720, 121);
-            this.UpdateButton.Name = "UpdateButton";
-            this.UpdateButton.Size = new System.Drawing.Size(45, 45);
-            this.UpdateButton.TabIndex = 5;
-            this.UpdateButton.Click += new System.EventHandler(this.UpdateButton_Click);
             // 
             // CurrentChart
             // 
@@ -588,6 +603,16 @@ namespace PowerSourceControlApp
             this.VoltageChart.Size = new System.Drawing.Size(300, 90);
             this.VoltageChart.TabIndex = 1;
             // 
+            // OnButton
+            // 
+            this.OnButton.ImageOptions.Image = ((System.Drawing.Image)(resources.GetObject("OnButton.ImageOptions.Image")));
+            this.OnButton.ImageOptions.ImageToTextAlignment = DevExpress.XtraEditors.ImageAlignToText.TopCenter;
+            this.OnButton.Location = new System.Drawing.Point(720, 29);
+            this.OnButton.Name = "OnButton";
+            this.OnButton.Size = new System.Drawing.Size(45, 45);
+            this.OnButton.TabIndex = 9;
+            this.OnButton.Click += new System.EventHandler(this.OnButton_Click);
+            // 
             // TaskListControl
             // 
             this.TaskListControl.Location = new System.Drawing.Point(812, 4);
@@ -615,6 +640,16 @@ namespace PowerSourceControlApp
             this.TaskNameColomn.Name = "TaskNameColomn";
             this.TaskNameColomn.Visible = true;
             this.TaskNameColomn.VisibleIndex = 0;
+            // 
+            // UpdateButton
+            // 
+            this.UpdateButton.ImageOptions.Image = ((System.Drawing.Image)(resources.GetObject("UpdateButton.ImageOptions.Image")));
+            this.UpdateButton.ImageOptions.ImageToTextAlignment = DevExpress.XtraEditors.ImageAlignToText.TopCenter;
+            this.UpdateButton.Location = new System.Drawing.Point(720, 121);
+            this.UpdateButton.Name = "UpdateButton";
+            this.UpdateButton.Size = new System.Drawing.Size(45, 45);
+            this.UpdateButton.TabIndex = 5;
+            this.UpdateButton.Click += new System.EventHandler(this.UpdateButton_Click);
             // 
             // ChanelLog
             // 
@@ -664,36 +699,6 @@ namespace PowerSourceControlApp
             indicatorState6,
             indicatorState7,
             indicatorState8});
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Nunito Sans", 25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(573, 27);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(141, 46);
-            this.label2.TabIndex = 11;
-            this.label2.Text = "On / Off";
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Font = new System.Drawing.Font("Nunito Sans", 30F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(4, 27);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(51, 54);
-            this.label3.TabIndex = 12;
-            this.label3.Text = "V";
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Font = new System.Drawing.Font("Nunito Sans", 30F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.Location = new System.Drawing.Point(13, 112);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(33, 54);
-            this.label4.TabIndex = 13;
-            this.label4.Text = "I";
             // 
             // Form1
             // 
@@ -804,9 +809,9 @@ namespace PowerSourceControlApp
         private DevExpress.XtraLayout.SimpleSeparator item1;
         private DevExpress.XtraLayout.SimpleSeparator item2;
         private DevExpress.XtraEditors.SimpleButton OnButton;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label UpdateLabel;
+        private System.Windows.Forms.Label OnOffLabel;
+        private System.Windows.Forms.Label CurrentLabel;
+        private System.Windows.Forms.Label VoltageLabel;
     }
 }
