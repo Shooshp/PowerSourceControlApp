@@ -31,21 +31,21 @@ namespace PowerSourceControlApp
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            DevExpress.XtraGauges.Core.Model.IndicatorState indicatorState1 = new DevExpress.XtraGauges.Core.Model.IndicatorState();
-            DevExpress.XtraGauges.Core.Model.IndicatorState indicatorState2 = new DevExpress.XtraGauges.Core.Model.IndicatorState();
-            DevExpress.XtraGauges.Core.Model.IndicatorState indicatorState3 = new DevExpress.XtraGauges.Core.Model.IndicatorState();
-            DevExpress.XtraGauges.Core.Model.IndicatorState indicatorState4 = new DevExpress.XtraGauges.Core.Model.IndicatorState();
-            DevExpress.XtraCharts.XYDiagram xyDiagram1 = new DevExpress.XtraCharts.XYDiagram();
-            DevExpress.XtraCharts.Series series1 = new DevExpress.XtraCharts.Series();
-            DevExpress.XtraCharts.LineSeriesView lineSeriesView1 = new DevExpress.XtraCharts.LineSeriesView();
-            DevExpress.XtraCharts.XYDiagram xyDiagram2 = new DevExpress.XtraCharts.XYDiagram();
-            DevExpress.XtraCharts.Series series2 = new DevExpress.XtraCharts.Series();
-            DevExpress.XtraCharts.LineSeriesView lineSeriesView2 = new DevExpress.XtraCharts.LineSeriesView();
+            DevExpress.XtraGauges.Core.Model.IndicatorState indicatorState25 = new DevExpress.XtraGauges.Core.Model.IndicatorState();
+            DevExpress.XtraGauges.Core.Model.IndicatorState indicatorState26 = new DevExpress.XtraGauges.Core.Model.IndicatorState();
+            DevExpress.XtraGauges.Core.Model.IndicatorState indicatorState27 = new DevExpress.XtraGauges.Core.Model.IndicatorState();
+            DevExpress.XtraGauges.Core.Model.IndicatorState indicatorState28 = new DevExpress.XtraGauges.Core.Model.IndicatorState();
+            DevExpress.XtraCharts.XYDiagram xyDiagram7 = new DevExpress.XtraCharts.XYDiagram();
+            DevExpress.XtraCharts.Series series7 = new DevExpress.XtraCharts.Series();
+            DevExpress.XtraCharts.LineSeriesView lineSeriesView7 = new DevExpress.XtraCharts.LineSeriesView();
+            DevExpress.XtraCharts.XYDiagram xyDiagram8 = new DevExpress.XtraCharts.XYDiagram();
+            DevExpress.XtraCharts.Series series8 = new DevExpress.XtraCharts.Series();
+            DevExpress.XtraCharts.LineSeriesView lineSeriesView8 = new DevExpress.XtraCharts.LineSeriesView();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
-            DevExpress.XtraGauges.Core.Model.IndicatorState indicatorState5 = new DevExpress.XtraGauges.Core.Model.IndicatorState();
-            DevExpress.XtraGauges.Core.Model.IndicatorState indicatorState6 = new DevExpress.XtraGauges.Core.Model.IndicatorState();
-            DevExpress.XtraGauges.Core.Model.IndicatorState indicatorState7 = new DevExpress.XtraGauges.Core.Model.IndicatorState();
-            DevExpress.XtraGauges.Core.Model.IndicatorState indicatorState8 = new DevExpress.XtraGauges.Core.Model.IndicatorState();
+            DevExpress.XtraGauges.Core.Model.IndicatorState indicatorState29 = new DevExpress.XtraGauges.Core.Model.IndicatorState();
+            DevExpress.XtraGauges.Core.Model.IndicatorState indicatorState30 = new DevExpress.XtraGauges.Core.Model.IndicatorState();
+            DevExpress.XtraGauges.Core.Model.IndicatorState indicatorState31 = new DevExpress.XtraGauges.Core.Model.IndicatorState();
+            DevExpress.XtraGauges.Core.Model.IndicatorState indicatorState32 = new DevExpress.XtraGauges.Core.Model.IndicatorState();
             this.PowerSourceChanelList = new DevExpress.XtraGrid.GridControl();
             this.layoutView1 = new DevExpress.XtraGrid.Views.Layout.LayoutView();
             this.PowerColumn = new DevExpress.XtraGrid.Columns.LayoutViewColumn();
@@ -98,6 +98,11 @@ namespace PowerSourceControlApp
             this.isOnlineGauge = new DevExpress.XtraGauges.Win.GaugeControl();
             this.stateIndicatorGauge = new DevExpress.XtraGauges.Win.Gauges.State.StateIndicatorGauge();
             this.OnLineGauge = new DevExpress.XtraGauges.Win.Gauges.State.StateIndicatorComponent();
+            this.LogGridControl = new DevExpress.XtraGrid.GridControl();
+            this.gridView3 = new DevExpress.XtraGrid.Views.Grid.GridView();
+            this.Event = new DevExpress.XtraGrid.Columns.GridColumn();
+            this.Discription = new DevExpress.XtraGrid.Columns.GridColumn();
+            this.Date = new DevExpress.XtraGrid.Columns.GridColumn();
             ((System.ComponentModel.ISupportInitialize)(this.PowerSourceChanelList)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutViewField_layoutViewColumn1_4)).BeginInit();
@@ -124,17 +129,20 @@ namespace PowerSourceControlApp
             ((System.ComponentModel.ISupportInitialize)(this.CurrentEdit.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.VoltageEdit.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.CurrentChart)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(xyDiagram1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(series1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(lineSeriesView1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(xyDiagram7)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(series7)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(lineSeriesView7)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.VoltageChart)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(xyDiagram2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(series2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(lineSeriesView2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(xyDiagram8)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(series8)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(lineSeriesView8)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.TaskListControl)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridView2)).BeginInit();
+            this.ChanelLog.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.stateIndicatorGauge)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.OnLineGauge)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.LogGridControl)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridView3)).BeginInit();
             this.SuspendLayout();
             // 
             // PowerSourceChanelList
@@ -319,19 +327,19 @@ namespace PowerSourceControlApp
             this.stateIndicatorComponent1.Name = "stateIndicatorComponent1";
             this.stateIndicatorComponent1.Size = new System.Drawing.SizeF(200F, 200F);
             this.stateIndicatorComponent1.StateIndex = 3;
-            indicatorState1.Name = "State1";
-            indicatorState1.ShapeType = DevExpress.XtraGauges.Core.Model.StateIndicatorShapeType.ElectricLight1;
-            indicatorState2.Name = "State2";
-            indicatorState2.ShapeType = DevExpress.XtraGauges.Core.Model.StateIndicatorShapeType.ElectricLight2;
-            indicatorState3.Name = "State3";
-            indicatorState3.ShapeType = DevExpress.XtraGauges.Core.Model.StateIndicatorShapeType.ElectricLight3;
-            indicatorState4.Name = "State4";
-            indicatorState4.ShapeType = DevExpress.XtraGauges.Core.Model.StateIndicatorShapeType.ElectricLight4;
+            indicatorState25.Name = "State1";
+            indicatorState25.ShapeType = DevExpress.XtraGauges.Core.Model.StateIndicatorShapeType.ElectricLight1;
+            indicatorState26.Name = "State2";
+            indicatorState26.ShapeType = DevExpress.XtraGauges.Core.Model.StateIndicatorShapeType.ElectricLight2;
+            indicatorState27.Name = "State3";
+            indicatorState27.ShapeType = DevExpress.XtraGauges.Core.Model.StateIndicatorShapeType.ElectricLight3;
+            indicatorState28.Name = "State4";
+            indicatorState28.ShapeType = DevExpress.XtraGauges.Core.Model.StateIndicatorShapeType.ElectricLight4;
             this.stateIndicatorComponent1.States.AddRange(new DevExpress.XtraGauges.Core.Model.IIndicatorState[] {
-            indicatorState1,
-            indicatorState2,
-            indicatorState3,
-            indicatorState4});
+            indicatorState25,
+            indicatorState26,
+            indicatorState27,
+            indicatorState28});
             // 
             // VoltageGauge
             // 
@@ -564,42 +572,42 @@ namespace PowerSourceControlApp
             // CurrentChart
             // 
             this.CurrentChart.DataBindings = null;
-            xyDiagram1.AxisX.VisibleInPanesSerializable = "-1";
-            xyDiagram1.AxisY.VisibleInPanesSerializable = "-1";
-            this.CurrentChart.Diagram = xyDiagram1;
+            xyDiagram7.AxisX.VisibleInPanesSerializable = "-1";
+            xyDiagram7.AxisY.VisibleInPanesSerializable = "-1";
+            this.CurrentChart.Diagram = xyDiagram7;
             this.CurrentChart.Legend.Name = "Default Legend";
             this.CurrentChart.Legend.Visibility = DevExpress.Utils.DefaultBoolean.False;
             this.CurrentChart.Location = new System.Drawing.Point(61, 95);
             this.CurrentChart.Name = "CurrentChart";
-            series1.ArgumentDataMember = "MeasuredAt";
-            series1.CrosshairHighlightPoints = DevExpress.Utils.DefaultBoolean.False;
-            series1.LabelsVisibility = DevExpress.Utils.DefaultBoolean.False;
-            series1.Name = "VoltageLine";
-            series1.ValueDataMembersSerializable = "Current";
-            series1.View = lineSeriesView1;
+            series7.ArgumentDataMember = "MeasuredAt";
+            series7.CrosshairHighlightPoints = DevExpress.Utils.DefaultBoolean.False;
+            series7.LabelsVisibility = DevExpress.Utils.DefaultBoolean.False;
+            series7.Name = "VoltageLine";
+            series7.ValueDataMembersSerializable = "Current";
+            series7.View = lineSeriesView7;
             this.CurrentChart.SeriesSerializable = new DevExpress.XtraCharts.Series[] {
-        series1};
+        series7};
             this.CurrentChart.Size = new System.Drawing.Size(300, 90);
             this.CurrentChart.TabIndex = 2;
             // 
             // VoltageChart
             // 
             this.VoltageChart.DataBindings = null;
-            xyDiagram2.AxisX.VisibleInPanesSerializable = "-1";
-            xyDiagram2.AxisY.VisibleInPanesSerializable = "-1";
-            this.VoltageChart.Diagram = xyDiagram2;
+            xyDiagram8.AxisX.VisibleInPanesSerializable = "-1";
+            xyDiagram8.AxisY.VisibleInPanesSerializable = "-1";
+            this.VoltageChart.Diagram = xyDiagram8;
             this.VoltageChart.Legend.Name = "Default Legend";
             this.VoltageChart.Legend.Visibility = DevExpress.Utils.DefaultBoolean.False;
             this.VoltageChart.Location = new System.Drawing.Point(61, 2);
             this.VoltageChart.Name = "VoltageChart";
-            series2.ArgumentDataMember = "MeasuredAt";
-            series2.CrosshairHighlightPoints = DevExpress.Utils.DefaultBoolean.False;
-            series2.LabelsVisibility = DevExpress.Utils.DefaultBoolean.False;
-            series2.Name = "VoltageLine";
-            series2.ValueDataMembersSerializable = "Voltage";
-            series2.View = lineSeriesView2;
+            series8.ArgumentDataMember = "MeasuredAt";
+            series8.CrosshairHighlightPoints = DevExpress.Utils.DefaultBoolean.False;
+            series8.LabelsVisibility = DevExpress.Utils.DefaultBoolean.False;
+            series8.Name = "VoltageLine";
+            series8.ValueDataMembersSerializable = "Voltage";
+            series8.View = lineSeriesView8;
             this.VoltageChart.SeriesSerializable = new DevExpress.XtraCharts.Series[] {
-        series2};
+        series8};
             this.VoltageChart.Size = new System.Drawing.Size(300, 90);
             this.VoltageChart.TabIndex = 1;
             // 
@@ -653,6 +661,7 @@ namespace PowerSourceControlApp
             // 
             // ChanelLog
             // 
+            this.ChanelLog.Controls.Add(this.LogGridControl);
             this.ChanelLog.Name = "ChanelLog";
             this.ChanelLog.Size = new System.Drawing.Size(1171, 192);
             this.ChanelLog.Text = "Лог";
@@ -686,19 +695,65 @@ namespace PowerSourceControlApp
             this.OnLineGauge.Name = "stateIndicatorComponent1";
             this.OnLineGauge.Size = new System.Drawing.SizeF(200F, 200F);
             this.OnLineGauge.StateIndex = 3;
-            indicatorState5.Name = "State1";
-            indicatorState5.ShapeType = DevExpress.XtraGauges.Core.Model.StateIndicatorShapeType.ElectricLight1;
-            indicatorState6.Name = "State2";
-            indicatorState6.ShapeType = DevExpress.XtraGauges.Core.Model.StateIndicatorShapeType.ElectricLight2;
-            indicatorState7.Name = "State3";
-            indicatorState7.ShapeType = DevExpress.XtraGauges.Core.Model.StateIndicatorShapeType.ElectricLight3;
-            indicatorState8.Name = "State4";
-            indicatorState8.ShapeType = DevExpress.XtraGauges.Core.Model.StateIndicatorShapeType.ElectricLight4;
+            indicatorState29.Name = "State1";
+            indicatorState29.ShapeType = DevExpress.XtraGauges.Core.Model.StateIndicatorShapeType.ElectricLight1;
+            indicatorState30.Name = "State2";
+            indicatorState30.ShapeType = DevExpress.XtraGauges.Core.Model.StateIndicatorShapeType.ElectricLight2;
+            indicatorState31.Name = "State3";
+            indicatorState31.ShapeType = DevExpress.XtraGauges.Core.Model.StateIndicatorShapeType.ElectricLight3;
+            indicatorState32.Name = "State4";
+            indicatorState32.ShapeType = DevExpress.XtraGauges.Core.Model.StateIndicatorShapeType.ElectricLight4;
             this.OnLineGauge.States.AddRange(new DevExpress.XtraGauges.Core.Model.IIndicatorState[] {
-            indicatorState5,
-            indicatorState6,
-            indicatorState7,
-            indicatorState8});
+            indicatorState29,
+            indicatorState30,
+            indicatorState31,
+            indicatorState32});
+            // 
+            // LogGridControl
+            // 
+            this.LogGridControl.Location = new System.Drawing.Point(3, 3);
+            this.LogGridControl.MainView = this.gridView3;
+            this.LogGridControl.Name = "LogGridControl";
+            this.LogGridControl.Size = new System.Drawing.Size(1165, 186);
+            this.LogGridControl.TabIndex = 0;
+            this.LogGridControl.ViewCollection.AddRange(new DevExpress.XtraGrid.Views.Base.BaseView[] {
+            this.gridView3});
+            // 
+            // gridView3
+            // 
+            this.gridView3.Columns.AddRange(new DevExpress.XtraGrid.Columns.GridColumn[] {
+            this.Event,
+            this.Discription,
+            this.Date});
+            this.gridView3.GridControl = this.LogGridControl;
+            this.gridView3.Name = "gridView3";
+            this.gridView3.OptionsCustomization.AllowGroup = false;
+            this.gridView3.OptionsView.ShowGroupPanel = false;
+            // 
+            // Event
+            // 
+            this.Event.Caption = "Происхождение";
+            this.Event.FieldName = "EventOrigin";
+            this.Event.Name = "Event";
+            this.Event.Visible = true;
+            this.Event.VisibleIndex = 0;
+            // 
+            // Discription
+            // 
+            this.Discription.Caption = "Событие";
+            this.Discription.FieldName = "Discription";
+            this.Discription.Name = "Discription";
+            this.Discription.Visible = true;
+            this.Discription.VisibleIndex = 1;
+            // 
+            // Date
+            // 
+            this.Date.Caption = "Время";
+            this.Date.DisplayFormat.FormatType = DevExpress.Utils.FormatType.DateTime;
+            this.Date.FieldName = "Date";
+            this.Date.Name = "Date";
+            this.Date.Visible = true;
+            this.Date.VisibleIndex = 2;
             // 
             // Form1
             // 
@@ -743,18 +798,21 @@ namespace PowerSourceControlApp
             this.ChanelStatus.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.CurrentEdit.Properties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.VoltageEdit.Properties)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(xyDiagram1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(lineSeriesView1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(series1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(xyDiagram7)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(lineSeriesView7)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(series7)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.CurrentChart)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(xyDiagram2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(lineSeriesView2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(series2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(xyDiagram8)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(lineSeriesView8)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(series8)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.VoltageChart)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.TaskListControl)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridView2)).EndInit();
+            this.ChanelLog.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.stateIndicatorGauge)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.OnLineGauge)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.LogGridControl)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridView3)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -813,5 +871,10 @@ namespace PowerSourceControlApp
         private System.Windows.Forms.Label OnOffLabel;
         private System.Windows.Forms.Label CurrentLabel;
         private System.Windows.Forms.Label VoltageLabel;
+        private DevExpress.XtraGrid.GridControl LogGridControl;
+        private DevExpress.XtraGrid.Views.Grid.GridView gridView3;
+        private DevExpress.XtraGrid.Columns.GridColumn Event;
+        private DevExpress.XtraGrid.Columns.GridColumn Discription;
+        private DevExpress.XtraGrid.Columns.GridColumn Date;
     }
 }

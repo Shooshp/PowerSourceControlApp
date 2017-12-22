@@ -2,12 +2,14 @@
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using PowerSourceControlApp.DeviceManagment;
+using PowerSourceControlApp.DeviceManagment.Log;
 
-namespace PowerSourceControlApp.DeviceManagment
+namespace PowerSourceControlApp.PowerSource
 {
     public class StatusChecker
     {
-        private PowerSource.PowerSource ParentPowerSource { get; }
+        private PowerSource ParentPowerSource { get; }
         private byte[] _message;
         private uint _errorCounter;
         private readonly int _bufferSize;
@@ -17,7 +19,7 @@ namespace PowerSourceControlApp.DeviceManagment
         private NetworkStream _statusStream;
         
 
-        public StatusChecker(PowerSource.PowerSource parent)
+        public StatusChecker(PowerSource parent)
         {
             _randomNumberGenerator = new Random();
             ParentPowerSource = parent;
@@ -125,6 +127,7 @@ namespace PowerSourceControlApp.DeviceManagment
                     }
                     DeviceManager.IsBusy = true;
                     ParentPowerSource.IsOnline = false;
+                    EventLog.Add(ParentPowerSource.DisplayName,"Connection Lost!");
                     if (_statusStream != null)
                     {
                         _statusStream.Close();

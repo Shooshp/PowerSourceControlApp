@@ -371,7 +371,6 @@ namespace PowerSourceControlApp.PowerSource
                     hash += Convert.ToInt32(measurement.IndexId);
                 }
             }
-
             return hash;
         }
     }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using PowerSourceControlApp.DeviceManagment.Log;
 
 namespace PowerSourceControlApp.PowerSource.Tasks
 {
@@ -97,26 +98,31 @@ namespace PowerSourceControlApp.PowerSource.Tasks
         public void SetVoltage(Chanel chanel, decimal value)
         {
             Add(chanel, "SetVoltage", value, 30000);
+            EventLog.Add(_parentPowerSource.DisplayName, "Setting Voltage: " + value + "to Chanel: " + chanel.Address);
         }
 
         public void SetCurrent(Chanel chanel, decimal value)
         {
             Add(chanel, "SetCurrent", value, 5000);
+            EventLog.Add(_parentPowerSource.DisplayName, "Setting Current: " + value + "to Chanel: " + chanel.Address);
         }
 
         public void Calibrate(Chanel chanel)
         {
             Add(chanel, "Calibrate", 0, 370000);
+            EventLog.Add(_parentPowerSource.DisplayName, "Calibrating Chanel: " + chanel.Address);
         }
 
         public void ShutDown(Chanel chanel)
         {
             Add(chanel, "ShutDown", 0, 5000);
+            EventLog.Add(_parentPowerSource.DisplayName, "Shuting Down Chanel: " + chanel.Address);
         }
 
         public void TurnOn(Chanel chanel)
         {
             Add(chanel, "TurnOn", 0, 5000);
+            EventLog.Add(_parentPowerSource.DisplayName, "Turning On Chanel: " + chanel.Address);
         }
     }
 }

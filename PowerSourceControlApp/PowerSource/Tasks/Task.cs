@@ -5,6 +5,7 @@ using Dapper;
 using MySql.Data.MySqlClient;
 using PowerSourceControlApp.DapperDTO;
 using PowerSourceControlApp.DeviceManagment;
+using PowerSourceControlApp.DeviceManagment.Log;
 
 namespace PowerSourceControlApp.PowerSource.Tasks
 {
@@ -66,6 +67,7 @@ namespace PowerSourceControlApp.PowerSource.Tasks
             IsExecuting = false;
             IsComplited = true;
             wd.Dispose();
+            EventLog.Add(_parentPowerSource.Hostname, DisplayName + " completed!");
             _parentTaskManager.StartNextTask();
         }
 

@@ -12,6 +12,7 @@ using DevExpress.XtraGrid.Columns;
 using DevExpress.XtraGrid.Views.Grid;
 using DevExpress.XtraGrid.Views.Layout.Events;
 using PowerSourceControlApp.DeviceManagment;
+using PowerSourceControlApp.DeviceManagment.Log;
 
 namespace PowerSourceControlApp
 {
@@ -42,10 +43,12 @@ namespace PowerSourceControlApp
                 currentedit: CurrentEdit,
                 updatebutton: UpdateButton,
                 onoffbutton: OnButton,
-                labellist: labelList);
+                labellist: labelList,
+                loggridcontrol:LogGridControl
+                );
 
             var version = Assembly.GetExecutingAssembly().GetName().Version;
-            Text = "PowerSource Control " + version.Major + "." + version.Minor + " (build " + version.Build + ")";
+            Text = @"PowerSource Control " + version.Major + @"." + version.Minor + @" (build " + version.Build + @")";
 
             CreateGauge(layoutView1.Columns["Status"], StatusGauge);
             CreateGauge(layoutView1.Columns["RecentVoltageDisplay"], VoltageGauge);
@@ -57,6 +60,9 @@ namespace PowerSourceControlApp
 
             DeviceManager.DeviceListUpdate += UpdateFormsHandler;
             DeviceManager.DeviceUpdate += UpdateDeviceHandler;
+            DeviceManager.LogUpdate += UpdateLogHandler;
+
+            EventLog.Add("Global", "App started!");
         }
 
         
@@ -65,11 +71,6 @@ namespace PowerSourceControlApp
         {
             get { return base.Text; }
             set { base.Text = value; }
-        }
-
-        private void Edit_EditValueChanged(object sender, EventArgs e)
-        {
-            layoutView1.PostEditor();
         }
 
         private static void CreateGauge(GridColumn column, GaugeControl gauge)
@@ -84,12 +85,18 @@ namespace PowerSourceControlApp
             layoutView1.PostEditor();
         }
 
-        public void UpdateFormsHandler()
+        private void UpdateLogHandler()
+        {
+
+            Invoke((MethodInvoker)VisualInterfaceControl.UpdateLog);
+        }
+
+        private void UpdateFormsHandler()
         {
             Invoke((MethodInvoker)VisualInterfaceControl.UpdateForms);
         }
 
-        public void UpdateDeviceHandler()
+        private void UpdateDeviceHandler()
         {
             Invoke((MethodInvoker)VisualInterfaceControl.UpdateDevice);
         }
@@ -127,7 +134,7 @@ namespace PowerSourceControlApp
             var arguments = e;
             if (arguments.Button == MouseButtons.Right)
             {
-                if (arguments.Column.Caption == "Status")
+                if (arguments.Column.Caption == @"Status")
                 {
                     
                     var powersourceIp = DeviceManager.SelectedPowerSourceIp;
@@ -173,27 +180,30 @@ namespace PowerSourceControlApp
             if (arguments.Button == MouseButtons.Right)
             {
                 var powersource = DeviceManager.DeviceList[arguments.HitInfo.VisibleIndex];
-
-                if (powersource.IsOnline)
+                var column = arguments.HitInfo.Column.Caption;
+                if (column == "Адрес") 
                 {
-                    var nameEdit = new TextEdit
+                    if (powersource.IsOnline)
                     {
-                        Text = powersource.Hostname,
-                        Dock = DockStyle.Fill
-                    };
-                    var caption = "Change Hostname for PowerSource " + powersource.IpAddress;
-                    const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-
-                    var result = XtraDialog.Show(content: nameEdit, caption: caption, buttons: buttons);
-
-                    if (result == DialogResult.Yes)
-                    {
-                        var newName = nameEdit.Text;
-
-                        if (newName != powersource.Hostname)
+                        var nameEdit = new TextEdit
                         {
-                            var thread = new Thread(() => powersource.SetHostname(newName)) {IsBackground = true};
-                            thread.Start();
+                            Text = powersource.Hostname,
+                            Dock = DockStyle.Fill
+                        };
+                        var caption = "Change Hostname for PowerSource " + powersource.IpAddress;
+                        const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
+
+                        var result = XtraDialog.Show(content: nameEdit, caption: caption, buttons: buttons);
+
+                        if (result == DialogResult.Yes)
+                        {
+                            var newName = nameEdit.Text;
+
+                            if (newName != powersource.Hostname)
+                            {
+                                var thread = new Thread(() => powersource.SetHostname(newName)) { IsBackground = true };
+                                thread.Start();
+                            }
                         }
                     }
                 }

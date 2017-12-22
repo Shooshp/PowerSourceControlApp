@@ -9,6 +9,7 @@ using DevExpress.XtraGrid.Views.Base;
 using DevExpress.XtraGrid.Views.Grid;
 using DevExpress.XtraGrid.Views.Layout;
 using PowerSourceControlApp.DeviceManagment;
+using PowerSourceControlApp.DeviceManagment.Log;
 
 namespace PowerSourceControlApp
 {
@@ -32,6 +33,7 @@ namespace PowerSourceControlApp
         private static SimpleButton _updateButton;
         private static SimpleButton _onoffButton;
         private static List<Label> _labelList;
+        private static GridControl _logGridControl;
 
         private static bool PowerSourceListIsEmpty
         {
@@ -58,7 +60,8 @@ namespace PowerSourceControlApp
             object currentedit,
             object updatebutton,
             object onoffbutton,
-            object labellist)
+            object labellist,
+            object loggridcontrol)
         {
             _focusedPowerSourceIndex = 0;
             _focusedPowerSourceIp = null;
@@ -88,6 +91,14 @@ namespace PowerSourceControlApp
             _chanelListLayoutView.FocusedRowChanged += CurrentChanelChanged;
 
             _labelList = (List<Label>) labellist;
+
+            _logGridControl = (GridControl) loggridcontrol;
+            _logGridControl.DataSource = EventLog.EventList;
+        }
+
+        public static void UpdateLog()
+        {
+            _logGridControl.RefreshDataSource();
         }
 
         public static void UpdateForms()

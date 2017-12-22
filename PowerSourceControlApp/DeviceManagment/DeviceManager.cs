@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using PowerSourceControlApp.DeviceManagment.Log;
 
 namespace PowerSourceControlApp.DeviceManagment
 {
@@ -13,7 +14,9 @@ namespace PowerSourceControlApp.DeviceManagment
 
         private static Thread _hashThread;
         private static int _hash;
+        private static int _loghash;
 
+        public static event EventHandler LogUpdate;
         public static event EventHandler DeviceListUpdate;
         public static event EventHandler DeviceUpdate;
         public delegate void EventHandler();
@@ -24,6 +27,7 @@ namespace PowerSourceControlApp.DeviceManagment
             IsBusy = false;
             SelectedPowerSourceIp = "";
             _hash = 0;
+            _loghash = 0;
         }
 
         public static void StartHashTread()
@@ -52,16 +56,19 @@ namespace PowerSourceControlApp.DeviceManagment
                         {
                             DeviceList.Single(p => p.IpAddress == address).IsOnline = true;
                             DeviceList.Single(p => p.IpAddress == address).Pinger.Start();
+                            EventLog.Add(DeviceList.Single(p => p.IpAddress == address).DisplayName, "Reconected");
                         }
                     }
                     else // If device is not on the list than add device to list
                     {
                         DeviceList.Add(new PowerSource.PowerSource(address));
+                        EventLog.Add("Global", "New device detected with ip: " + address);
                     }
                 }
                 else // No devices on the list so we will add new one
                 {
                     DeviceList.Add(new PowerSource.PowerSource(address));
+                    EventLog.Add("Global", "New device detected with ip: "+ address);
                 }
                 DeviceUpdate?.Invoke();
                 IsBusy = false; //  Remove Busy Flag
@@ -75,6 +82,7 @@ namespace PowerSourceControlApp.DeviceManagment
                 Thread.Sleep(100);
 
                 var  currentHash = 0;
+                var logCount = EventLog.EventList.Count;
 
                 if (DeviceList.Count != 0)
                 {
@@ -95,6 +103,11 @@ namespace PowerSourceControlApp.DeviceManagment
                 {
                     _hash = currentHash;
                     DeviceListUpdate?.Invoke();
+                }
+
+                if (_loghash != logCount)
+                {
+                    LogUpdate?.Invoke();
                 }
             }
         }

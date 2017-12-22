@@ -106,7 +106,9 @@
     <Compile Include="DapperDTO\Measurement.cs" />
     <Compile Include="DapperDTO\Settings.cs" />
     <Compile Include="DeviceManagment\DeviceManager.cs" />
-    <Compile Include="DeviceManagment\StatusChecker.cs" />
+    <Compile Include="DeviceManagment\Log\LogEntry.cs" />
+    <Compile Include="DeviceManagment\Log\EventLog.cs" />
+    <Compile Include="PowerSource\StatusChecker.cs" />
     <Compile Include="DeviceManagment\Watchdog.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
