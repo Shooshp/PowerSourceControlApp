@@ -109,7 +109,7 @@
         <code lang="vbnet">
           Public Sub CreateMySqlCommand()
           Dim myConnection As New MySqlConnection _
-          ("Persist Security Info=False;database=test;ipAddress=myIpAddress")
+          ("Persist Security Info=False;database=test;server=myServer")
           myConnection.Open()
           Dim myTrans As MySqlTransaction = myConnection.BeginTransaction()
           Dim mySelectQuery As String = "SELECT * FROM MyTable"
@@ -121,7 +121,7 @@
           public void CreateMySqlCommand()
           {
           MySqlConnection myConnection = new MySqlConnection("Persist Security Info=False;
-          database=test;ipAddress=myIpAddress");
+          database=test;server=myServer");
           myConnection.Open();
           MySqlTransaction myTrans = myConnection.BeginTransaction();
           string mySelectQuery = "SELECT * FROM myTable";
@@ -134,7 +134,7 @@
           void CreateMySqlCommand()
           {
           MySqlConnection* myConnection = new MySqlConnection(S"Persist Security Info=False;
-          database=test;ipAddress=myIpAddress");
+          database=test;server=myServer");
           myConnection->Open();
           MySqlTransaction* myTrans = myConnection->BeginTransaction();
           String* mySelectQuery = S"SELECT * FROM myTable";
@@ -283,7 +283,7 @@
     <param name="cmdText">The text of the query.</param>
     <param name="connection">
       A <see cref="MySqlConnection"/> that represents the
-      connection to an instance of SQL IpAddress.
+      connection to an instance of SQL Server.
     </param>
     <remarks>
       When an instance of <see cref="MySqlCommand"/> is created,
@@ -334,7 +334,7 @@
 
       <code lang="vbnet">
         Public Sub CreateMySqlCommand()
-        Dim conn as new MySqlConnection("ipAddress=myIpAddress")
+        Dim conn as new MySqlConnection("server=myServer")
         Dim sql as String = "SELECT * FROM mytable"
         Dim myCommand As New MySqlCommand(sql, conn)
         myCommand.CommandType = CommandType.Text
@@ -343,7 +343,7 @@
       <code lang="C#">
         public void CreateMySqlCommand()
         {
-        MySqlConnection conn = new MySqlConnection("ipAddress=myipAddress")
+        MySqlConnection conn = new MySqlConnection("server=myserver")
         string sql = "SELECT * FROM mytable";
         MySqlCommand myCommand = new MySqlCommand(sql, conn);
         myCommand.CommandType = CommandType.Text;
@@ -364,7 +364,7 @@
     <param name="cmdText">The text of the query.</param>
     <param name="connection">
       A <see cref="MySqlConnection"/> that represents the
-      connection to an instance of SQL IpAddress.
+      connection to an instance of SQL Server.
     </param>
     <param name="transaction">
       The <see cref="MySqlTransaction"/> in which the <see cref="MySqlCommand"/> executes.
@@ -418,7 +418,7 @@
 
       <code lang="vbnet">
         Public Sub CreateMySqlCommand()
-        Dim conn as new MySqlConnection("ipAddress=myIpAddress")
+        Dim conn as new MySqlConnection("server=myServer")
         conn.Open();
         Dim txn as MySqlTransaction = conn.BeginTransaction()
         Dim sql as String = "SELECT * FROM mytable"
@@ -429,7 +429,7 @@
       <code lang="C#">
         public void CreateMySqlCommand()
         {
-        MySqlConnection conn = new MySqlConnection("ipAddress=myipAddress")
+        MySqlConnection conn = new MySqlConnection("server=myserver")
         conn.Open();
         MySqlTransaction txn = conn.BeginTransaction();
         string sql = "SELECT * FROM mytable";
@@ -597,7 +597,7 @@
 
   <Prepare>
     <summary>
-      Creates a prepared version of the command on an instance of MySQL IpAddress.
+      Creates a prepared version of the command on an instance of MySQL Server.
     </summary>
     <remarks>
       <para>
@@ -802,7 +802,7 @@
       <code lang="vbnet">
         Public Sub CreateMySqlCommand()
         Dim mySelectQuery As String = "SELECT * FROM mytable ORDER BY id"
-        Dim myConnectString As String = "Persist Security Info=False;database=test;ipAddress=myIpAddress"
+        Dim myConnectString As String = "Persist Security Info=False;database=test;server=myServer"
         Dim myCommand As New MySqlCommand(mySelectQuery)
         myCommand.Connection = New MySqlConnection(myConnectString)
         myCommand.CommandType = CommandType.Text
@@ -812,7 +812,7 @@
         public void CreateMySqlCommand()
         {
         string mySelectQuery = "SELECT * FROM mytable ORDER BY id";
-        string myConnectString = "Persist Security Info=False;database=test;ipAddress=myIpAddress";
+        string myConnectString = "Persist Security Info=False;database=test;server=myServer";
         MySqlCommand myCommand = new MySqlCommand(mySelectQuery);
         myCommand.Connection = new MySqlConnection(myConnectString);
         myCommand.CommandType = CommandType.Text;

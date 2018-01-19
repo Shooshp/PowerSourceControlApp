@@ -3,7 +3,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using PowerSourceControlApp.DeviceManagment;
-using PowerSourceControlApp.DeviceManagment.Log;
+using Serilog;
 
 namespace PowerSourceControlApp.PowerSource
 {
@@ -127,7 +127,12 @@ namespace PowerSourceControlApp.PowerSource
                     }
                     DeviceManager.IsBusy = true;
                     ParentPowerSource.IsOnline = false;
-                    EventLog.Add(ParentPowerSource.DisplayName,"Connection Lost!");
+                    ParentPowerSource.DutyManager.ClearAllTasks();
+
+                    Log.Warning("{User}, lost connection with {Host} at {TimeStamp}",
+                        Global.User, ParentPowerSource.DisplayName, DateTime.Now);
+
+                   
                     if (_statusStream != null)
                     {
                         _statusStream.Close();

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using PowerSourceControlApp.DapperDTO;
 
 namespace PowerSourceControlApp.PowerSource
@@ -46,14 +47,14 @@ namespace PowerSourceControlApp.PowerSource
                     ResultsList[ResultsList.Count - 1].Current = 0;
                 }
 
-                if (RecentVoltageDisplay != ResultsList[ResultsList.Count - 1].Voltage)
+                if (RecentVoltageDisplay != decimal.Round(ResultsList[ResultsList.Count - 1].Voltage, 2, MidpointRounding.AwayFromZero))
                 {
-                    RecentVoltageDisplay = ResultsList[ResultsList.Count - 1].Voltage;
+                    RecentVoltageDisplay = decimal.Round(ResultsList[ResultsList.Count - 1].Voltage, 2, MidpointRounding.AwayFromZero);
                 }
 
-                if (RecentCurrentDisplay != ResultsList[ResultsList.Count - 1].Current)
+                if (RecentCurrentDisplay != decimal.Round(ResultsList[ResultsList.Count - 1].Current, 3, MidpointRounding.AwayFromZero))
                 {
-                    RecentCurrentDisplay = ResultsList[ResultsList.Count - 1].Current;
+                    RecentCurrentDisplay = decimal.Round(ResultsList[ResultsList.Count - 1].Current, 3, MidpointRounding.AwayFromZero);
                 }
             }
             else

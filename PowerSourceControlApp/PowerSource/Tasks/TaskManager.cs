@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using PowerSourceControlApp.DeviceManagment.Log;
+using Serilog;
 
 namespace PowerSourceControlApp.PowerSource.Tasks
 {
@@ -92,37 +92,70 @@ namespace PowerSourceControlApp.PowerSource.Tasks
 
         private void RemoveComplitedTasks()
         {
+            var tasks = TaskList.Count.ToString();
+
+            Log.Debug("{User} remove {LogEvent} tasks to host {Host} at {TimeStamp}",
+                Global.User, tasks, _parentPowerSource.DisplayName, DateTime.Now);
+
             TaskList.RemoveAll(x => x.IsComplited && x.IsExecuting == false);
         }
 
         public void SetVoltage(Chanel chanel, decimal value)
         {
             Add(chanel, "SetVoltage", value, 30000);
-            EventLog.Add(_parentPowerSource.DisplayName, "Setting Voltage: " + value + "to Chanel: " + chanel.Address);
+
+            var taskDiscription = "Set Voltage: " + value + " to Chanel: " + chanel.Address;
+
+            Log.Debug("{User} give task to {Host}, {LogEvent} at {TimeStamp}", 
+                Global.User, _parentPowerSource.DisplayName, taskDiscription, DateTime.Now);
         }
 
         public void SetCurrent(Chanel chanel, decimal value)
         {
             Add(chanel, "SetCurrent", value, 5000);
-            EventLog.Add(_parentPowerSource.DisplayName, "Setting Current: " + value + "to Chanel: " + chanel.Address);
+
+            var taskDiscription = "Set Current: " + value + " to Chanel: " + chanel.Address;
+
+            Log.Debug("{User} give task to {Host}, {LogEvent} at {TimeStamp}",
+                Global.User, _parentPowerSource.DisplayName, taskDiscription, DateTime.Now);
         }
 
         public void Calibrate(Chanel chanel)
         {
             Add(chanel, "Calibrate", 0, 370000);
-            EventLog.Add(_parentPowerSource.DisplayName, "Calibrating Chanel: " + chanel.Address);
+
+            var taskDiscription = "Calibrating Chanel: " + chanel.Address;
+
+            Log.Debug("{User} give task to {Host}, {LogEvent} at {TimeStamp}",
+                Global.User, _parentPowerSource.DisplayName, taskDiscription, DateTime.Now);
         }
 
         public void ShutDown(Chanel chanel)
         {
             Add(chanel, "ShutDown", 0, 5000);
-            EventLog.Add(_parentPowerSource.DisplayName, "Shuting Down Chanel: " + chanel.Address);
+
+            var taskDiscription = "Shut Down Chanel: " + chanel.Address;
+
+            Log.Debug("{User} give task to {Host}, {LogEvent} at {TimeStamp}",
+                Global.User, _parentPowerSource.DisplayName, taskDiscription, DateTime.Now);
         }
 
         public void TurnOn(Chanel chanel)
         {
             Add(chanel, "TurnOn", 0, 5000);
-            EventLog.Add(_parentPowerSource.DisplayName, "Turning On Chanel: " + chanel.Address);
+
+            var taskDiscription = "Turn On Chanel: " + chanel.Address;
+
+            Log.Debug("{User} give task to {Host}, {LogEvent} at {TimeStamp}",
+                Global.User, _parentPowerSource.DisplayName, taskDiscription, DateTime.Now);
+        }
+
+        public void ClearAllTasks()
+        {
+            foreach (var task in TaskList)
+            {
+                task.Dispose();
+            }
         }
     }
 }

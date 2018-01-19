@@ -39,7 +39,7 @@
         </item>
         <item>
           <term>
-            <see cref="IpAddressVersion"/>
+            <see cref="ServerVersion"/>
           </term>
           <term>empty string ("")</term>
         </item>
@@ -96,7 +96,7 @@
         </item>
         <item>
           <term>
-            <see cref="IpAddressVersion"/>
+            <see cref="ServerVersion"/>
           </term>
           <term>empty string ("")</term>
         </item>
@@ -111,7 +111,7 @@
 
   <Open>
     <summary>Opens a database connection with the property settings specified by the ConnectionString.</summary>
-    <exception cref="InvalidOperationException">Cannot open a connection without specifying a data source or ipAddress.</exception>
+    <exception cref="InvalidOperationException">Cannot open a connection without specifying a data source or server.</exception>
     <exception cref="MySqlException">A connection-level error occurred while opening the connection.</exception>
     <remarks>
       <para>
@@ -127,7 +127,7 @@
         Public Sub CreateMySqlConnection(myConnString As String)
         Dim myConnection As New MySqlConnection(myConnString)
         myConnection.Open()
-        MessageBox.Show("IpAddressVersion: " + myConnection.IpAddressVersion _
+        MessageBox.Show("ServerVersion: " + myConnection.ServerVersion _
         + ControlChars.Cr + "State: " + myConnection.State.ToString())
         myConnection.Close()
         End Sub
@@ -137,7 +137,7 @@
         {
         MySqlConnection myConnection = new MySqlConnection(myConnString);
         myConnection.Open();
-        MessageBox.Show("IpAddressVersion: " + myConnection.IpAddressVersion +
+        MessageBox.Show("ServerVersion: " + myConnection.ServerVersion +
         "\nState: " + myConnection.State.ToString());
         myConnection.Close();
         }
@@ -163,13 +163,13 @@
       <code lang="vbnet">
         Public Sub CreateMySqlConnection()
         Dim myConnString As String = _
-        "Persist Security Info=False;database=test;ipAddress=localhost;user id=joeuser;pwd=pass"
+        "Persist Security Info=False;database=test;server=localhost;user id=joeuser;pwd=pass"
         Dim myConnection As New MySqlConnection( myConnString )
         myConnection.Open()
-        MessageBox.Show( "IpAddress Version: " + myConnection.IpAddressVersion _
+        MessageBox.Show( "Server Version: " + myConnection.ServerVersion _
         + ControlChars.NewLine + "Database: " + myConnection.Database )
         myConnection.ChangeDatabase( "test2" )
-        MessageBox.Show( "IpAddressVersion: " + myConnection.IpAddressVersion _
+        MessageBox.Show( "ServerVersion: " + myConnection.ServerVersion _
         + ControlChars.NewLine + "Database: " + myConnection.Database )
         myConnection.Close()
         End Sub
@@ -179,13 +179,13 @@
         public void CreateMySqlConnection()
         {
         string myConnString =
-        "Persist Security Info=False;database=test;ipAddress=localhost;user id=joeuser;pwd=pass";
+        "Persist Security Info=False;database=test;server=localhost;user id=joeuser;pwd=pass";
         MySqlConnection myConnection = new MySqlConnection( myConnString );
         myConnection.Open();
-        MessageBox.Show( "IpAddress Version: " + myConnection.IpAddressVersion
+        MessageBox.Show( "Server Version: " + myConnection.ServerVersion
         + "\nDatabase: " + myConnection.Database );
         myConnection.ChangeDatabase( "test2" );
-        MessageBox.Show( "IpAddressVersion: " + myConnection.IpAddressVersion
+        MessageBox.Show( "ServerVersion: " + myConnection.ServerVersion
         + "\nDatabase: " + myConnection.Database );
         myConnection.Close();
         }
@@ -217,7 +217,7 @@
         Public Sub CreateMySqlConnection(myConnString As String)
         Dim myConnection As New MySqlConnection(myConnString)
         myConnection.Open()
-        MessageBox.Show("IpAddressVersion: " + myConnection.IpAddressVersion _
+        MessageBox.Show("ServerVersion: " + myConnection.ServerVersion _
         + ControlChars.Cr + "State: " + myConnection.State.ToString())
         myConnection.Close()
         End Sub
@@ -227,7 +227,7 @@
         {
         MySqlConnection myConnection = new MySqlConnection(myConnString);
         myConnection.Open();
-        MessageBox.Show("IpAddressVersion: " + myConnection.IpAddressVersion +
+        MessageBox.Show("ServerVersion: " + myConnection.ServerVersion +
         "\nState: " + myConnection.State.ToString());
         myConnection.Close();
         }
@@ -235,8 +235,8 @@
     </example>
   </State>
 
-  <IpAddressVersion>
-    <summary>Gets a string containing the version of the MySQL ipAddress to which the client is connected.</summary>
+  <ServerVersion>
+    <summary>Gets a string containing the version of the MySQL server to which the client is connected.</summary>
     <returns>The version of the instance of MySQL.</returns>
     <exception cref="InvalidOperationException">The connection is closed.</exception>
     <example>
@@ -247,7 +247,7 @@
         Public Sub CreateMySqlConnection(myConnString As String)
         Dim myConnection As New MySqlConnection(myConnString)
         myConnection.Open()
-        MessageBox.Show("IpAddressVersion: " + myConnection.IpAddressVersion _
+        MessageBox.Show("ServerVersion: " + myConnection.ServerVersion _
         + ControlChars.Cr + "State: " + myConnection.State.ToString())
         myConnection.Close()
         End Sub
@@ -257,13 +257,13 @@
         {
         MySqlConnection myConnection = new MySqlConnection(myConnString);
         myConnection.Open();
-        MessageBox.Show("IpAddressVersion: " + myConnection.IpAddressVersion +
+        MessageBox.Show("ServerVersion: " + myConnection.ServerVersion +
         "\nState: " + myConnection.State.ToString());
         myConnection.Close();
         }
       </code>
     </example>
-  </IpAddressVersion>
+  </ServerVersion>
 
   <Close>
     <summary>Closes the connection to the database. This is the preferred method of closing any open connection.</summary>
@@ -286,7 +286,7 @@
         Public Sub CreateMySqlConnection(myConnString As String)
         Dim myConnection As New MySqlConnection(myConnString)
         myConnection.Open()
-        MessageBox.Show("IpAddressVersion: " + myConnection.IpAddressVersion _
+        MessageBox.Show("ServerVersion: " + myConnection.ServerVersion _
         + ControlChars.Cr + "State: " + myConnection.State.ToString())
         myConnection.Close()
         End Sub
@@ -296,7 +296,7 @@
         {
         MySqlConnection myConnection = new MySqlConnection(myConnString);
         myConnection.Open();
-        MessageBox.Show("IpAddressVersion: " + myConnection.IpAddressVersion +
+        MessageBox.Show("ServerVersion: " + myConnection.ServerVersion +
         "\nState: " + myConnection.State.ToString());
         myConnection.Close();
         }
@@ -326,7 +326,7 @@
           If you do not specify an isolation level, the default isolation level is used. To specify an isolation
           level with the <see cref="BeginTransaction()"/> method, use the overload that takes the <I>iso</I> parameter.  Also
           note that any attempt to begin a transaction while a transaction is in progress will throw an exception on MySQL 4.1 and higher.
-          On MySQL 4.0, an exception will not be thrown because ipAddresss 4.0 and earlier did not report their transacation status.
+          On MySQL 4.0, an exception will not be thrown because servers 4.0 and earlier did not report their transacation status.
         </note>
       </para>
     </remarks>
@@ -342,7 +342,7 @@
         Dim myCommand As MySqlCommand = myConnection.CreateCommand()
         Dim myTrans As MySqlTransaction
 
-        ' StartTaskManagerThread a local transaction
+        ' Start a local transaction
         myTrans = myConnection.BeginTransaction()
         ' Must assign both transaction object and connection
         ' to Command object for a pending local transaction
@@ -383,7 +383,7 @@
         MySqlCommand myCommand = myConnection.CreateCommand();
         MySqlTransaction myTrans;
 
-        // StartTaskManagerThread a local transaction
+        // Start a local transaction
         myTrans = myConnection.BeginTransaction();
         // Must assign both transaction object and connection
         // to Command object for a pending local transaction
@@ -441,7 +441,7 @@
           If you do not specify an isolation level, the default isolation level is used. To specify an isolation
           level with the <see cref="BeginTransaction()"/> method, use the overload that takes the <I>iso</I> parameter.
           Also note that any attempt to begin a transaction while a transaction is in progress will throw an exception on MySQL 4.1 and higher.
-          On MySQL 4.0, an exception will not be thrown because ipAddresss 4.0 and earlier did not report their transacation status.
+          On MySQL 4.0, an exception will not be thrown because servers 4.0 and earlier did not report their transacation status.
         </note>
       </para>
     </remarks>
@@ -457,7 +457,7 @@
         Dim myCommand As MySqlCommand = myConnection.CreateCommand()
         Dim myTrans As MySqlTransaction
 
-        ' StartTaskManagerThread a local transaction
+        ' Start a local transaction
         myTrans = myConnection.BeginTransaction()
         ' Must assign both transaction object and connection
         ' to Command object for a pending local transaction
@@ -498,7 +498,7 @@
         MySqlCommand myCommand = myConnection.CreateCommand();
         MySqlTransaction myTrans;
 
-        // StartTaskManagerThread a local transaction
+        // Start a local transaction
         myTrans = myConnection.BeginTransaction();
         // Must assign both transaction object and connection
         // to Command object for a pending local transaction
@@ -569,13 +569,13 @@
       <code lang="vbnet">
         Public Sub CreateMySqlConnection()
         Dim myConnString As String = _
-        "Persist Security Info=False;database=test;ipAddress=localhost;user id=joeuser;pwd=pass"
+        "Persist Security Info=False;database=test;server=localhost;user id=joeuser;pwd=pass"
         Dim myConnection As New MySqlConnection( myConnString )
         myConnection.Open()
-        MessageBox.Show( "IpAddress Version: " + myConnection.IpAddressVersion _
+        MessageBox.Show( "Server Version: " + myConnection.ServerVersion _
         + ControlChars.NewLine + "Database: " + myConnection.Database )
         myConnection.ChangeDatabase( "test2" )
-        MessageBox.Show( "IpAddressVersion: " + myConnection.IpAddressVersion _
+        MessageBox.Show( "ServerVersion: " + myConnection.ServerVersion _
         + ControlChars.NewLine + "Database: " + myConnection.Database )
         myConnection.Close()
         End Sub
@@ -585,13 +585,13 @@
         public void CreateMySqlConnection()
         {
         string myConnString =
-        "Persist Security Info=False;database=test;ipAddress=localhost;user id=joeuser;pwd=pass";
+        "Persist Security Info=False;database=test;server=localhost;user id=joeuser;pwd=pass";
         MySqlConnection myConnection = new MySqlConnection( myConnString );
         myConnection.Open();
-        MessageBox.Show( "IpAddress Version: " + myConnection.IpAddressVersion
+        MessageBox.Show( "Server Version: " + myConnection.ServerVersion
         + "\nDatabase: " + myConnection.Database );
         myConnection.ChangeDatabase( "test2" );
-        MessageBox.Show( "IpAddressVersion: " + myConnection.IpAddressVersion
+        MessageBox.Show( "ServerVersion: " + myConnection.ServerVersion
         + "\nDatabase: " + myConnection.Database );
         myConnection.Close();
         }
@@ -660,11 +660,11 @@
 
   <ClassSummary>
     <summary>
-      Represents an open connection to a MySQL IpAddress database. This class cannot be inherited.
+      Represents an open connection to a MySQL Server database. This class cannot be inherited.
     </summary>
     <remarks>
       <para>
-        A <b>MySqlConnection</b> object represents a session to a MySQL IpAddress
+        A <b>MySqlConnection</b> object represents a session to a MySQL Server
         data source.  When you create an instance of <B>MySqlConnection</B>, all
         properties are set to their initial values. For a list of these values, see the
         <B>MySqlConnection</B> constructor.
@@ -739,7 +739,7 @@
       <code lang="vbnet">
         Public Sub CreateSqlConnection()
         Dim myConnection As New MySqlConnection()
-        myConnection.ConnectionString = "Persist Security Info=False;Username=user;Password=pass;database=test1;ipAddress=localhost;Connect Timeout=30"
+        myConnection.ConnectionString = "Persist Security Info=False;Username=user;Password=pass;database=test1;server=localhost;Connect Timeout=30"
         myConnection.Open()
         End Sub
       </code>
@@ -747,7 +747,7 @@
         public void CreateSqlConnection()
         {
         MySqlConnection myConnection = new MySqlConnection();
-        myConnection.ConnectionString = "Persist Security Info=False;Username=user;Password=pass;database=test1;ipAddress=localhost;Connect Timeout=30";
+        myConnection.ConnectionString = "Persist Security Info=False;Username=user;Password=pass;database=test1;server=localhost;Connect Timeout=30";
         myConnection.Open();
         }
       </code>
@@ -757,7 +757,7 @@
 
   <ConnectionString>
     <summary>
-      Gets or sets the string used to connect to a MySQL IpAddress database.
+      Gets or sets the string used to connect to a MySQL Server database.
     </summary>
     <remarks>
       <para>
@@ -769,7 +769,7 @@
         You can use the <B>ConnectionString</B> property to connect to a database.
         The following example illustrates a typical connection string.
       </para>
-      <c>"Persist Security Info=False;database=MyDB;ipAddress=MySqlIpAddress;user id=myUser;Password=myPass"</c>
+      <c>"Persist Security Info=False;database=MyDB;server=MySqlServer;user id=myUser;Password=myPass"</c>
       <para>
         The <B>ConnectionString</B> property can be set only when the connection is
         closed. Many of the connection string values have corresponding read-only
@@ -779,14 +779,14 @@
         <B>ConnectionString</B>.
       </para>
       <para>
-        To connect to a local machine, specify "localhost" for the ipAddress. If you do not
-        specify a ipAddress, localhost is assumed.
+        To connect to a local machine, specify "localhost" for the server. If you do not
+        specify a server, localhost is assumed.
       </para>
       <para>
         Resetting the <B>ConnectionString</B> on a closed connection resets all
         connection string values (and related properties) including the password. For
         example, if you set a connection string that includes "Database= MyDb", and
-        then reset the connection string to "Data Source=myipAddress;User Id=myUser;Password=myPass",
+        then reset the connection string to "Data Source=myserver;User Id=myUser;Password=myPass",
         the <see cref="MySqlConnection.Database"/> property is no longer set to MyDb.
       </para>
       <para>
@@ -814,7 +814,7 @@
         enclosed in quotes. However, spaces within a string literal keyword or value are
         preserved. Using .NET Framework version 1.1, single or double quotes may be used
         within a connection string without using delimiters (for example, Data Source=
-        my'IpAddress or Data Source= my"IpAddress), unless a quote character is the first or
+        my'Server or Data Source= my"Server), unless a quote character is the first or
         last character in the value.
       </para>
       <para>
@@ -847,13 +847,13 @@
             </td>
             <td>15</td>
             <td>
-              The length of time (in seconds) to wait for a connection to the ipAddress before
+              The length of time (in seconds) to wait for a connection to the server before
               terminating the attempt and generating an error.
             </td>
           </tr>
           <tr>
             <td>
-              Host<para>  -or-  </para>IpAddress<para>  -or-  </para>Data Source<para>  -or-  </para>
+              Host<para>  -or-  </para>Server<para>  -or-  </para>Data Source<para>  -or-  </para>
               DataSource<para>  -or-  </para>Address<para>  -or-  </para>Addr<para>  -or-  </para>
               Network Address
             </td>
@@ -861,8 +861,8 @@
             <td>
               <para>
                 The name or network address of the instance of MySQL to which to connect.  Multiple hosts can be
-                specified separated by &amp;.  This can be useful where multiple MySQL ipAddresss are configured for replication
-                and you are not concerned about the precise ipAddress you are connecting to.  No attempt is made by the provider to
+                specified separated by &amp;.  This can be useful where multiple MySQL servers are configured for replication
+                and you are not concerned about the precise server you are connecting to.  No attempt is made by the provider to
                 synchronize writes to the database so care should be taken when using this option.
               </para>
               <para>
@@ -883,7 +883,7 @@
             <td>Protocol</td>
             <td>socket</td>
             <td>
-              Specifies the type of connection to make to the ipAddress.<para>Values can be:</para>
+              Specifies the type of connection to make to the server.<para>Values can be:</para>
               socket or tcp for a socket connection<br/>
               pipe for a named pipe connection<br/>
               unix for a Unix socket connection<br/>
@@ -896,7 +896,7 @@
             </td>
             <td></td>
             <td>
-              Specifies the character set that should be used to encode all queries sent to the ipAddress.
+              Specifies the character set that should be used to encode all queries sent to the server.
               Resultsets are still returned in the character set of the data returned.
             </td>
           </tr>
@@ -911,7 +911,7 @@
             <td>
               When true, multiple SQL statements can be sent with one command execution.<br/><br/>
               -Note-<br/>
-              StartTaskManagerThreading with MySQL 4.1.1, batch statements should be separated by the ipAddress-defined seperator character.<br/>
+              Starting with MySQL 4.1.1, batch statements should be separated by the server-defined seperator character.<br/>
               Commands sent to earlier versions of MySQL should be seperated with ';'.
             </td>
           </tr>
@@ -920,7 +920,7 @@
             <td>false</td>
             <td>
               When <B>true</B>, SSL/TLS encryption is used for all data sent between the
-              client and ipAddress if the ipAddress has a certificate installed. Recognized values
+              client and server if the server has a certificate installed. Recognized values
               are <B>true</B>, <B>false</B>, <B>yes</B>, and <B>no</B>.
             </td>
           </tr>
@@ -1116,8 +1116,8 @@
               When a connection is returned to the pool, its creation time is compared with
               the current time, and the connection is destroyed if that time span (in seconds)
               exceeds the value specified by <B>Connection Lifetime</B>. This is useful in
-              clustered configurations to force load balancing between a running ipAddress and a
-              ipAddress just brought online.
+              clustered configurations to force load balancing between a running server and a
+              server just brought online.
               <para>
                 A value of zero (0) causes pooled connections to have the maximum connection
                 timeout.
@@ -1155,10 +1155,10 @@
             </td>
           </tr>
           <tr>
-            <td>Cache IpAddress Properties</td>
+            <td>Cache Server Properties</td>
             <td>false</td>
             <td>
-              Specifies whether the ipAddress variables are cached between pooled connections.
+              Specifies whether the server variables are cached between pooled connections.
               On systems where the variables change infrequently and there are lots of
               connection attempts, this can speed up things dramatically.
             </td>
@@ -1188,7 +1188,7 @@
       <code lang="vbnet">
         Public Sub CreateConnection()
         Dim myConnection As New MySqlConnection()
-        myConnection.ConnectionString = "Persist Security Info=False;database=myDB;ipAddress=myHost;Connect Timeout=30;user id=myUser; pwd=myPass"
+        myConnection.ConnectionString = "Persist Security Info=False;database=myDB;server=myHost;Connect Timeout=30;user id=myUser; pwd=myPass"
         myConnection.Open()
         End Sub 'CreateConnection
       </code>
@@ -1196,7 +1196,7 @@
         public void CreateConnection()
         {
         MySqlConnection myConnection = new MySqlConnection();
-        myConnection.ConnectionString = "Persist Security Info=False;database=myDB;ipAddress=myHost;Connect Timeout=30;user id=myUser; pwd=myPass";
+        myConnection.ConnectionString = "Persist Security Info=False;database=myDB;server=myHost;Connect Timeout=30;user id=myUser; pwd=myPass";
         myConnection.Open();
         }
       </code>
@@ -1206,7 +1206,7 @@
       <code lang="vbnet">
         Public Sub CreateConnection()
         Dim myConnection As New MySqlConnection()
-        myConnection.ConnectionString = "database=myDB;ipAddress=/var/lib/mysql/mysql.sock;user id=myUser; pwd=myPass"
+        myConnection.ConnectionString = "database=myDB;server=/var/lib/mysql/mysql.sock;user id=myUser; pwd=myPass"
         myConnection.Open()
         End Sub 'CreateConnection
       </code>
@@ -1214,7 +1214,7 @@
         public void CreateConnection()
         {
         MySqlConnection myConnection = new MySqlConnection();
-        myConnection.ConnectionString = "database=myDB;ipAddress=/var/lib/mysql/mysql.sock;user id=myUser; pwd=myPass";
+        myConnection.ConnectionString = "database=myDB;server=/var/lib/mysql/mysql.sock;user id=myUser; pwd=myPass";
         myConnection.Open();
         }
       </code>

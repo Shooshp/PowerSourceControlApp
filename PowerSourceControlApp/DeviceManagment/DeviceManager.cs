@@ -1,13 +1,18 @@
-﻿using System.Collections.Generic;
+﻿using Dapper;
+using PowerSourceControlApp.DapperDTO;
+using System;
+using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Threading;
-using PowerSourceControlApp.DeviceManagment.Log;
+using Serilog;
 
 namespace PowerSourceControlApp.DeviceManagment
 {
     public static class DeviceManager
     {
         public static List<PowerSource.PowerSource> DeviceList;
+        public static List<Logs> LogList;
         public static bool IsBusy;
         public static string SelectedPowerSourceIp;
         public static string SelectedChanelUUID;
@@ -24,6 +29,7 @@ namespace PowerSourceControlApp.DeviceManagment
         public static void Init()
         {
             DeviceList = new List<PowerSource.PowerSource>();
+            LogList = new List<Logs>();
             IsBusy = false;
             SelectedPowerSourceIp = "";
             _hash = 0;
@@ -56,19 +62,20 @@ namespace PowerSourceControlApp.DeviceManagment
                         {
                             DeviceList.Single(p => p.IpAddress == address).IsOnline = true;
                             DeviceList.Single(p => p.IpAddress == address).Pinger.Start();
-                            EventLog.Add(DeviceList.Single(p => p.IpAddress == address).DisplayName, "Reconected");
+
+                            Log.Information("{User} reconected with {Host} at {TimeStamp}", Global.User, DeviceList.Single(p => p.IpAddress == address).DisplayName, DateTime.Now);
                         }
                     }
                     else // If device is not on the list than add device to list
                     {
                         DeviceList.Add(new PowerSource.PowerSource(address));
-                        EventLog.Add("Global", "New device detected with ip: " + address);
+                        Log.Information("{User} detected new {Host} at {TimeStamp}", Global.User, DeviceList.Single(p => p.IpAddress == address).DisplayName, DateTime.Now);
                     }
                 }
                 else // No devices on the list so we will add new one
                 {
                     DeviceList.Add(new PowerSource.PowerSource(address));
-                    EventLog.Add("Global", "New device detected with ip: "+ address);
+                    Log.Information("{User} detected new {Host} at {TimeStamp}", Global.User, DeviceList.Single(p => p.IpAddress == address).DisplayName, DateTime.Now);
                 }
                 DeviceUpdate?.Invoke();
                 IsBusy = false; //  Remove Busy Flag
@@ -81,8 +88,28 @@ namespace PowerSourceControlApp.DeviceManagment
             {
                 Thread.Sleep(100);
 
-                var  currentHash = 0;
-                var logCount = EventLog.EventList.Count;
+                var currentHash = 0;
+                int logCount;
+
+                var connectionString = new SqlConnectionStringBuilder
+                {
+                    DataSource = "S14",
+                    UserID = "PowerSource",
+                    Password = "123",
+                    InitialCatalog = "Barinov"
+                };
+
+                using (var connection = new SqlConnection(connectionString.ToString()))
+                {
+                    const string queryString = "SELECT COUNT(*) FROM Logs";
+                    var command = new SqlCommand(queryString, connection);
+                    connection.Open();
+                    var reader = command.ExecuteScalar();
+
+                    logCount = Convert.ToInt32(reader);
+
+                    connection.Close();
+                }
 
                 if (DeviceList.Count != 0)
                 {
@@ -107,6 +134,15 @@ namespace PowerSourceControlApp.DeviceManagment
 
                 if (_loghash != logCount)
                 {
+                    _loghash = logCount;
+                    using (var connection = new SqlConnection(connectionString.ToString()))
+                    {
+                        SimpleCRUD.SetDialect(SimpleCRUD.Dialect.SQLServer);
+                        connection.Open();
+                        LogList = connection.GetList<Logs>().ToList();
+                        connection.Close();
+                    }
+
                     LogUpdate?.Invoke();
                 }
             }

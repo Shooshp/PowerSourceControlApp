@@ -12,7 +12,6 @@ using DevExpress.XtraGrid.Columns;
 using DevExpress.XtraGrid.Views.Grid;
 using DevExpress.XtraGrid.Views.Layout.Events;
 using PowerSourceControlApp.DeviceManagment;
-using PowerSourceControlApp.DeviceManagment.Log;
 
 namespace PowerSourceControlApp
 {
@@ -61,8 +60,6 @@ namespace PowerSourceControlApp
             DeviceManager.DeviceListUpdate += UpdateFormsHandler;
             DeviceManager.DeviceUpdate += UpdateDeviceHandler;
             DeviceManager.LogUpdate += UpdateLogHandler;
-
-            EventLog.Add("Global", "App started!");
         }
 
         

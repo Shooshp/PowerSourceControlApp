@@ -5,7 +5,7 @@ using Dapper;
 using MySql.Data.MySqlClient;
 using PowerSourceControlApp.DapperDTO;
 using PowerSourceControlApp.DeviceManagment;
-using PowerSourceControlApp.DeviceManagment.Log;
+using Serilog;
 
 namespace PowerSourceControlApp.PowerSource.Tasks
 {
@@ -67,7 +67,8 @@ namespace PowerSourceControlApp.PowerSource.Tasks
             IsExecuting = false;
             IsComplited = true;
             wd.Dispose();
-            EventLog.Add(_parentPowerSource.Hostname, DisplayName + " completed!");
+            Log.Debug("{Host} complited task {LogEvent} created by {User} at {TimeStamp}", _parentPowerSource.DisplayName, DisplayName, Global.User, DateTime.Now);
+
             _parentTaskManager.StartNextTask();
         }
 
@@ -102,9 +103,9 @@ namespace PowerSourceControlApp.PowerSource.Tasks
             }
             catch (Exception e)
             {
+                Log.Error("SQL Error accured by {User} to {Host}, while commiting to DB task: {LogEvent}. With parametrs {Exception} at {TimeStamp}",
+                    Global.User, _parentPowerSource.DisplayName, DisplayName, e, DateTime.Now);
                 Console.WriteLine(e);
-                throw;
-                //TODO: Need to implement some kind of SQL disconnect handler
             }
         }
 
@@ -126,7 +127,8 @@ namespace PowerSourceControlApp.PowerSource.Tasks
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                //TODO: Need to implement some kind of SQL disconnect handler
+                Log.Error("SQL Error accured by {User} to {Host}, cheking progress of task: {LogEvent}. With parametrs {Exception} at {TimeStamp}",
+                    Global.User, _parentPowerSource.DisplayName, DisplayName, e, DateTime.Now);
             }
             if (!state)
             {

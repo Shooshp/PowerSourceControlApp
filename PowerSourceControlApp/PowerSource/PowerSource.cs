@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using Dapper;
 using MySql.Data.MySqlClient;
@@ -9,6 +11,7 @@ using PowerSourceControlApp.DapperDTO;
 using PowerSourceControlApp.DeviceManagment;
 using PowerSourceControlApp.PowerSource.Tasks;
 using Renci.SshNet;
+using Serilog;
 
 namespace PowerSourceControlApp.PowerSource
 {
@@ -32,7 +35,7 @@ namespace PowerSourceControlApp.PowerSource
         private List<Settings> _settingsList;
         private List<Measurement> _measurementList;
         private List<Calibration> _calibrationList;
-        public readonly List<Chanel> ChanelList;
+        public  List<Chanel> ChanelList;
         public readonly TaskManager DutyManager;
         public readonly StatusChecker Pinger;
         private readonly SshClient _sshConnector;
@@ -62,7 +65,7 @@ namespace PowerSourceControlApp.PowerSource
             MsqlConnectionString = new MySqlConnectionStringBuilder
             {
                 Server = IpAddress,
-                UserID = "root",
+                UserID = "admin",
                 Password = "123",
                 Database = "local_data_storage"
             };
@@ -88,8 +91,11 @@ namespace PowerSourceControlApp.PowerSource
                     connection.Close();
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
+
+                Log.Error("SQL Error accured by {User} to {Host}, while getting initial settings. With parametrs {Exception} at {TimeStamp}",
+                    Global.User,DisplayName, e, DateTime.Now);
                 if (IsOnline)
                 {
                     Thread.Sleep(100);
@@ -98,21 +104,25 @@ namespace PowerSourceControlApp.PowerSource
 
             if (_settingsList.Count != 0)
             {
+                var tempList = new List<Chanel>();
+
                 foreach (var chanel in _settingsList)
                 {
-                    ChanelList.Add(new Chanel(chanel.Id, this));
+                    tempList.Add(new Chanel(chanel.Id, this));
 
-                    ChanelList.Single(c => c.ChanelId == chanel.Id).ChanelUUID = chanel.UUID;
-                    ChanelList.Single(c => c.ChanelId == chanel.Id).Address = chanel.Address;
-                    ChanelList.Single(c => c.ChanelId == chanel.Id).Voltage = chanel.Voltage;
-                    ChanelList.Single(c => c.ChanelId == chanel.Id).Current = chanel.Current;
-                    ChanelList.Single(c => c.ChanelId == chanel.Id).Power = chanel.Power;
-                    ChanelList.Single(c => c.ChanelId == chanel.Id).Calibration = chanel.Calibration;
-                    ChanelList.Single(c => c.ChanelId == chanel.Id).OnOff = chanel.OnOff;
+                    tempList.Single(c => c.ChanelId == chanel.Id).ChanelUUID = chanel.UUID;
+                    tempList.Single(c => c.ChanelId == chanel.Id).Address = chanel.Address;
+                    tempList.Single(c => c.ChanelId == chanel.Id).Voltage = chanel.Voltage;
+                    tempList.Single(c => c.ChanelId == chanel.Id).Current = chanel.Current;
+                    tempList.Single(c => c.ChanelId == chanel.Id).Power = chanel.Power;
+                    tempList.Single(c => c.ChanelId == chanel.Id).Calibration = chanel.Calibration;
+                    tempList.Single(c => c.ChanelId == chanel.Id).OnOff = chanel.OnOff;
 
                     var calibration = _calibrationList.Single((calibration1 => calibration1.UUID == chanel.UUID));
 
-                    ChanelList.Single(c => c.ChanelId == chanel.Id).CalibratedAt = calibration.CalibratedAt;
+                    tempList.Single(c => c.ChanelId == chanel.Id).CalibratedAt = calibration.CalibratedAt;
+
+                    ChanelList = tempList.OrderByDescending((chanel1 => chanel1.Address)).ToList();
                 }
             }
         }
@@ -149,8 +159,10 @@ namespace PowerSourceControlApp.PowerSource
                         connection.Close();
                     }
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
+                    Log.Error("SQL Error accured by {User}, while updating data from {Host}. With parametrs {Exception} at {TimeStamp}",
+                        Global.User, DisplayName, e, DateTime.Now);
                     if (IsOnline)
                     {
                         Thread.Sleep(100);
@@ -186,11 +198,13 @@ namespace PowerSourceControlApp.PowerSource
         private void GetHostname()
         {
             Hostname = RunSshCommand("hostname");
-            DisplayName = string.Concat(Hostname, "(", IpAddress, ")");
+            var replacement = Regex.Replace(Hostname, @"\t|\n|\r", "");
+            DisplayName = string.Concat(replacement, "(", IpAddress, ")");
         }
 
         public void SetHostname(string name)
         {
+            Log.Information("{User} renaming {Host} to {LogEvent}, at {TimeStamp}", Global.User, DisplayName, name, DateTime.Now);
             RunSshCommand(string.Concat("sudo hostnamectl set-hostname ", name));
             GetHostname();
         }
@@ -204,8 +218,9 @@ namespace PowerSourceControlApp.PowerSource
             var diffinseconds = (DateTime.Now - time).TotalSeconds;
             if (diffinseconds > 5)
             {
-                var reply = RunSshCommand(string.Concat("sudo date +%s -s @", (DateTime.Now - Epoch.ToLocalTime()).TotalSeconds));
-                Console.WriteLine(reply);
+                RunSshCommand(string.Concat("sudo date +%s -s @", (DateTime.Now - Epoch.ToLocalTime()).TotalSeconds));
+                Log.Information("Because of time difference between {User} and {Host}, readjusting time from {LogEvent} to {TimeStamp}",
+                    Global.User, DisplayName, time.ToString(CultureInfo.CurrentCulture), DateTime.Now);
             }
         }
 
@@ -239,7 +254,8 @@ namespace PowerSourceControlApp.PowerSource
                     }
                     else
                     {
-                        //TODO: Text Popoup with error: no voltage without current!
+                        Log.Debug("{User} is stupid asshole, and trys to set voltage without current to {Host} at {TimeStamp}",
+                            Global.User, DisplayName, DateTime.Now);
                     }
                 }
                 else // Chanel current is not zero
@@ -257,7 +273,8 @@ namespace PowerSourceControlApp.PowerSource
                     }
                     else
                     {
-                        //TODO: Text Popoup with error: no voltage without current!
+                        Log.Debug("{User} is stupid asshole, and trys to set voltage without current to {Host} at {TimeStamp}",
+                            Global.User, DisplayName, DateTime.Now);
                     }
                 }
             }
@@ -282,7 +299,8 @@ namespace PowerSourceControlApp.PowerSource
                     }
                     else
                     {
-                        //TODO: Text Popoup with error: no voltage without current!
+                        Log.Debug("{User} is stupid asshole, and trys to set voltage without current to {Host} at {TimeStamp}",
+                            Global.User, DisplayName, DateTime.Now);
                     }
                 }
             }

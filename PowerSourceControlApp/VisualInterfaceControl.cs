@@ -1,15 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Windows.Forms;
 using DevExpress.XtraCharts;
 using DevExpress.XtraEditors;
 using DevExpress.XtraGrid;
 using DevExpress.XtraGrid.Views.Base;
+using DevExpress.XtraGrid.Views.Card;
 using DevExpress.XtraGrid.Views.Grid;
 using DevExpress.XtraGrid.Views.Layout;
+using DevExpress.XtraGrid.Views.Layout.Events;
 using PowerSourceControlApp.DeviceManagment;
-using PowerSourceControlApp.DeviceManagment.Log;
 
 namespace PowerSourceControlApp
 {
@@ -89,15 +92,49 @@ namespace PowerSourceControlApp
 
             _powerSourceListGridView.FocusedRowChanged += CurrentPowerSourceChanged;
             _chanelListLayoutView.FocusedRowChanged += CurrentChanelChanged;
+            _chanelListLayoutView.CustomDrawCardBackground += CustomDrawCardBackground;
+            _chanelListLayoutView.CustomDrawCardCaption += CustomDrawCardCaption;
 
             _labelList = (List<Label>) labellist;
 
             _logGridControl = (GridControl) loggridcontrol;
-            _logGridControl.DataSource = EventLog.EventList;
+            _logGridControl.DataSource = DeviceManager.LogList;
+        }
+
+        private static void CustomDrawCardCaption(object sender, LayoutViewCustomDrawCardCaptionEventArgs e)
+        {
+            if (e.RowHandle == _chanelListLayoutView.FocusedRowHandle)
+            {
+                e.DefaultDraw();
+                var r = e.CaptionBounds;
+                r.Inflate(-1, -1);
+                ControlPaint.DrawBorder3D(e.Graphics, r, Border3DStyle.RaisedInner );
+                using (var highlight = new SolidBrush(Color.FromArgb(25, Color.Red)))
+                {
+                    e.Graphics.FillRectangle(highlight, r);
+                }
+
+            }
+        }
+
+        private static void CustomDrawCardBackground(object sender, LayoutViewCustomDrawCardBackgroundEventArgs e)
+        {
+            if (e.RowHandle == _chanelListLayoutView.FocusedRowHandle)
+            {
+                e.DefaultDraw();
+                using (var highlight = new SolidBrush(Color.FromArgb(25, Color.Red)))
+                {
+                    e.Graphics.FillRectangle(highlight, Rectangle.Inflate(e.Bounds, -1, -1));
+                }
+            }
         }
 
         public static void UpdateLog()
         {
+            if (_logGridControl.DataSource != DeviceManager.LogList)
+            {
+                _logGridControl.DataSource = DeviceManager.LogList;
+            }
             _logGridControl.RefreshDataSource();
         }
 
@@ -240,6 +277,16 @@ namespace PowerSourceControlApp
 
         public static void UpdateButtonClick()
         {
+            if (Convert.ToInt16(_voltageEdit.EditValue) > 20)
+            {
+                _voltageEdit.EditValue = 20;
+            }
+
+            if (Convert.ToInt16(_currentEdit.EditValue) > 3)
+            {
+                _currentEdit.EditValue = 3;
+            }
+
             decimal voltage = Convert.ToDecimal(_voltageEdit.EditValue);
             decimal current = Convert.ToDecimal(_currentEdit.EditValue);
             uint chanelId = DeviceManager.DeviceList.ElementAt(_focusedPowerSourceIndex).ChanelList.ElementAt(_focusedChanelIndex).ChanelId;
